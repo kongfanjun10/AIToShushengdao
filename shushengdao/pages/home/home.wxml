@@ -1,0 +1,573 @@
+<import src="../../templates/tabbar.wxml" />
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row">
+        <text class="t-18 truncate" style="max-width:250rpx">首页</text>
+      </view>
+      <view class="mini-ctrl">
+        <view class="row center" style="width:54rpx;height:54rpx" bindtap="toggleMore">
+          <view class="ico ico-more ico-34"></view>
+        </view>
+        <view class="hairline" style="height:27rpx;width:1px"></view>
+        <view class="row center" style="width:54rpx;height:54rpx" bindtap="goTop">
+          <view class="ico ico-arrow-up ico-34"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 问候区 -->
+    <view class="row between" style="padding-top:4rpx">
+      <view class="col">
+        <view class="row" style="gap:10rpx">
+          <view class="hi-avatar" hover-class="pressed" bindtap="goProfile">
+            <image wx:if="{{avatar}}" class="hi-avatar-img" src="{{avatar}}" mode="aspectFill" />
+            <view wx:else class="ico ico-person ico-30"></view>
+          </view>
+          <text class="t-24">你好，{{nickname}}</text>
+          <view class="name-edit" hover-class="pressed" bindtap="goProfile">
+            <view class="ico ico-edit ico-22 c-t"></view>
+          </view>
+          <text class="wave">👋</text>
+        </view>
+        <text class="t-13 c-s" style="margin-top:2rpx">今天也是朗读打卡的小达人哦</text>
+      </view>
+      <view class="row" style="gap:8rpx">
+        <view class="bell-btn" hover-class="pressed" bindtap="openNotif">
+          <view class="ico ico-bell ico-38"></view>
+          <view class="bell-dot" wx:if="{{notifCount > 0}}">
+            <text class="t-9" style="color:#fff;font-weight:700">{{notifCount > 9 ? '9+' : notifCount}}</text>
+          </view>
+        </view>
+        <view class="mode-pill" hover-class="pressed" bindtap="goSettings">
+          <view class="dot anim-pulse"></view>
+          <text class="t-10 bold c-primary">{{ageModeLabel}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 学科分区 -->
+    <view class="subjects">
+      <view
+        class="subject {{subject === item.key ? 'subject-on' : ''}}"
+        wx:for="{{subjects}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="pickSubject"
+        hover-class="pressed"
+      >
+        <view class="subj-ico {{item.cls}}">
+          <view class="ico {{item.icon}} ico-38"></view>
+        </view>
+        <text class="t-13 semi subj-name">{{item.name}}</text>
+        <text class="t-10 subj-hint">{{item.hint}}</text>
+      </view>
+    </view>
+
+    <block wx:if="{{subject === 'chinese'}}">
+    <!-- 拼音卡片（语文学习主线，置顶） -->
+    <view class="section">
+      <view class="sec-head">
+        <text class="t-18 bold">拼音卡片</text>
+        <text class="t-10 c-t">声母 23 · 韵母 24 · 整体认读 16</text>
+      </view>
+      <view class="card write-card shadow-soft" hover-class="pressed" bindtap="goPinyin">
+        <view class="row between">
+          <view class="row" style="gap:13rpx;min-width:0;flex:1">
+            <view class="squircle write-squircle">
+              <view class="ico ico-spellcheck ico-46" style="color:#047857"></view>
+            </view>
+            <view class="col flex1" style="gap:2rpx">
+              <text class="t-14 bold truncate">63 个汉语拼音</text>
+              <text class="t-10 c-t">已学 {{pinyin.done}}/{{pinyin.total}} 个 · 今日 {{pinyin.today}} 个</text>
+            </view>
+          </view>
+          <view class="go-pill">
+            <text class="t-11 semi c-primary">去读拼音</text>
+            <view class="ico ico-chevron-right ico-26 c-primary"></view>
+          </view>
+        </view>
+
+        <view class="pv-row">
+          <view class="pv-cell" wx:for="{{pinyin.preview}}" wx:key="id">
+            <text class="pv-py">{{item.kind}}</text>
+            <text class="pv-char">{{item.py}}</text>
+          </view>
+          <view class="col flex1" style="gap:6rpx;padding-left:8rpx">
+            <text class="t-10 c-t">读音 · 口舌图 · 拼音词组，点开逐个听</text>
+            <view class="bar"><view class="bar-fill" style="width:{{pinyin.percent}}%"></view></view>
+            <text class="t-10 semi c-pc">已学会 {{pinyin.percent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 断点续读 -->
+    <view class="section">
+      <view class="sec-head">
+        <text class="t-18 bold">断点续读</text>
+        <text class="t-10 c-t">上次朗读进度已自动保存</text>
+      </view>
+      <view
+        class="card resume shadow-soft"
+        wx:for="{{resumeList}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="goReader"
+      >
+        <view class="row between" style="align-items:flex-start;gap:15rpx">
+          <view class="row" style="align-items:flex-start;gap:15rpx;flex:1;min-width:0">
+            <view class="squircle"><view class="ico ico-book-open ico-46 c-pc"></view></view>
+            <view class="col flex1">
+              <view class="row" style="gap:8rpx">
+                <text class="t-14 bold truncate" style="flex:1;min-width:0">{{item.title}}</text>
+                <view class="resume-done-chip" wx:if="{{item.done}}"><text class="t-10">已读完</text></view>
+              </view>
+              <text class="t-13 c-s truncate" style="margin-top:2rpx">{{item.lessonTitle}}</text>
+              <view class="row" style="gap:8rpx;margin-top:4rpx">
+                <text class="t-10 semi c-pc">已读 {{item.readCount}}/{{item.totalCount}} 句</text>
+                <view class="bullet"></view>
+                <text class="t-10 c-t">{{item.agoText}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="row" style="align-items:baseline">
+            <text class="t-hero">{{item.percent}}</text>
+            <text class="t-12 c-s" style="margin-left:2rpx">%</text>
+          </view>
+        </view>
+
+        <view class="col" style="gap:6rpx;padding-top:4rpx">
+          <view class="bar">
+            <view class="bar-fill" style="width:{{item.percent}}%"></view>
+          </view>
+          <view class="row between">
+            <text class="t-10 c-t">0%</text>
+            <text class="t-10 c-t">目标 100%</text>
+          </view>
+        </view>
+
+        <view class="row between" style="padding-top:4rpx">
+          <view class="row" style="gap:6rpx">
+            <view class="ico ico-mic ico-30" style="color:#f97316"></view>
+            <text class="t-13 c-s">{{item.done ? '已读完，可以再读一遍' : '录音已暂存，随时继续'}}</text>
+          </view>
+          <view class="resume-btn" hover-class="pressed">
+            <view class="ico ico-play ico-34 c-primary"></view>
+            <text class="t-12 c-primary">{{item.done ? '再读一遍' : '继续朗读'}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="card resume shadow-soft" wx:if="{{!resumeList.length}}" bindtap="goCapture">
+        <text class="t-14 bold">还没有课文</text>
+        <text class="t-13 c-s" style="margin-top:4rpx">先拍一张课文照片，开始今天的朗读</text>
+      </view>
+    </view>
+
+    <!-- 文字描写 -->
+    <view class="section">
+      <view class="sec-head">
+        <text class="t-18 bold">文字描写</text>
+        <text class="t-10 c-t">按学段练字 · 写完自动打勾</text>
+      </view>
+      <view class="card write-card shadow-soft" hover-class="pressed" bindtap="goWrite">
+        <view class="row between">
+          <view class="row" style="gap:13rpx;min-width:0;flex:1">
+            <view class="squircle write-squircle">
+              <view class="ico ico-edit ico-46" style="color:#0ea5e9"></view>
+            </view>
+            <view class="col flex1" style="gap:2rpx">
+              <text class="t-14 bold truncate">{{write.levelName}} · 中文描写</text>
+              <text class="t-10 c-t">已写 {{write.done}}/{{write.total}} 字 · 今日 {{write.today}} 字</text>
+            </view>
+          </view>
+          <view class="go-pill">
+            <text class="t-11 semi c-primary">去描写</text>
+            <view class="ico ico-chevron-right ico-26 c-primary"></view>
+          </view>
+        </view>
+
+        <view class="pv-row">
+          <view class="pv-cell" wx:for="{{write.preview}}" wx:key="c">
+            <text class="pv-py">{{item.py}}</text>
+            <text class="pv-char">{{item.c}}</text>
+          </view>
+          <view class="col flex1" style="gap:6rpx;padding-left:8rpx">
+            <text class="t-10 c-t">{{write.levelSub}}</text>
+            <view class="bar"><view class="bar-fill" style="width:{{write.percent}}%"></view></view>
+            <text class="t-10 semi c-pc">本册已完成 {{write.percent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快速入口（辅助功能，收成一条小工具条放到页尾） -->
+    <view class="section">
+      <view class="sec-head">
+        <text class="t-18 bold">快速入口</text>
+        <text class="t-10 c-t">拍照 · 生词 · 范读 · 奖状</text>
+      </view>
+      <view class="card quick-bar shadow-soft">
+        <view class="qb-item" hover-class="pressed" bindtap="goCapture">
+          <view class="q-ico qb-ico q-purple"><view class="ico ico-camera ico-38"></view></view>
+          <text class="t-11 semi truncate">拍照伴读</text>
+        </view>
+        <view class="qb-sep"></view>
+        <view class="qb-item" hover-class="pressed" bindtap="goVocab">
+          <view class="q-ico qb-ico q-teal"><view class="ico ico-spellcheck ico-38"></view></view>
+          <text class="t-11 semi truncate">生词复习</text>
+        </view>
+        <view class="qb-sep"></view>
+        <view class="qb-item" hover-class="pressed" bindtap="goReader">
+          <view class="q-ico qb-ico q-amber"><view class="ico ico-headphones ico-38"></view></view>
+          <text class="t-11 semi truncate">听范读</text>
+        </view>
+        <view class="qb-sep"></view>
+        <view class="qb-item" hover-class="pressed" bindtap="goArchive">
+          <view class="q-ico qb-ico q-blue"><view class="ico ico-medal ico-38"></view></view>
+          <text class="t-11 semi truncate">我的奖状</text>
+        </view>
+      </view>
+    </view>
+
+    </block>
+
+    <!-- 英语：48 个国际音标 -->
+    <view class="section" wx:if="{{subject === 'english'}}">
+      <view class="sec-head">
+        <text class="t-18 bold">国际音标</text>
+        <text class="t-10 c-t">元音 20 · 辅音 28</text>
+      </view>
+      <view class="card write-card shadow-soft" hover-class="pressed" bindtap="goPhonics">
+        <view class="row between">
+          <view class="row" style="gap:13rpx;min-width:0;flex:1">
+            <view class="squircle write-squircle">
+              <view class="ico ico-volume ico-46" style="color:#0ea5e9"></view>
+            </view>
+            <view class="col flex1" style="gap:2rpx">
+              <text class="t-14 bold truncate">48 个国际音标</text>
+              <text class="t-10 c-t">已学 {{phonics.done}}/{{phonics.total}} 个 · 今日 {{phonics.today}} 个</text>
+            </view>
+          </view>
+          <view class="go-pill">
+            <text class="t-11 semi c-primary">去听音标</text>
+            <view class="ico ico-chevron-right ico-26 c-primary"></view>
+          </view>
+        </view>
+
+        <view class="pv-row">
+          <view class="pv-cell" wx:for="{{phonics.preview}}" wx:key="id">
+            <text class="pv-py">{{item.kind}}</text>
+            <text class="pv-ipa">{{item.ipa}}</text>
+          </view>
+          <view class="col flex1" style="gap:6rpx;padding-left:8rpx">
+            <text class="t-10 c-t">点开逐个听，读完自动打勾</text>
+            <view class="bar"><view class="bar-fill" style="width:{{phonics.percent}}%"></view></view>
+            <text class="t-10 semi c-pc">已学会 {{phonics.percent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 数学：数字测试 -->
+    <view class="section" wx:if="{{subject === 'math'}}">
+      <view class="sec-head">
+        <view class="row" style="gap:8rpx">
+          <text class="t-18 bold">数字测试</text>
+          <text class="t-10 c-t">随机出题 · 录音判对错</text>
+        </view>
+        <text class="t-10 semi c-primary">今日 {{math.todayRight}} 对</text>
+      </view>
+
+      <view class="card write-card shadow-soft" hover-class="pressed" bindtap="goMath">
+        <view class="row between">
+          <view class="row" style="gap:13rpx;min-width:0;flex:1">
+            <view class="squircle math-squircle">
+              <view class="ico ico-calc ico-46" style="color:#00687a"></view>
+            </view>
+            <view class="col flex1" style="gap:2rpx">
+              <text class="t-14 bold truncate">看数字，读出来</text>
+              <text class="t-10 c-t">范围 {{math.rangeLabel}} · 连对 {{math.streak}} 个</text>
+            </view>
+          </view>
+          <view class="go-pill">
+            <text class="t-11 semi c-primary">去测试</text>
+            <view class="ico ico-chevron-right ico-26 c-primary"></view>
+          </view>
+        </view>
+
+        <view class="num-row">
+          <view class="num-chip" wx:for="{{math.preview}}" wx:key="*this">{{item}}</view>
+          <view class="col flex1" style="gap:6rpx;padding-left:10rpx">
+            <text class="t-10 c-t">点开就能读，读对会说「你真棒哟」</text>
+            <view class="bar"><view class="bar-fill" style="width:{{math.percent}}%"></view></view>
+            <text class="t-10 semi c-pc">今日正确率 {{math.percent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 数学：更多玩法（口算 + 竖式） -->
+    <view class="section" wx:if="{{subject === 'math'}}">
+      <view class="sec-head">
+        <view class="row" style="gap:8rpx">
+          <text class="t-18 bold">更多玩法</text>
+          <text class="t-10 c-t">口算 · 竖式 · 错题本</text>
+        </view>
+        <text class="t-10 semi c-primary">今日 {{calc.todayRight}} 题</text>
+      </view>
+
+      <view class="tool-card shadow-soft">
+        <view class="tool-row" hover-class="row-hover" bindtap="goCalc">
+          <view class="squircle tool-sq" style="background:linear-gradient(135deg,#e0f2fe,#cffafe)">
+            <view class="ico ico-timer ico-40" style="color:#00687a"></view>
+          </view>
+          <view class="col flex1" style="gap:1rpx;min-width:0">
+            <text class="t-14 bold truncate">口算闯关</text>
+            <text class="t-10 c-t truncate">{{calc.levelName}} · 连对 {{calc.streak}} · 正确率 {{calc.percent}}%</text>
+          </view>
+          <view class="tool-tag" wx:if="{{calc.wrongCount > 0}}">错题 {{calc.wrongCount}}</view>
+          <view class="ico ico-chevron-right ico-26 c-t"></view>
+        </view>
+
+        <view class="tool-hair"></view>
+
+        <view class="tool-row" hover-class="row-hover" bindtap="goColumn">
+          <view class="squircle tool-sq" style="background:linear-gradient(135deg,#e0f2fe,#dbeafe)">
+            <view class="ico ico-reorder ico-40" style="color:#00687a"></view>
+          </view>
+          <view class="col flex1" style="gap:1rpx;min-width:0">
+            <text class="t-14 bold truncate">竖式计算</text>
+            <text class="t-10 c-t truncate">{{column.levelName}} · 逐位填写 · 进位看得见</text>
+          </view>
+          <view class="tool-tag" wx:if="{{column.wrongCount > 0}}">错题 {{column.wrongCount}}</view>
+          <view class="ico ico-chevron-right ico-26 c-t"></view>
+        </view>
+
+        <view class="tool-hair"></view>
+
+        <view class="tool-row" hover-class="row-hover" bindtap="goLink">
+          <view class="squircle tool-sq" style="background:linear-gradient(135deg,#ecfeff,#cffafe)">
+            <view class="ico ico-share ico-40" style="color:#00687a"></view>
+          </view>
+          <view class="col flex1" style="gap:1rpx;min-width:0">
+            <text class="t-14 bold truncate">图案与数字连线</text>
+            <text class="t-10 c-t truncate">{{link.levelName}} · 今日连对 {{link.todayRight}} 次</text>
+          </view>
+          <view class="ico ico-chevron-right ico-26 c-t"></view>
+        </view>
+
+        <view class="tool-hair"></view>
+
+        <view class="tool-row" hover-class="row-hover" bindtap="goMind">
+          <view class="squircle tool-sq" style="background:linear-gradient(135deg,#f0fdfa,#ccfbf1)">
+            <view class="ico ico-flag ico-40" style="color:#00687a"></view>
+          </view>
+          <view class="col flex1" style="gap:1rpx;min-width:0">
+            <text class="t-14 bold truncate">思维游戏</text>
+            <text class="t-10 c-t truncate">走迷宫 · 方块滑块 · 今日 {{mind.todayRight}} 关</text>
+          </view>
+          <view class="ico ico-chevron-right ico-26 c-t"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 英语：单词与跟读 -->
+    <view class="section" wx:if="{{subject === 'english'}}">
+      <view class="sec-head">
+        <view class="row" style="gap:8rpx">
+          <text class="t-18 bold">单词与跟读</text>
+          <text class="t-10 c-t">{{words.themeCount}} 个主题 · {{words.total}} 个词</text>
+        </view>
+        <text class="t-10 semi c-primary">今日 {{words.today}} 个</text>
+      </view>
+
+      <view class="card write-card shadow-soft" hover-class="pressed" bindtap="goWords">
+        <view class="row between">
+          <view class="row" style="gap:13rpx;min-width:0;flex:1">
+            <view class="squircle eng-squircle">
+              <view class="ico ico-headphones ico-46" style="color:#047857"></view>
+            </view>
+            <view class="col flex1" style="gap:2rpx">
+              <text class="t-14 bold truncate">听单词，跟着读</text>
+              <text class="t-10 c-t">{{words.themeName}} · 已读 {{words.done}} 个 · 跟读 {{words.follow}} 次</text>
+            </view>
+          </view>
+          <view class="go-pill">
+            <text class="t-11 semi c-primary">去跟读</text>
+            <view class="ico ico-chevron-right ico-26 c-primary"></view>
+          </view>
+        </view>
+
+        <view class="wpre-row">
+          <view class="wpre-cell" wx:for="{{words.preview}}" wx:key="en">
+            <text class="wpre-en">{{item.en}}</text>
+            <text class="wpre-cn">{{item.cn}}</text>
+          </view>
+          <view class="col flex1" style="gap:6rpx;padding-left:8rpx">
+            <text class="t-10 c-t">点词听发音，还能录下来自己回听</text>
+            <view class="bar"><view class="bar-fill" style="width:{{words.percent}}%"></view></view>
+            <text class="t-10 semi c-pc">已读 {{words.percent}}%</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="plan-mini">
+        <view class="row" style="gap:6rpx;flex:1;min-width:0">
+          <view class="ico ico-bulb ico-26" style="color:#fbbf24"></view>
+          <text class="t-10 c-t flex1">字母描写、课文跟读还在准备，先把单词读顺</text>
+        </view>
+        <view class="go-pill" hover-class="pressed" bindtap="pickChinese">
+          <text class="t-11 semi c-primary">回语文</text>
+          <view class="ico ico-chevron-right ico-26 c-primary"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 勋章预告 -->
+    <view class="section" style="margin-bottom:15rpx">
+      <view class="sec-head">
+        <view class="row" style="gap:6rpx">
+          <text class="t-18 bold">下一枚待解锁勋章</text>
+          <view class="ico ico-star ico-30" style="color:#fbbf24"></view>
+        </view>
+        <view class="row" bindtap="goArchive">
+          <text class="t-10 semi c-primary">全部勋章</text>
+          <view class="ico ico-chevron-right ico-26 c-primary"></view>
+        </view>
+      </view>
+
+      <view class="badge-card shadow-soft">
+        <view class="badge-glow"></view>
+        <view class="row" style="gap:13rpx;flex:1;min-width:0;z-index:2">
+          <view class="badge-box">
+            <view class="ico ico-trophy ico-70" style="color:#cbd5e1"></view>
+            <view class="lock-dot"><view class="ico ico-lock ico-26"></view></view>
+            <view class="ico ico-sparkle ico-26 anim-pulse" style="position:absolute;top:-6rpx;left:-6rpx;color:#0ea5e9"></view>
+          </view>
+          <view class="col flex1">
+            <view class="row" style="gap:8rpx">
+              <text class="t-18 bold truncate">{{badge.name}}</text>
+              <text class="rarity">{{badge.rarity}}</text>
+            </view>
+            <text class="t-13 c-s truncate" style="margin-top:2rpx">{{badge.desc}}</text>
+            <view class="row" style="gap:8rpx;margin-top:8rpx">
+              <view class="streak-bar">
+                <view class="streak-fill" style="width:{{badge.percent}}%"></view>
+              </view>
+              <text class="t-10 bold" style="color:#f97316">{{badge.current}}/{{badge.target}} 天连续打卡</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="row center" style="gap:6rpx;padding:8rpx 0">
+        <view class="ico ico-bulb ico-30" style="color:#fbbf24"></view>
+        <text class="t-13 c-s" style="text-align:center">{{subject === 'chinese' ? '太棒了！明天完成 1 句朗读，即可点亮全新勋章 🎉' : subject === 'math' ? '读对一个数字也是一次小胜利，明天继续来练 🎉' : '语文的朗读和描写都会计入打卡，勋章一样点亮 🎉'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 顶部更多菜单 -->
+  <view class="h-mask" wx:if="{{moreMenu}}" bindtap="closeMore">
+    <view class="more-panel" catchtap="noop">
+      <view class="more-item" hover-class="pressed" bindtap="goArchive">
+        <view class="row" style="gap:10rpx">
+          <view class="ico ico-medal ico-32 c-pc"></view>
+          <view class="col" style="gap:0">
+            <text class="t-13 semi">成长档案</text>
+            <text class="t-10 c-t">勋章墙与能力明细</text>
+          </view>
+        </view>
+      </view>
+      <view class="hairline"></view>
+      <view class="more-item" hover-class="pressed" bindtap="goVocab">
+        <view class="row" style="gap:10rpx">
+          <view class="ico ico-stories ico-32 c-pc"></view>
+          <view class="col" style="gap:0">
+            <text class="t-13 semi">生词本</text>
+            <text class="t-10 c-t">复习读错的词</text>
+          </view>
+        </view>
+      </view>
+      <view class="hairline"></view>
+      <view class="more-item" hover-class="pressed" bindtap="goFeedback">
+        <view class="row" style="gap:10rpx">
+          <view class="ico ico-edit ico-32 c-pc"></view>
+          <view class="col" style="gap:0">
+            <text class="t-13 semi">欢迎留言</text>
+            <text class="t-10 c-t">提建议 · 反馈问题</text>
+          </view>
+        </view>
+      </view>
+      <view class="hairline"></view>
+      <view class="more-item" hover-class="pressed" bindtap="goParent">
+        <view class="row" style="gap:10rpx">
+          <view class="ico ico-shield ico-32 c-pc"></view>
+          <view class="col" style="gap:0">
+            <text class="t-13 semi">家长中心</text>
+            <text class="t-10 c-t">周报与伴读设置</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 轻提示 -->
+  <view class="toast {{toastVisible ? 'toast-show' : ''}}">
+    <view class="ico ico-check-circle ico-34" style="color:#6ffbbe"></view>
+    <text class="t-12" style="color:#ecf1ff">{{toastText}}</text>
+  </view>
+
+  <!-- 消息中心（右上角铃铛）：勋章解锁 / 打卡里程碑 / 留言回复 -->
+  <view class="notif-mask" wx:if="{{notifOpen}}" bindtap="closeNotif">
+    <view class="notif-sheet" catchtap="noop">
+      <view class="row between" style="margin-bottom:8rpx">
+        <text class="t-18 bold">消息中心</text>
+        <view class="row" style="gap:14rpx">
+          <text class="t-11 c-p semi" wx:if="{{notifCount > 0}}" bindtap="clearNotif">全部已读</text>
+          <view class="notif-close" hover-class="hover-bg" bindtap="closeNotif">
+            <view class="ico ico-close ico-30 c-s"></view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{!notifList.length}}" class="notif-empty">
+        <text class="ne-ico">🌱</text>
+        <text class="t-14 semi" style="margin-top:12rpx">还没有消息</text>
+        <text class="t-11 c-s" style="margin-top:6rpx;text-align:center;line-height:1.6">坚持朗读打卡、解锁勋章、收到回复</text>
+        <text class="t-11 c-s" style="text-align:center;line-height:1.6">的消息都会出现在这里</text>
+      </view>
+
+      <scroll-view scroll-y class="notif-list" wx:else show-scrollbar="{{false}}">
+        <view
+          class="notif-item {{item.read ? 'read' : ''}}"
+          wx:for="{{notifList}}"
+          wx:key="id"
+          hover-class="hover-bg"
+          bindtap="onNotifItem"
+          data-id="{{item.id}}"
+        >
+          <view class="ni-ico"><text style="font-size:36rpx">{{item.icon}}</text></view>
+          <view class="col flex1" style="min-width:0">
+            <view class="row" style="gap:10rpx">
+              <text class="t-13 bold truncate" style="flex:1;min-width:0">{{item.title}}</text>
+              <text class="t-9 c-t" style="flex-shrink:0">{{item.timeText}}</text>
+            </view>
+            <text class="t-11 c-s" style="margin-top:4rpx;line-height:1.5">{{item.text}}</text>
+            <text class="t-10 c-p semi" style="margin-top:6rpx" wx:if="{{item.go}}">{{item.go.label}} ›</text>
+          </view>
+          <view class="ni-dot" wx:if="{{!item.read}}"></view>
+        </view>
+        <text class="t-9 c-t" style="text-align:center;display:block;padding:16rpx 0 6rpx">最多保留最近 50 条消息</text>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 底部任务栏（页签式，共享模板） -->
+  <template is="tabbar" data="{{active: 'home'}}" />
+</view>
+<include src="../../pages/common/veil.wxml" />

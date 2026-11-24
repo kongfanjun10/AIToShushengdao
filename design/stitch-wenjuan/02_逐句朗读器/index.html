@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;min-height:100vh;margin:0;padding:0;}body{overscroll-behavior:none;background:linear-gradient(180deg,#E0F2FE 0%,#DCFCE7 100%);background-attachment:fixed;font-family:'Plus Jakarta Sans',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,16px);}.pt-safe{padding-top:env(safe-area-inset-top,24px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { 'colors': { 'on-primary-fixed-variant': '#5a00c6', 'surface-bright': '#f9f9ff', 'warning-banner-bg': '#FEF3C7', 'primary-container': '#7c3aed', 'on-secondary-fixed-variant': '#004e5c', 'accent-purple-light': '#EDE9FE', 'surface-variant': '#d8e3fb', 'on-primary': '#ffffff', 'on-surface-variant': '#4a4455', 'surface-container-lowest': '#ffffff', 'primary-fixed': '#eaddff', 'on-tertiary-container': '#76ffc2', 'text-secondary': '#64748B', 'secondary-fixed-dim': '#4cd7f6', 'inverse-primary': '#d2bbff', 'surface': '#f9f9ff', 'on-error-container': '#93000a', 'background': '#f9f9ff', 'surface-container': '#e7eeff', 'text-primary': '#0F172A', 'on-secondary-container': '#006172', 'on-secondary': '#ffffff', 'on-primary-fixed': '#25005a', 'surface-white': '#FFFFFF', 'surface-dim': '#cfdaf2', 'text-tertiary': '#94A3B8', 'accent-coral': '#F97316', 'on-background': '#111c2d', 'bg-gradient-top': '#E0F2FE', 'surface-container-highest': '#d8e3fb', 'on-secondary-fixed': '#001f26', 'outline': '#7b7487', 'outline-variant': '#ccc3d8', 'primary-fixed-dim': '#d2bbff', 'tertiary-fixed-dim': '#4edea3', 'warning-banner-text': '#92400E', 'secondary': '#00687a', 'on-tertiary': '#ffffff', 'bg-gradient-bottom': '#DCFCE7', 'surface-translucent': 'rgba(255, 255, 255, 0.85)', 'error': '#ba1a1a', 'tertiary-fixed': '#6ffbbe', 'inverse-on-surface': '#ecf1ff', 'surface-container-low': '#f0f3ff', 'primary': '#630ed4', 'on-error': '#ffffff', 'inverse-surface': '#263143', 'card-border': 'rgba(255, 255, 255, 0.6)', 'tertiary': '#005b3d', 'secondary-fixed': '#acedff', 'on-primary-container': '#ede0ff', 'on-tertiary-fixed-variant': '#005236', 'accent-purple-hover': '#6D28D9', 'accent-yellow': '#FBBF24', 'error-container': '#ffdad6', 'surface-tint': '#732ee4', 'tertiary-container': '#007650', 'on-tertiary-fixed': '#002113', 'secondary-container': '#57dffe', 'on-surface': '#111c2d', 'surface-container-high': '#dee8ff', 'badge-locked-mask': '#CBD5E1' }, 'borderRadius': { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, 'spacing': { 'space-md': '1rem', 'margin': '1.25rem', 'space-lg': '1.25rem', 'space-xl': '1.75rem', 'gutter': '1rem', 'space-sm': '0.5rem', 'space-xs': '0.25rem' }, 'fontFamily': { 'label-md': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'headline-md': ['Plus Jakarta Sans'], 'headline-sm': ['Plus Jakarta Sans'], 'label-lg': ['Plus Jakarta Sans'], 'headline-hero': ['Plus Jakarta Sans'], 'body-md': ['Plus Jakarta Sans'], 'body-lg': ['Plus Jakarta Sans'], 'reader-hero-kindergarten': ['Plus Jakarta Sans'], 'headline-lg': ['Plus Jakarta Sans'], 'label-sm': ['Plus Jakarta Sans'], 'pinyin-annotation': ['Plus Jakarta Sans'] }, 'fontSize': { 'label-md': ['12px', { 'lineHeight': '16px', 'fontWeight': '600' }], 'body-sm': ['13px', { 'lineHeight': '18px', 'fontWeight': '400' }], 'headline-md': ['20px', { 'lineHeight': '28px', 'fontWeight': '600' }], 'headline-sm': ['18px', { 'lineHeight': '24px', 'fontWeight': '600' }], 'label-lg': ['14px', { 'lineHeight': '18px', 'fontWeight': '600' }], 'headline-hero': ['32px', { 'lineHeight': '40px', 'fontWeight': '700' }], 'body-md': ['14px', { 'lineHeight': '20px', 'fontWeight': '400' }], 'body-lg': ['16px', { 'lineHeight': '24px', 'fontWeight': '500' }], 'reader-hero-kindergarten': ['28px', { 'lineHeight': '42px', 'fontWeight': '700' }], 'headline-lg': ['24px', { 'lineHeight': '32px', 'fontWeight': '700' }], 'label-sm': ['10px', { 'lineHeight': '14px', 'fontWeight': '500' }], 'pinyin-annotation': ['11px', { 'lineHeight': '14px', 'fontWeight': '500' }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="min-h-screen text-on-surface antialiased"><header class="fixed top-0 inset-x-0 z-50 bg-white/70 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.03)]"><div class="h-14 px-margin flex items-center justify-between"><div class="flex items-center gap-space-xs"><button class="w-11 h-11 -ml-2 flex items-center justify-center text-on-surface rounded-full active:bg-black/5" onclick="history.back()"><span class="material-symbols-outlined text-[22px]">arrow_back_ios_new</span></button><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate max-w-[140px]">Camera Reading</h1></div><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex items-center bg-white/80 backdrop-blur-md rounded-full px-2 py-1 shadow-sm gap-2"><button aria-label="小程序菜单" class="w-7 h-7 flex items-center justify-center text-on-surface"><span class="material-symbols-outlined text-[18px]">more_horiz</span></button><div class="w-[1px] h-3.5 bg-outline-variant/60"></div><button aria-label="关闭小程序" class="w-7 h-7 flex items-center justify-center text-on-surface"><span class="material-symbols-outlined text-[18px]">close</span></button></div></div></div></header><main class="flex flex-col relative w-full px-margin pt-14 pb-safe"><div class="flex flex-col w-full pb-6 space-y-4">
+<!-- Toast Notification Pill: Instant Encouragement -->
+<div class="flex items-center justify-center">
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-white/90 backdrop-blur-md shadow-sm border border-card-border transform transition-all animate-bounce">
+<span class="text-accent-coral font-label-md text-label-md flex items-center">
+<span class="material-symbols-outlined text-[16px] mr-1" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+        连续读对 4 句！
+      </span>
+<span class="w-1.5 h-1.5 rounded-full bg-accent-yellow"></span>
+<span class="font-label-sm text-label-sm text-text-secondary">朗读之星加速中</span>
+</div>
+</div>
+<!-- Page Meta & Progress Ribbon -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-md text-label-md text-text-secondary">《秋天的雨》第2自然段</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-full bg-white/70 text-primary font-label-sm text-label-sm shadow-sm backdrop-blur-sm">
+        第 1 / 3 页
+      </span>
+<button class="w-7 h-7 rounded-full bg-white/70 flex items-center justify-center text-text-secondary shadow-sm active:scale-95 transition-transform" title="切换视图">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+</button>
+</div>
+</div>
+<!-- 1. Top Textbook Preview Thumbnail Card with Active Bounding Highlight -->
+<div class="relative w-full rounded-2xl bg-surface-white p-3 shadow-sm border border-card-border overflow-hidden">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5 text-text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px] text-primary">crop_free</span>
+        课文原件对齐与分句追踪
+      </div>
+<span class="font-label-sm text-label-sm text-tertiary-container bg-emerald-50 px-2 py-0.5 rounded-full">
+        OCR 识别精确
+      </span>
+</div>
+<!-- Mini Canvas Preview Container -->
+<div class="relative w-full h-24 rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center">
+<div class="bg-cover bg-center w-full h-full opacity-70 filter blur-[0.5px]" data-alt="Close up photography of an illustrated elementary Chinese language textbook open on a classroom wooden desk. Soft natural daylight illuminates pastel autumn leaves and printed Chinese typography with neat pinyin annotations." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCpV7RPqu02A_fMQ7VYNHBM5fFLHATQ_dD4IpjVZPohxEFeaM730jeoC6d-_7huRGA01xGdulPLDMdgBlB4I0ACA9GvaHfWIubzruLCoqwMQVsai2r9z23RSzAsYBqE10GT-iqoVsTAsH_HwsleCVJq9Hqdq_2Ja3m6teXzJ8195EVDLH7M7LEnABjv32J_RH_OZdoDvCRV9kV9FjwpCmzO6zq3UIiHlndSCunBHIsp')">
+</div>
+<!-- Highlight Active Sentence Bounding Box -->
+<div class="absolute inset-x-4 top-5 bottom-5 rounded-lg bg-primary/15 border-2 border-primary/60 backdrop-blur-[0.5px] flex items-center justify-between px-3 shadow-inner">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-sm text-label-sm text-primary font-bold bg-white/90 px-1.5 py-0.5 rounded shadow-xs">当前朗读句</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary">第 1 句 / 共 5 句</span>
+</div>
+</div>
+</div>
+<!-- 2. Current Active Sentence Card: Kid-friendly Pinyin + Large Hanzi -->
+<div class="w-full rounded-2xl bg-surface-white p-5 shadow-sm border border-card-border flex flex-col items-center justify-center text-center relative overflow-hidden">
+<!-- Subtle Background Ambient Tint -->
+<div class="absolute -top-12 -right-12 w-28 h-28 bg-accent-purple-light/40 rounded-full blur-2xl pointer-events-none"></div>
+<div class="absolute -bottom-10 -left-10 w-24 h-24 bg-emerald-100/50 rounded-full blur-xl pointer-events-none"></div>
+<div class="w-full flex items-center justify-between mb-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-accent-purple-light text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[13px]" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+        核心语句
+      </span>
+<button class="flex items-center gap-1 text-text-tertiary hover:text-primary font-label-sm text-label-sm transition-colors">
+<span class="material-symbols-outlined text-[14px]">spellcheck</span>
+        拼音开启
+      </button>
+</div>
+<!-- Pinyin Phonation Row -->
+<div class="flex items-center justify-center gap-x-3.5 mb-1.5 text-text-secondary font-pinyin-annotation text-pinyin-annotation tracking-wider">
+<span>qiū</span>
+<span>tiān</span>
+<span>de</span>
+<span>yǔ</span>
+<span class="opacity-40">，</span>
+<span>shì</span>
+<span>yī</span>
+<span>bǎ</span>
+<span>yào</span>
+<span>shi</span>
+<span class="opacity-40">。</span>
+</div>
+<!-- Large Kid-friendly Characters -->
+<div class="font-reader-hero-kindergarten text-reader-hero-kindergarten text-text-primary tracking-wide font-bold select-none py-1">
+      秋天的雨，是一把钥匙。
+    </div>
+<div class="mt-3 flex items-center gap-2 text-text-tertiary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-accent-yellow" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+      提示：注意轻声读法 “钥匙 (shi)” 要读得轻而短哦！
+    </div>
+</div>
+<!-- 3. Interactive Sentence Audio Bubbles (Teacher TTS & Child Follow-up) -->
+<div class="space-y-3 pt-1">
+<!-- Bubble A: AI Teacher Fan-read (TTS) -->
+<div class="flex items-start gap-2.5 max-w-[92%]">
+<div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-primary to-accent-purple-hover flex-shrink-0 flex items-center justify-center text-on-primary shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[19px]">smart_toy</span>
+</div>
+<div class="flex flex-col gap-1.5 flex-1">
+<div class="bg-surface-white text-text-primary p-3.5 rounded-2xl rounded-bl-sm shadow-sm border border-card-border flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary flex items-center gap-1">
+              AI 教师示范读
+              <span class="material-symbols-outlined text-[14px]">volume_up</span>
+</span>
+<span class="text-text-tertiary font-label-sm text-label-sm">0.8x 慢速伴读</span>
+</div>
+<p class="font-body-md text-body-md text-text-secondary leading-snug">
+            “秋天的雨，是一把钥匙...”
+          </p>
+<div class="pt-1 flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-purple-light text-primary hover:bg-primary hover:text-on-primary transition-all font-label-sm text-label-sm active:scale-95 shadow-xs">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+              范读试听 00:03
+            </button>
+<button class="px-2 py-1 rounded-full bg-slate-50 text-text-secondary font-label-sm text-label-sm">
+              语速调节
+            </button>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-text-tertiary pl-1">刚刚 · 系统自动示范</span>
+</div>
+</div>
+<!-- Bubble B: Child Voice Follow-up Transcript Bubble -->
+<div class="flex items-start justify-end gap-2.5 max-w-[94%] ml-auto">
+<div class="flex flex-col items-end gap-1.5 flex-1">
+<div class="bg-accent-purple-light text-text-primary p-3.5 rounded-2xl rounded-br-sm shadow-sm flex flex-col gap-2 w-full text-right border border-primary-fixed">
+<div class="flex items-center justify-between flex-row-reverse">
+<div class="flex items-center gap-1">
+<!-- 3 Golden Stars Badge -->
+<span class="material-symbols-outlined text-[16px] text-accent-yellow" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px] text-accent-yellow" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px] text-accent-yellow" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="font-label-md text-label-md text-primary font-semibold">我的跟读录音</span>
+</div>
+<p class="font-body-md text-body-md text-text-primary font-medium text-left leading-snug">
+            “秋天的雨，是一把钥匙。”
+          </p>
+<div class="flex items-center justify-between pt-1">
+<span class="inline-flex items-center gap-1 text-tertiary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">sentiment_satisfied</span>
+              读得太棒啦！声音真洪亮 🌟
+            </span>
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/80 text-primary font-label-sm text-label-sm hover:bg-white active:scale-95 shadow-xs transition-all">
+<span class="material-symbols-outlined text-[14px]">headphones</span>
+              00:04 点此回听
+            </button>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-text-tertiary pr-1">已成功保存本地录音</span>
+</div>
+<div class="w-9 h-9 rounded-2xl bg-tertiary-fixed-dim/60 flex-shrink-0 flex items-center justify-center text-tertiary shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[19px]">face_6</span>
+</div>
+</div>
+</div>
+<!-- 4. Bottom Voice Interaction Control Console (Waveform + Mic Trigger + Quick Actions) -->
+<div class="w-full rounded-3xl bg-surface-white/95 backdrop-blur-xl p-4 shadow-xl border border-card-border flex flex-col items-center gap-3.5 mt-2">
+<!-- Animated Audio Wave Spectrum Visualization -->
+<div class="w-full h-11 flex items-center justify-center gap-1 px-4 overflow-hidden">
+<span class="w-1 rounded-full bg-primary/30 h-2.5 animate-pulse"></span>
+<span class="w-1 rounded-full bg-primary/40 h-4 animate-pulse"></span>
+<span class="w-1 rounded-full bg-primary h-7 animate-bounce"></span>
+<span class="w-1 rounded-full bg-secondary-fixed-dim h-9 animate-pulse"></span>
+<span class="w-1 rounded-full bg-primary h-6 animate-bounce"></span>
+<span class="w-1.5 rounded-full bg-accent-purple-hover h-10 animate-pulse"></span>
+<span class="w-1 rounded-full bg-tertiary-fixed-dim h-8 animate-bounce"></span>
+<span class="w-1 rounded-full bg-primary h-5 animate-pulse"></span>
+<span class="w-1 rounded-full bg-secondary-fixed-dim h-9 animate-bounce"></span>
+<span class="w-1 rounded-full bg-primary h-7 animate-pulse"></span>
+<span class="w-1 rounded-full bg-primary/50 h-3 animate-pulse"></span>
+<span class="w-1 rounded-full bg-primary/30 h-2 animate-bounce"></span>
+</div>
+<!-- Timer Indicator -->
+<div class="px-3 py-0.5 rounded-full bg-surface-container-low text-text-secondary font-label-sm text-label-sm flex items-center gap-1.5 shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+      跟读倒计时: <span class="font-bold text-text-primary">00:26</span> / 30s
+    </div>
+<!-- Master Push-to-Talk Record Button -->
+<div class="relative flex flex-col items-center">
+<!-- Radiant Pulsing Glow Ring -->
+<div class="absolute -inset-2 bg-gradient-to-r from-primary to-accent-coral rounded-full blur-md opacity-25 animate-pulse"></div>
+<button aria-label="按住录音" class="relative w-20 h-20 rounded-full bg-gradient-to-tr from-primary via-accent-purple-hover to-primary-container text-on-primary flex flex-col items-center justify-center shadow-lg active:scale-95 transition-all select-none focus:outline-none" id="recordButton">
+<span class="material-symbols-outlined text-[34px]" style="font-variation-settings: 'FILL' 1;">mic</span>
+</button>
+</div>
+<div class="text-center font-label-md text-label-md text-text-primary -mt-1 font-semibold">
+      按住朗读，松开结束
+      <p class="font-label-sm text-label-sm text-text-tertiary font-normal mt-0.5">单句上限 30 秒 · 自动生成鼓励星</p>
+</div>
+<!-- Quick Sentence Flow Controls -->
+<div class="w-full grid grid-cols-4 gap-2 pt-2 border-t border-slate-100">
+<button class="h-10 rounded-full bg-surface-container-low text-text-secondary hover:text-text-primary font-label-sm text-label-sm flex items-center justify-center gap-1 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[15px]">arrow_back</span>
+        上一句
+      </button>
+<button class="h-10 rounded-full bg-surface-container-low text-text-secondary hover:text-text-primary font-label-sm text-label-sm flex items-center justify-center gap-1 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[15px]">refresh</span>
+        重读
+      </button>
+<button class="h-10 rounded-full bg-surface-container-low text-text-secondary hover:text-text-primary font-label-sm text-label-sm flex items-center justify-center gap-1 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[15px]">skip_next</span>
+        跳过
+      </button>
+<button class="h-10 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1 active:scale-95 transition-all shadow-xs">
+        下一句
+        <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  // Dynamic client interaction micro-interaction for record button
+  const recordBtn = document.getElementById('recordButton');
+  if (recordBtn) {
+    let isHolding = false;
+    
+    const startRecord = () => {
+      isHolding = true;
+      recordBtn.classList.add('scale-90', 'ring-4', 'ring-accent-purple-light');
+    };
+
+    const stopRecord = () => {
+      if (!isHolding) return;
+      isHolding = false;
+      recordBtn.classList.remove('scale-90', 'ring-4', 'ring-accent-purple-light');
+    };
+
+    recordBtn.addEventListener('mousedown', startRecord);
+    window.addEventListener('mouseup', stopRecord);
+    recordBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startRecord();
+    }, { passive: false });
+    window.addEventListener('touchend', stopRecord);
+  }
+</script></main></body></html>

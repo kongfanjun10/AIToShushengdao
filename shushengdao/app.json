@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/capture/capture",
+    "pages/listen/listen",
+    "pages/write/write",
+    "pages/math/math",
+    "pages/calc/calc",
+    "pages/column/column",
+    "pages/link/link",
+    "pages/mind/mind",
+    "pages/words/words",
+    "pages/reader/reader",
+    "pages/reward/reward",
+    "pages/vocab/vocab",
+    "pages/archive/archive",
+    "pages/parent/parent",
+    "pages/feedback/feedback",
+    "pages/admin/admin"
+  ],
+  "subPackages": [
+    {
+      "root": "pkgLearn",
+      "pages": [
+        "pages/pinyin/pinyin",
+        "pages/phonetics/phonetics"
+      ]
+    }
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "backgroundColor": "#F9F9FF",
+    "backgroundTextStyle": "dark",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "书声岛"
+  },
+  "plugins": {
+    "WechatSI": {
+      "version": "0.3.10",
+      "provider": "wx069ba97219f66d99"
+    }
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

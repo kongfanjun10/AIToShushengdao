@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>方案B 安全重置 · 第一步</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 504px; min-height: 1000px;
+    font-family: "Plus Jakarta Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(180deg, #e0f2fe 0%, #dcfce7 100%);
+    color: #0f172a; padding-bottom: 150px; position: relative;
+  }
+  .statusbar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 13px; font-weight: 700; }
+  .nav { height: 48px; display: flex; align-items: center; gap: 6px; padding: 0 16px; }
+  .nav .back { font-size: 26px; line-height: 1; color: #0369a1; margin-top: -4px; }
+  .nav .title { font-size: 17px; font-weight: 700; }
+  .body { padding: 4px 16px 0; }
+
+  .lead { padding: 4px 6px 14px; }
+  .lead h2 { font-size: 19px; font-weight: 800; letter-spacing: -.2px; }
+  .lead p { font-size: 12px; color: #64748b; margin-top: 6px; line-height: 1.6; }
+
+  .plan {
+    background: #fff; border-radius: 22px; padding: 16px;
+    margin-bottom: 12px; border: 2px solid transparent;
+    box-shadow: 0 10px 26px -18px rgba(15,23,42,.28);
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .plan.on { border-color: #0ea5e9; box-shadow: 0 12px 30px -14px rgba(14,165,233,.45); }
+  .radio {
+    width: 20px; height: 20px; border-radius: 50%; border: 1.6px solid #cbd5e1;
+    flex: 0 0 20px; margin-top: 2px; display: flex; align-items: center; justify-content: center;
+  }
+  .plan.on .radio { border-color: #0ea5e9; }
+  .plan.on .radio::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: linear-gradient(135deg,#0369a1,#0ea5e9); }
+  .plan .mid { flex: 1; }
+  .plan .hd { display: flex; align-items: center; gap: 7px; }
+  .plan .nm { font-size: 14px; font-weight: 700; }
+  .plan .tag { font-size: 9.5px; font-weight: 700; color: #007650; background: #dcfce7; padding: 2px 7px; border-radius: 999px; }
+  .plan .ds { font-size: 11.5px; color: #475569; margin-top: 5px; line-height: 1.6; }
+  .plan .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .chip { font-size: 9.5px; padding: 3px 8px; border-radius: 6px; background: #f1f5f9; color: #64748b; }
+  .chip.del { background: #fef2f2; color: #b91c1c; }
+  .chip.keep { background: #ecfdf5; color: #047857; }
+
+  .warn { display: flex; gap: 8px; padding: 10px 12px; background: #fff7ed; border-radius: 14px; font-size: 11px; color: #9a3412; line-height: 1.55; margin-top: 4px; }
+
+  .footer {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,.95); border-top: 1px solid #e2e8f0; padding: 12px 18px 20px;
+  }
+  .btn-main {
+    height: 48px; border-radius: 999px; color: #fff; font-size: 15px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #0369a1, #0ea5e9);
+    box-shadow: 0 12px 28px -10px rgba(14,165,233,.55);
+  }
+  .step { text-align: center; font-size: 10.5px; color: #94a3b8; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="statusbar"><span>9:41</span><span>104</span></div>
+  <div class="nav"><span class="back">‹</span><span class="title">重置数据</span></div>
+
+  <div class="body">
+    <div class="lead">
+      <h2>想清理到什么程度？</h2>
+      <p>先选范围，下一步会列出「将删除 / 将保留」清单，确认后才执行。</p>
+    </div>
+
+    <div class="plan on">
+      <div class="radio"></div>
+      <div class="mid">
+        <div class="hd"><span class="nm">只清学习记录</span><span class="tag">推荐</span></div>
+        <div class="ds">孩子想重新开始，但资料和习惯设置都留着。</div>
+        <div class="chips">
+          <span class="chip del">书单朗读</span>
+          <span class="chip del">生词错题</span>
+          <span class="chip del">打卡勋章</span>
+          <span class="chip keep">保留资料</span>
+          <span class="chip keep">保留设置</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="plan">
+      <div class="radio"></div>
+      <div class="mid">
+        <div class="hd"><span class="nm">学习记录 + 孩子资料</span></div>
+        <div class="ds">换一个孩子用，或彻底换个开始。</div>
+        <div class="chips">
+          <span class="chip del">全部学习数据</span>
+          <span class="chip del">昵称头像</span>
+          <span class="chip keep">保留手机号</span>
+          <span class="chip keep">保留偏好</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="plan">
+      <div class="radio"></div>
+      <div class="mid">
+        <div class="hd"><span class="nm">彻底恢复出厂</span></div>
+        <div class="ds">把这一台设备上的所有记录和设置都清掉。</div>
+        <div class="chips">
+          <span class="chip del">所有本地数据</span>
+          <span class="chip del">手机号绑定</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="warn">
+      <span>⚠️</span>
+      <span>无论选哪种，清理前都会自动备份一次，7 天内可在家长中心「恢复数据」找回。</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="btn-main">下一步 · 查看清单</div>
+    <div class="step">第 1 步，共 2 步</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,386 @@
+[
+ {
+  "slug": "i-long",
+  "ipa": "/iː/",
+  "ms": 235,
+  "peak": 25558,
+  "bytes": 1149,
+  "corr": 1
+ },
+ {
+  "slug": "a-long",
+  "ipa": "/ɑː/",
+  "ms": 296,
+  "peak": 25558,
+  "bytes": 1463,
+  "corr": 1
+ },
+ {
+  "slug": "o-long",
+  "ipa": "/ɔː/",
+  "ms": 286,
+  "peak": 25558,
+  "bytes": 1358,
+  "corr": 1
+ },
+ {
+  "slug": "u-long",
+  "ipa": "/uː/",
+  "ms": 257,
+  "peak": 25558,
+  "bytes": 1254,
+  "corr": 1
+ },
+ {
+  "slug": "er-long",
+  "ipa": "/ɜː/",
+  "ms": 266,
+  "peak": 25558,
+  "bytes": 1358,
+  "corr": 1
+ },
+ {
+  "slug": "i-short",
+  "ipa": "/ɪ/",
+  "ms": 204,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "e-short",
+  "ipa": "/e/",
+  "ms": 203,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "ae",
+  "ipa": "/æ/",
+  "ms": 234,
+  "peak": 25558,
+  "bytes": 1149,
+  "corr": 1
+ },
+ {
+  "slug": "ah",
+  "ipa": "/ʌ/",
+  "ms": 203,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "o-short",
+  "ipa": "/ɒ/",
+  "ms": 205,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "u-short",
+  "ipa": "/ʊ/",
+  "ms": 216,
+  "peak": 25558,
+  "bytes": 1149,
+  "corr": 1
+ },
+ {
+  "slug": "schwa",
+  "ipa": "/ə/",
+  "ms": 214,
+  "peak": 25558,
+  "bytes": 1149,
+  "corr": 1
+ },
+ {
+  "slug": "ei",
+  "ipa": "/eɪ/",
+  "ms": 276,
+  "peak": 25558,
+  "bytes": 1358,
+  "corr": 1
+ },
+ {
+  "slug": "ai",
+  "ipa": "/aɪ/",
+  "ms": 287,
+  "peak": 25558,
+  "bytes": 1358,
+  "corr": 1
+ },
+ {
+  "slug": "oi",
+  "ipa": "/ɔɪ/",
+  "ms": 286,
+  "peak": 25558,
+  "bytes": 1358,
+  "corr": 1
+ },
+ {
+  "slug": "ou",
+  "ipa": "/əʊ/",
+  "ms": 276,
+  "peak": 25558,
+  "bytes": 1358,
+  "corr": 1
+ },
+ {
+  "slug": "au",
+  "ipa": "/aʊ/",
+  "ms": 287,
+  "peak": 25558,
+  "bytes": 1358,
+  "corr": 1
+ },
+ {
+  "slug": "ia",
+  "ipa": "/ɪə/",
+  "ms": 296,
+  "peak": 25558,
+  "bytes": 1463,
+  "corr": 1
+ },
+ {
+  "slug": "ea",
+  "ipa": "/eə/",
+  "ms": 276,
+  "peak": 25558,
+  "bytes": 1358,
+  "corr": 1
+ },
+ {
+  "slug": "ua",
+  "ipa": "/ʊə/",
+  "ms": 288,
+  "peak": 25558,
+  "bytes": 1463,
+  "corr": 1
+ },
+ {
+  "slug": "p",
+  "ipa": "/p/",
+  "ms": 95,
+  "peak": 25558,
+  "bytes": 627,
+  "corr": 1
+ },
+ {
+  "slug": "b",
+  "ipa": "/b/",
+  "ms": 130,
+  "peak": 25558,
+  "bytes": 731,
+  "corr": 1
+ },
+ {
+  "slug": "t",
+  "ipa": "/t/",
+  "ms": 95,
+  "peak": 25558,
+  "bytes": 627,
+  "corr": 1
+ },
+ {
+  "slug": "d",
+  "ipa": "/d/",
+  "ms": 130,
+  "peak": 25558,
+  "bytes": 731,
+  "corr": 1
+ },
+ {
+  "slug": "k",
+  "ipa": "/k/",
+  "ms": 95,
+  "peak": 25042,
+  "bytes": 627,
+  "corr": 1
+ },
+ {
+  "slug": "g",
+  "ipa": "/g/",
+  "ms": 130,
+  "peak": 25558,
+  "bytes": 731,
+  "corr": 1
+ },
+ {
+  "slug": "f",
+  "ipa": "/f/",
+  "ms": 221,
+  "peak": 25558,
+  "bytes": 1149,
+  "corr": 1
+ },
+ {
+  "slug": "v",
+  "ipa": "/v/",
+  "ms": 200,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "th",
+  "ipa": "/θ/",
+  "ms": 205,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "dh",
+  "ipa": "/ð/",
+  "ms": 200,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "s",
+  "ipa": "/s/",
+  "ms": 217,
+  "peak": 25558,
+  "bytes": 1149,
+  "corr": 1
+ },
+ {
+  "slug": "z",
+  "ipa": "/z/",
+  "ms": 239,
+  "peak": 25558,
+  "bytes": 1254,
+  "corr": 1
+ },
+ {
+  "slug": "sh",
+  "ipa": "/ʃ/",
+  "ms": 237,
+  "peak": 25558,
+  "bytes": 1254,
+  "corr": 1
+ },
+ {
+  "slug": "zh",
+  "ipa": "/ʒ/",
+  "ms": 228,
+  "peak": 25558,
+  "bytes": 1149,
+  "corr": 1
+ },
+ {
+  "slug": "h",
+  "ipa": "/h/",
+  "ms": 169,
+  "peak": 25558,
+  "bytes": 940,
+  "corr": 1
+ },
+ {
+  "slug": "r",
+  "ipa": "/r/",
+  "ms": 162,
+  "peak": 25558,
+  "bytes": 940,
+  "corr": 1
+ },
+ {
+  "slug": "ch",
+  "ipa": "/tʃ/",
+  "ms": 148,
+  "peak": 25558,
+  "bytes": 836,
+  "corr": 1
+ },
+ {
+  "slug": "jh",
+  "ipa": "/dʒ/",
+  "ms": 200,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "tr",
+  "ipa": "/tr/",
+  "ms": 183,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "dr",
+  "ipa": "/dr/",
+  "ms": 114,
+  "peak": 25558,
+  "bytes": 731,
+  "corr": 1
+ },
+ {
+  "slug": "ts",
+  "ipa": "/ts/",
+  "ms": 207,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "dz",
+  "ipa": "/dz/",
+  "ms": 165,
+  "peak": 25558,
+  "bytes": 940,
+  "corr": 1
+ },
+ {
+  "slug": "m",
+  "ipa": "/m/",
+  "ms": 170,
+  "peak": 25558,
+  "bytes": 940,
+  "corr": 1
+ },
+ {
+  "slug": "n",
+  "ipa": "/n/",
+  "ms": 130,
+  "peak": 23681,
+  "bytes": 731,
+  "corr": 1
+ },
+ {
+  "slug": "ng",
+  "ipa": "/ŋ/",
+  "ms": 168,
+  "peak": 25558,
+  "bytes": 940,
+  "corr": 1
+ },
+ {
+  "slug": "l",
+  "ipa": "/l/",
+  "ms": 145,
+  "peak": 25558,
+  "bytes": 836,
+  "corr": 1
+ },
+ {
+  "slug": "w",
+  "ipa": "/w/",
+  "ms": 190,
+  "peak": 25558,
+  "bytes": 1045,
+  "corr": 1
+ },
+ {
+  "slug": "y",
+  "ipa": "/j/",
+  "ms": 160,
+  "peak": 25558,
+  "bytes": 940,
+  "corr": 1
+ }
+]

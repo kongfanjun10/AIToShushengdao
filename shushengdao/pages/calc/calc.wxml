@@ -1,0 +1,196 @@
+<view class="page">
+  <!-- 顶部导航（右侧留出微信胶囊位置） -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row hd-left" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <view class="col" style="gap:0;min-width:0">
+          <text class="t-18">口算闯关</text>
+          <text class="t-10 c-t truncate">算一算，答对自动下一题</text>
+        </view>
+      </view>
+      <view class="hd-right">
+        <view class="today-chip {{timed ? 'chip-timer' : ''}}" hover-class="pressed" bindtap="toggleTimed">
+          <view class="ico {{timed ? 'ico-timer' : 'ico-star'}} ico-26"></view>
+          <text class="t-10 semi">{{timed ? left + '″' : '60 秒挑战'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 难度 -->
+    <scroll-view class="lv-scroll" scroll-x enable-flex show-scrollbar="{{false}}">
+      <view class="lv-row">
+        <view
+          class="lv-chip {{item.key === levelKey ? 'lv-on' : ''}}"
+          wx:for="{{levels}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="pickLevel"
+          hover-class="pressed"
+        >
+          <text class="lv-name">{{item.name}}</text>
+          <text class="lv-sub">{{item.sub}}</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <text class="lv-desc">{{levelDesc}}</text>
+
+    <!-- 题面 -->
+    <view class="paper {{phase === 'right' ? 'paper-ok' : ''}} {{phase === 'wrong' ? 'paper-bad' : ''}}">
+      <view class="paper-glow"></view>
+
+      <view class="row between" style="z-index:2;width:100%">
+        <view class="q-badge">
+          <text class="t-10 semi">{{onlyWrong ? '错题重练' : '第 ' + round + ' 题'}}</text>
+        </view>
+        <view class="dots">
+          <view class="hdot {{item.ok ? 'hdot-ok' : 'hdot-bad'}}" wx:for="{{history}}" wx:key="key"></view>
+          <view class="hdot hdot-empty" wx:if="{{!history.length}}"></view>
+        </view>
+      </view>
+
+      <view class="expr">
+        <text class="num">{{q.a}}</text>
+        <text class="op">{{q.op}}</text>
+        <text class="num">{{q.b}}</text>
+        <text class="eq">=</text>
+        <view class="ans {{phase === 'right' ? 'ans-ok' : ''}} {{phase === 'wrong' ? 'ans-bad' : ''}}">
+          <text class="ans-txt">{{input ? input : '?'}}</text>
+          <view class="caret" wx:if="{{!input}}"></view>
+        </view>
+      </view>
+
+      <text class="tip {{phase === 'right' ? 'tip-ok' : ''}} {{phase === 'wrong' ? 'tip-bad' : ''}}">{{tip}}</text>
+
+      <view class="q-tools">
+        <view class="qtool" hover-class="hover-bg" bindtap="speakQuestion">
+          <view class="ico ico-volume ico-26 c-primary"></view>
+          <text class="t-10 c-primary">读题</text>
+        </view>
+        <view class="qtool" hover-class="hover-bg" bindtap="showHint">
+          <view class="ico ico-bulb ico-26" style="color:#fbbf24"></view>
+          <text class="t-10 c-s">提示</text>
+        </view>
+        <view class="qtool qtool-right" wx:if="{{phase === 'wrong'}}" hover-class="pressed" bindtap="nextQuestion">
+          <text class="t-10 semi c-primary">换一题</text>
+          <view class="ico ico-chevron-right ico-22 c-primary"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 反馈 -->
+    <view class="fb fb-ok" wx:if="{{phase === 'right'}}">
+      <text class="fb-emoji">🎉</text>
+      <view class="col flex1" style="min-width:0">
+        <text class="fb-title">你真棒哟</text>
+        <text class="fb-sub">答对啦，下一题马上来</text>
+      </view>
+      <view class="fb-skip" hover-class="pressed" bindtap="nextQuestion">
+        <text class="t-11 semi">下一个</text>
+        <view class="ico ico-chevron-right ico-24"></view>
+      </view>
+    </view>
+
+    <view class="fb fb-bad" wx:if="{{phase === 'wrong'}}">
+      <text class="fb-emoji">💪</text>
+      <view class="col flex1" style="min-width:0">
+        <text class="fb-title">答错咯，要加油哟</text>
+        <text class="fb-sub">正确答案是 {{q.answer}}，再算一遍试试</text>
+      </view>
+      <view class="fb-actions">
+        <view class="fb-btn ghost" hover-class="pressed" bindtap="nextQuestion">换一题</view>
+        <view class="fb-btn solid" hover-class="pressed" bindtap="clearInput">再试一次</view>
+      </view>
+    </view>
+
+    <!-- 统计 -->
+    <view class="stats">
+      <view class="st">
+        <text class="st-n" style="color:#059669">{{stats.todayRight}}</text>
+        <text class="st-l">今日答对</text>
+      </view>
+      <view class="st-hair"></view>
+      <view class="st">
+        <text class="st-n" style="color:#f97316">{{stats.todayWrong}}</text>
+        <text class="st-l">答错</text>
+      </view>
+      <view class="st-hair"></view>
+      <view class="st">
+        <text class="st-n c-primary">{{stats.streak}}</text>
+        <text class="st-l">连对</text>
+      </view>
+      <view class="st-hair"></view>
+      <view class="st">
+        <text class="st-n c-s">{{stats.percent}}%</text>
+        <text class="st-l">正确率</text>
+      </view>
+    </view>
+
+    <view class="only-row" wx:if="{{stats.wrongCount > 0}}">
+      <view class="row" style="gap:8rpx;min-width:0;flex:1">
+        <view class="ico ico-refresh ico-26" style="color:#00687a"></view>
+        <text class="t-11 c-s truncate">错题本还有 {{stats.wrongCount}} 道</text>
+      </view>
+      <view class="only-btn {{onlyWrong ? 'only-on' : ''}}" hover-class="pressed" bindtap="toggleOnlyWrong">
+        {{onlyWrong ? '退出错题' : '只练错题'}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 数字键盘 -->
+  <view class="pad">
+    <view class="pad-grid">
+      <view class="key" hover-class="key-hover" data-k="1" bindtap="press">1</view>
+      <view class="key" hover-class="key-hover" data-k="2" bindtap="press">2</view>
+      <view class="key" hover-class="key-hover" data-k="3" bindtap="press">3</view>
+      <view class="key" hover-class="key-hover" data-k="4" bindtap="press">4</view>
+      <view class="key" hover-class="key-hover" data-k="5" bindtap="press">5</view>
+      <view class="key" hover-class="key-hover" data-k="6" bindtap="press">6</view>
+      <view class="key" hover-class="key-hover" data-k="7" bindtap="press">7</view>
+      <view class="key" hover-class="key-hover" data-k="8" bindtap="press">8</view>
+      <view class="key" hover-class="key-hover" data-k="9" bindtap="press">9</view>
+      <view class="key key-fn" hover-class="key-hover" data-k="del" bindtap="press">
+        <view class="ico ico-close ico-34"></view>
+      </view>
+      <view class="key" hover-class="key-hover" data-k="0" bindtap="press">0</view>
+      <view class="key key-ok" hover-class="key-hover" data-k="ok" bindtap="press">
+        <view class="ico ico-check ico-38" style="color:#fff"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 限时挑战结算 -->
+  <view class="mask" wx:if="{{over}}">
+    <view class="result">
+      <text class="res-emoji">{{overRight >= overWrong ? '🏆' : '💪'}}</text>
+      <text class="res-title">60 秒到啦</text>
+      <view class="res-row">
+        <view class="res-cell">
+          <text class="res-n" style="color:#059669">{{overRight}}</text>
+          <text class="res-l">答对</text>
+        </view>
+        <view class="res-cell">
+          <text class="res-n" style="color:#f97316">{{overWrong}}</text>
+          <text class="res-l">答错</text>
+        </view>
+        <view class="res-cell">
+          <text class="res-n c-primary">{{bestStreak}}</text>
+          <text class="res-l">最长连对</text>
+        </view>
+      </view>
+      <text class="res-tip">{{overRight >= 10 ? '太厉害了，下次挑战更多！' : '再练一局，会越来越快的'}}</text>
+      <view class="res-btn" hover-class="pressed" bindtap="restartTimed">
+        <view class="ico ico-refresh ico-30" style="color:#fff"></view>
+        <text class="t-14 semi" style="color:#fff">再来一局</text>
+      </view>
+      <view class="res-quit" hover-class="hover-bg" bindtap="toggleTimed">
+        <text class="t-12 c-s">退出挑战，慢慢练</text>
+      </view>
+    </view>
+  </view>
+</view>

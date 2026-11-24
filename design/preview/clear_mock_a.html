@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>方案A 分区清理</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 504px; min-height: 1000px;
+    font-family: "Plus Jakarta Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(180deg, #e0f2fe 0%, #dcfce7 100%);
+    color: #0f172a; padding-bottom: 140px; position: relative;
+  }
+  .statusbar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 13px; font-weight: 700; color: #0f172a; }
+  .nav { height: 48px; display: flex; align-items: center; gap: 6px; padding: 0 16px; }
+  .nav .back { font-size: 26px; line-height: 1; color: #0369a1; margin-top: -4px; }
+  .nav .title { font-size: 17px; font-weight: 700; }
+  .body { padding: 4px 16px 0; }
+
+  .safe-card {
+    background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 16px;
+    padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .safe-card .ic { font-size: 17px; line-height: 1.2; }
+  .safe-card .tx { font-size: 11.5px; color: #065f46; line-height: 1.55; }
+  .safe-card .tx b { font-weight: 700; }
+
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 2px 4px 8px; }
+  .bar h3 { font-size: 14px; font-weight: 700; }
+  .bar .all { font-size: 12px; color: #0369a1; font-weight: 600; }
+
+  .sec {
+    background: #fff; border-radius: 20px; padding: 14px 14px;
+    display: flex; gap: 12px; align-items: flex-start;
+    margin-bottom: 10px; box-shadow: 0 8px 24px -14px rgba(15,23,42,.18);
+    border: 1.5px solid transparent;
+  }
+  .sec.on { border-color: #7dd3fc; box-shadow: 0 8px 26px -12px rgba(14,165,233,.35); }
+  .sec .ico {
+    width: 40px; height: 40px; border-radius: 13px; flex: 0 0 40px;
+    display: flex; align-items: center; justify-content: center; font-size: 19px;
+  }
+  .sec .mid { flex: 1; min-width: 0; }
+  .sec .nm { font-size: 13.5px; font-weight: 700; color: #0f172a; }
+  .sec .meta { font-size: 11px; color: #64748b; margin-top: 3px; line-height: 1.5; }
+  .sec .meta .keep { color: #007650; font-weight: 600; }
+  .sec .box {
+    width: 22px; height: 22px; border-radius: 7px; border: 1.6px solid #cbd5e1;
+    flex: 0 0 22px; margin-top: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #fff; background: #fff;
+  }
+  .sec.on .box { background: linear-gradient(135deg, #0369a1, #0ea5e9); border-color: #0ea5e9; }
+
+  .hint { font-size: 10.5px; color: #94a3b8; text-align: center; margin: 6px 0 0; line-height: 1.6; }
+
+  .footer {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,.94); backdrop-filter: none;
+    border-top: 1px solid #e2e8f0; padding: 12px 18px 20px;
+  }
+  .sum { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .sum .l { font-size: 11.5px; color: #475569; }
+  .sum .l b { color: #0369a1; font-size: 13px; }
+  .sum .r { font-size: 11px; color: #94a3b8; }
+  .btn-main {
+    height: 48px; border-radius: 999px; color: #fff; font-size: 15px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #0369a1, #0ea5e9);
+    box-shadow: 0 12px 28px -10px rgba(14,165,233,.55);
+  }
+  .btn-sub { height: 40px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #94a3b8; margin-top: 2px; }
+</style>
+</head>
+<body>
+  <div class="statusbar"><span>9:41</span><span>104</span></div>
+  <div class="nav"><span class="back">‹</span><span class="title">清理数据</span></div>
+
+  <div class="body">
+    <div class="safe-card">
+      <span class="ic">🛡️</span>
+      <div class="tx">清理前会<b>自动备份</b>这台设备的数据，<b>7 天内可一键恢复</b>；手机号等账号信息不会被删除。</div>
+    </div>
+
+    <div class="bar">
+      <h3>选择要清理的内容</h3>
+      <span class="all">全选</span>
+    </div>
+
+    <div class="sec on">
+      <div class="ico" style="background:#e0f2fe">📚</div>
+      <div class="mid">
+        <div class="nm">书单与朗读进度</div>
+        <div class="meta">3 本书 · 12 篇已读完 · 录音文件</div>
+      </div>
+      <div class="box">✓</div>
+    </div>
+
+    <div class="sec on">
+      <div class="ico" style="background:#fef3c7">📝</div>
+      <div class="mid">
+        <div class="nm">生词本与错题本</div>
+        <div class="meta">64 个生词 · 8 道错题</div>
+      </div>
+      <div class="box">✓</div>
+    </div>
+
+    <div class="sec">
+      <div class="ico" style="background:#dcfce7">🏅</div>
+      <div class="mid">
+        <div class="nm">打卡与勋章</div>
+        <div class="meta">连续打卡 12 天 · 9 枚勋章 · 学习时长统计</div>
+      </div>
+      <div class="box"></div>
+    </div>
+
+    <div class="sec">
+      <div class="ico" style="background:#ede9fe">👤</div>
+      <div class="mid">
+        <div class="nm">孩子资料与偏好</div>
+        <div class="meta">昵称、头像、年龄模式、每日目标<br /><span class="keep">建议保留</span>，清理后需重新设置</div>
+      </div>
+      <div class="box"></div>
+    </div>
+
+    <div class="hint">未勾选的内容会完整保留 · 手机号与设置不受影响</div>
+  </div>
+
+  <div class="footer">
+    <div class="sum">
+      <div class="l">已选 <b>2</b> 项 · 清理 <b>76</b> 条记录</div>
+      <div class="r">剩余 3 项保留</div>
+    </div>
+    <div class="btn-main">清理所选内容</div>
+    <div class="btn-sub">清除全部数据（恢复出厂）</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row hd-left" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <view class="col" style="gap:0;min-width:0">
+          <text class="t-18">数据后台</text>
+          <text class="t-10 c-t truncate">仅管理员可见</text>
+        </view>
+      </view>
+      <view class="row" style="gap:8rpx;flex-shrink:0">
+        <view class="admin-chip" wx:if="{{phase === 'in'}}" hover-class="pressed" bindtap="refresh">
+          <view class="ico ico-refresh ico-22" style="color:#005b3d"></view>
+          <text class="t-10 semi" style="color:#005b3d">刷新</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- ============ 身份校验中 ============ -->
+    <block wx:if="{{phase === 'checking'}}">
+      <view class="gate shadow-card">
+        <view class="gate-ico"><view class="ico ico-shield ico-54" style="color:#fff"></view></view>
+        <text class="t-16 bold">正在核对管理员身份…</text>
+      </view>
+    </block>
+
+    <!-- ============ 非管理员：直接挡住，不给口令入口 ============ -->
+    <block wx:elif="{{phase === 'denied'}}">
+      <view class="gate shadow-card">
+        <view class="gate-ico"><view class="ico ico-lock ico-54" style="color:#fff"></view></view>
+        <text class="t-20 bold">仅管理员本人可访问</text>
+        <text class="t-12 c-s" style="text-align:center;max-width:430rpx">{{deniedText}}</text>
+        <view class="btn-main" style="width:100%" hover-class="pressed" bindtap="goBack">
+          <text class="t-14 semi" style="color:#fff">返回</text>
+        </view>
+        <text class="t-10 c-t">后台按微信身份（openid）校验，其他人无法进入</text>
+      </view>
+    </block>
+
+    <!-- ============ 首次认领：口令 + 当前微信绑定成管理员 ============ -->
+    <block wx:elif="{{phase === 'claim'}}">
+      <view class="gate shadow-card">
+        <view class="gate-ico"><view class="ico ico-lock ico-54" style="color:#fff"></view></view>
+        <text class="t-20 bold">首次设置管理员</text>
+        <text class="t-12 c-s" style="text-align:center;max-width:440rpx">输入管理口令完成认领：从今往后，这份后台数据只认当前微信，其他家长无法查看</text>
+        <input
+          class="gate-input"
+          password
+          value="{{keyDraft}}"
+          placeholder="输入管理口令"
+          placeholder-class="ph"
+          bindinput="onKeyInput"
+          confirm-type="done"
+          bindconfirm="submitKey"
+        />
+        <view class="gate-error" wx:if="{{keyError}}">{{keyError}}</view>
+        <view class="btn-main" style="width:100%" hover-class="pressed" bindtap="submitKey">
+          <text class="t-14 semi" style="color:#fff">{{checking ? '认领中…' : '认领并进入'}}</text>
+        </view>
+        <text class="t-10 c-t">口令在云函数 stats 的 ADMIN_KEY 里设置，认领一次即可</text>
+      </view>
+    </block>
+
+    <!-- ============ 数据看板（方案B 仪表盘，验证后直接展示） ============ -->
+    <block wx:else>
+      <!-- 加载失败 -->
+      <view class="err-card" wx:if="{{loadErr}}" bindtap="refresh" hover-class="pressed">
+        <view class="ico ico-refresh ico-30 c-pc"></view>
+        <text class="t-10 c-s">{{loadErr}}</text>
+      </view>
+
+      <block wx:if="{{overview}}">
+        <!-- 四格概览 -->
+        <view class="card shadow-card">
+          <view class="row between" style="padding:22rpx 26rpx 6rpx">
+            <text class="t-16 bold">使用概览</text>
+            <text class="t-10 c-t">{{updatedAtText}}</text>
+          </view>
+          <view class="grid">
+            <view class="g-cell">
+              <text class="g-ico">🚀</text>
+              <view class="col" style="gap:2rpx">
+                <text class="g-k">累计使用次数</text>
+                <text class="g-v">{{overview.totalLaunches}}<text class="g-unit"> 次</text></text>
+                <text class="g-d" style="color:#c2410c">{{overview.diffText}}</text>
+              </view>
+            </view>
+            <view class="g-cell g-green">
+              <text class="g-ico">☀️</text>
+              <view class="col" style="gap:2rpx">
+                <text class="g-k">今日使用次数</text>
+                <text class="g-v">{{overview.todayLaunches}}<text class="g-unit"> 次</text></text>
+                <text class="g-d" style="color:#007650">今天实时统计</text>
+              </view>
+            </view>
+            <view class="g-cell g-amber">
+              <text class="g-ico">👶</text>
+              <view class="col" style="gap:2rpx">
+                <text class="g-k">累计用户</text>
+                <text class="g-v">{{overview.totalUsers}}<text class="g-unit"> 位</text></text>
+                <text class="g-d" style="color:#007650">今日新增 {{overview.todayNewUsers}} 位</text>
+              </view>
+            </view>
+            <view class="g-cell g-violet">
+              <text class="g-ico">🔥</text>
+              <view class="col" style="gap:2rpx">
+                <text class="g-k">今日活跃用户</text>
+                <text class="g-v">{{overview.todayUsers}}<text class="g-unit"> 位</text></text>
+                <text class="g-d c-t">打开过小程序即算</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 近 7 日柱状图 -->
+          <view class="trend">
+            <view class="row between" style="margin-bottom:10rpx">
+              <text class="t-13 semi">近 7 日使用</text>
+              <text class="t-10 c-t">按启动次数</text>
+            </view>
+            <view class="bars">
+              <view class="barcol" wx:for="{{overview.days}}" wx:for-item="d" wx:key="label">
+                <text class="bar-v">{{d.count}}</text>
+                <view class="bar {{d.isToday ? 'bar-today' : ''}}" style="height:{{d.h}}%"></view>
+                <text class="bar-x {{d.isToday ? 'bar-x-on' : ''}}">{{d.label}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 用户列表（表格式） -->
+        <view class="card shadow-card" style="padding:22rpx 26rpx 8rpx">
+          <view class="row between" style="margin-bottom:6rpx">
+            <text class="t-16 bold">用户列表</text>
+            <text class="t-10 c-t">共 {{overview.totalUsers}} 位 · 手机号脱敏</text>
+          </view>
+          <view class="thead">
+            <text class="th" style="flex:1.4">小朋友</text>
+            <text class="th" style="flex:1.2">手机号</text>
+            <text class="th th-r" style="flex:0.8">使用</text>
+            <text class="th th-r" style="flex:1">最近使用</text>
+          </view>
+          <view class="urow" wx:for="{{overview.users}}" wx:for-item="u" wx:key="lastAt">
+            <view class="row" style="flex:1.4;gap:12rpx;min-width:0">
+              <view class="ava" style="background:{{u.avaBg}}">{{u.avaChar}}</view>
+              <view class="col" style="min-width:0;gap:2rpx">
+                <text class="u-name truncate">{{u.nickname}}</text>
+                <text class="u-mode">{{u.modeText}}</text>
+              </view>
+            </view>
+            <text class="phone {{u.phoneBound ? '' : 'phone-none'}}" style="flex:1.2">{{u.phoneBound ? u.phone : '未绑定'}}</text>
+            <text class="t-12 bold c-primary th-r" style="flex:0.8">{{u.launchesText}}<text class="u-unit"> 次</text></text>
+            <view class="row" style="flex:1;justify-content:flex-end;gap:6rpx">
+              <view class="hot" wx:if="{{u.todayActive}}"></view>
+              <text class="t-10 c-s">{{u.lastText}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="note">
+          <view class="ico ico-bulb ico-26" style="color:#fbbf24"></view>
+          <text class="t-10 c-t">数据来自小程序云端统计：每次打开小程序记 1 次使用；手机号在家长绑定后同步（这里只显示脱敏值，完整号码在微信开发者工具 → 云开发 → 数据库 → stats_users 集合的 phone 字段查看）。</text>
+        </view>
+      </block>
+    </block>
+  </view>
+</view>

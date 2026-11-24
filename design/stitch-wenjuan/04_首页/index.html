@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;min-height:100vh;margin:0;padding:0;}body{overscroll-behavior:none;background:linear-gradient(180deg,#E0F2FE 0%,#DCFCE7 100%);background-attachment:fixed;font-family:'Plus Jakarta Sans',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,16px);}.pt-safe{padding-top:env(safe-area-inset-top,24px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { 'colors': { 'on-primary-fixed-variant': '#5a00c6', 'surface-bright': '#f9f9ff', 'warning-banner-bg': '#FEF3C7', 'primary-container': '#7c3aed', 'on-secondary-fixed-variant': '#004e5c', 'accent-purple-light': '#EDE9FE', 'surface-variant': '#d8e3fb', 'on-primary': '#ffffff', 'on-surface-variant': '#4a4455', 'surface-container-lowest': '#ffffff', 'primary-fixed': '#eaddff', 'on-tertiary-container': '#76ffc2', 'text-secondary': '#64748B', 'secondary-fixed-dim': '#4cd7f6', 'inverse-primary': '#d2bbff', 'surface': '#f9f9ff', 'on-error-container': '#93000a', 'background': '#f9f9ff', 'surface-container': '#e7eeff', 'text-primary': '#0F172A', 'on-secondary-container': '#006172', 'on-secondary': '#ffffff', 'on-primary-fixed': '#25005a', 'surface-white': '#FFFFFF', 'surface-dim': '#cfdaf2', 'text-tertiary': '#94A3B8', 'accent-coral': '#F97316', 'on-background': '#111c2d', 'bg-gradient-top': '#E0F2FE', 'surface-container-highest': '#d8e3fb', 'on-secondary-fixed': '#001f26', 'outline': '#7b7487', 'outline-variant': '#ccc3d8', 'primary-fixed-dim': '#d2bbff', 'tertiary-fixed-dim': '#4edea3', 'warning-banner-text': '#92400E', 'secondary': '#00687a', 'on-tertiary': '#ffffff', 'bg-gradient-bottom': '#DCFCE7', 'surface-translucent': 'rgba(255, 255, 255, 0.85)', 'error': '#ba1a1a', 'tertiary-fixed': '#6ffbbe', 'inverse-on-surface': '#ecf1ff', 'surface-container-low': '#f0f3ff', 'primary': '#630ed4', 'on-error': '#ffffff', 'inverse-surface': '#263143', 'card-border': 'rgba(255, 255, 255, 0.6)', 'tertiary': '#005b3d', 'secondary-fixed': '#acedff', 'on-primary-container': '#ede0ff', 'on-tertiary-fixed-variant': '#005236', 'accent-purple-hover': '#6D28D9', 'accent-yellow': '#FBBF24', 'error-container': '#ffdad6', 'surface-tint': '#732ee4', 'tertiary-container': '#007650', 'on-tertiary-fixed': '#002113', 'secondary-container': '#57dffe', 'on-surface': '#111c2d', 'surface-container-high': '#dee8ff', 'badge-locked-mask': '#CBD5E1' }, 'borderRadius': { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, 'spacing': { 'space-md': '1rem', 'margin': '1.25rem', 'space-lg': '1.25rem', 'space-xl': '1.75rem', 'gutter': '1rem', 'space-sm': '0.5rem', 'space-xs': '0.25rem' }, 'fontFamily': { 'label-md': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'headline-md': ['Plus Jakarta Sans'], 'headline-sm': ['Plus Jakarta Sans'], 'label-lg': ['Plus Jakarta Sans'], 'headline-hero': ['Plus Jakarta Sans'], 'body-md': ['Plus Jakarta Sans'], 'body-lg': ['Plus Jakarta Sans'], 'reader-hero-kindergarten': ['Plus Jakarta Sans'], 'headline-lg': ['Plus Jakarta Sans'], 'label-sm': ['Plus Jakarta Sans'], 'pinyin-annotation': ['Plus Jakarta Sans'] }, 'fontSize': { 'label-md': ['12px', { 'lineHeight': '16px', 'fontWeight': '600' }], 'body-sm': ['13px', { 'lineHeight': '18px', 'fontWeight': '400' }], 'headline-md': ['20px', { 'lineHeight': '28px', 'fontWeight': '600' }], 'headline-sm': ['18px', { 'lineHeight': '24px', 'fontWeight': '600' }], 'label-lg': ['14px', { 'lineHeight': '18px', 'fontWeight': '600' }], 'headline-hero': ['32px', { 'lineHeight': '40px', 'fontWeight': '700' }], 'body-md': ['14px', { 'lineHeight': '20px', 'fontWeight': '400' }], 'body-lg': ['16px', { 'lineHeight': '24px', 'fontWeight': '500' }], 'reader-hero-kindergarten': ['28px', { 'lineHeight': '42px', 'fontWeight': '700' }], 'headline-lg': ['24px', { 'lineHeight': '32px', 'fontWeight': '700' }], 'label-sm': ['10px', { 'lineHeight': '14px', 'fontWeight': '500' }], 'pinyin-annotation': ['11px', { 'lineHeight': '14px', 'fontWeight': '500' }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="min-h-screen text-on-surface antialiased"><header class="fixed top-0 inset-x-0 z-50 bg-white/70 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.03)]"><div class="h-14 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate max-w-[130px]">Home</h1></div><div class="flex items-center bg-white/80 backdrop-blur-md rounded-full px-2 py-1 shadow-sm gap-2"><button aria-label="小程序菜单" class="w-7 h-7 flex items-center justify-center text-on-surface"><span class="material-symbols-outlined text-[18px]">more_horiz</span></button><div class="w-[1px] h-3.5 bg-outline-variant/60"></div><button aria-label="关闭小程序" class="w-7 h-7 flex items-center justify-center text-on-surface"><span class="material-symbols-outlined text-[18px]">close</span></button></div></div></header><main class="flex flex-col relative w-full px-margin pt-14 pb-32"><div class="flex flex-col w-full gap-space-lg select-none">
+<!-- Top Greeting & Header Status (matches reference & PRD) -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<h2 class="font-headline-lg text-headline-lg text-text-primary tracking-tight">你好，孔老师</h2>
+<span class="text-xl inline-block origin-bottom-right animate-[wave_1.5s_infinite_ease-in-out]">👋</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary mt-0.5">今天也是朗读打卡的小达人哦</p>
+</div>
+<!-- Right Quick Actions: Reminder / Audio Settings -->
+<div class="flex items-center gap-space-xs">
+<button aria-label="通知提醒" class="w-10 h-10 rounded-full bg-surface-white/90 backdrop-blur-md shadow-sm flex items-center justify-center text-text-secondary active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<div class="px-2.5 py-1 rounded-full bg-accent-purple-light/80 backdrop-blur-md flex items-center gap-1 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">小学模式</span>
+</div>
+</div>
+</div>
+<!-- Hero Card: AI Challenge Banner (Referenced directly from Image 2) -->
+<div class="relative w-full rounded-2xl bg-surface-white/95 backdrop-blur-xl p-space-lg shadow-[0_8px_24px_-4px_rgba(124,58,237,0.12),0_2px_8px_rgba(15,23,42,0.04)] overflow-hidden transition-all active:scale-[0.99]">
+<!-- Ambient decorative lilac/mint glow in background -->
+<div class="absolute -right-8 -top-8 w-44 h-44 rounded-full bg-gradient-to-br from-primary-fixed/60 via-secondary-fixed/40 to-transparent blur-2xl pointer-events-none"></div>
+<div class="absolute -left-6 -bottom-6 w-32 h-32 rounded-full bg-tertiary-fixed/30 blur-xl pointer-events-none"></div>
+<div class="relative z-10 flex items-center justify-between">
+<div class="flex flex-col max-w-[58%]">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent-purple-light text-primary-container font-label-sm text-label-sm w-fit mb-1.5 font-semibold">
+<span class="material-symbols-outlined text-[13px]" style="font-variation-settings: 'FILL' 1;">arrow_back_ios_new</span>
+<span>今日朗读挑战</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-bold leading-tight">每日伴读小任务</h3>
+<div class="flex items-center gap-1.5 text-text-secondary mt-1.5 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-primary-container">menu_book</span>
+<span>待完成 1 组新课文</span>
+</div>
+<!-- Pill CTA Button -->
+<a class="mt-4 inline-flex items-center justify-center gap-1 px-4 h-10 rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-label-lg text-label-lg shadow-[0_4px_14px_rgba(124,58,237,0.35)] active:scale-95 transition-transform w-fit" data-path="camera-reading" href="#">
+<span>立即开读</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- Friendly AI Tutor Companion Character Artwork -->
+<div class="relative flex-1 flex justify-end items-center pr-1">
+<div class="relative w-28 h-28 flex items-center justify-center">
+<!-- Floating halo ring -->
+<div class="absolute inset-0 rounded-full border border-primary/20 scale-105 animate-[spin_12s_linear_infinite] border-dashed"></div>
+<!-- Bot Mascot Illustrated SVG -->
+<svg class="w-24 h-24 drop-shadow-[0_10px_16px_rgba(124,58,237,0.22)]" fill="none" viewbox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<lineargradient gradientunits="userSpaceOnUse" id="headGrad" x1="20" x2="80" y1="10" y2="80">
+<stop stop-color="#FFFFFF"></stop>
+<stop offset="0.6" stop-color="#F1F5F9"></stop>
+<stop offset="1" stop-color="#E2E8F0"></stop>
+</lineargradient>
+<lineargradient gradientunits="userSpaceOnUse" id="visorGrad" x1="25" x2="75" y1="35" y2="65">
+<stop stop-color="#0F172A"></stop>
+<stop offset="1" stop-color="#1E293B"></stop>
+</lineargradient>
+<lineargradient id="earGrad" x1="0" x2="1" y1="0" y2="1">
+<stop stop-color="#A78BFA"></stop>
+<stop offset="1" stop-color="#7C3AED"></stop>
+</lineargradient>
+<lineargradient id="haloGrad" x1="0" x2="1" y1="0" y2="1">
+<stop stop-color="#C084FC"></stop>
+<stop offset="1" stop-color="#38BDF8"></stop>
+</lineargradient>
+</defs>
+<!-- Holographic Halo -->
+<ellipse cx="50" cy="22" fill="none" opacity="0.9" rx="34" ry="10" stroke="url(#haloGrad)" stroke-width="4.5"></ellipse>
+<!-- Ear Pods -->
+<rect fill="url(#earGrad)" height="18" rx="3.5" width="7" x="12" y="44"></rect>
+<rect fill="url(#earGrad)" height="18" rx="3.5" width="7" x="81" y="44"></rect>
+<!-- Main Head -->
+<rect fill="url(#headGrad)" height="54" rx="26" stroke="#CBD5E1" stroke-width="1.5" width="64" x="18" y="24"></rect>
+<!-- Visor Screen -->
+<rect fill="url(#visorGrad)" height="30" rx="14" width="50" x="25" y="36"></rect>
+<!-- Glowing Digital Eyes (Happy Arc) -->
+<path d="M36 50 C37 45, 43 45, 44 50" stroke="#38BDF8" stroke-linecap="round" stroke-width="3"></path>
+<path d="M56 50 C57 45, 63 45, 64 50" stroke="#38BDF8" stroke-linecap="round" stroke-width="3"></path>
+<!-- Little Joy Blush -->
+<circle cx="34" cy="55" fill="#F472B6" opacity="0.8" r="2.5"></circle>
+<circle cx="66" cy="55" fill="#F472B6" opacity="0.8" r="2.5"></circle>
+<!-- Sparkle detail -->
+<path d="M78 20L80 14L86 16L82 21L84 26L79 23L75 27L76 21L71 19L77 17Z" fill="#FBBF24" opacity="0.9"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 1: Breakpoint Resume / Continue Learning (FR-3-7, FR-5-8, FR-2-2) -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-bold">断点续读</h3>
+<span class="font-label-sm text-label-sm text-text-tertiary">上次朗读进度已自动保存</span>
+</div>
+<!-- Continue Card matching reference progress card structure -->
+<div class="w-full bg-surface-white rounded-2xl p-space-md shadow-[0_4px_16px_-2px_rgba(124,58,237,0.06),0_2px_6px_0_rgba(15,23,42,0.03)] flex flex-col gap-3">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start gap-3 min-w-0">
+<!-- Module icon squircle -->
+<div class="w-11 h-11 rounded-xl bg-accent-purple-light flex items-center justify-center flex-shrink-0 text-primary-container">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-text-primary font-bold truncate">小学语文三年级上册</span>
+<span class="font-body-sm text-body-sm text-text-secondary truncate mt-0.5">第3课《古诗三首》· 望天门山</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-label-sm text-label-sm text-primary-container font-semibold">已读 6/10 句</span>
+<span class="w-1 h-1 rounded-full bg-text-tertiary"></span>
+<span class="font-label-sm text-label-sm text-text-tertiary">20分钟前</span>
+</div>
+</div>
+</div>
+<!-- Progress Percentage Number (from Image 2 inspiration) -->
+<div class="flex flex-col items-end flex-shrink-0">
+<div class="flex items-baseline">
+<span class="font-headline-hero text-headline-hero text-text-primary font-bold leading-none tracking-tight">60</span>
+<span class="font-label-md text-label-md text-text-secondary ml-0.5">%</span>
+</div>
+</div>
+</div>
+<!-- Linear Scrub Progress Bar -->
+<div class="relative w-full flex flex-col gap-1.5 pt-1">
+<div class="w-full h-2.5 bg-surface-container rounded-full overflow-hidden relative">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container rounded-full" style="width: 60%;"></div>
+</div>
+<div class="flex justify-between items-center text-text-tertiary font-label-sm text-label-sm px-0.5">
+<span>0%</span>
+<span>目标 100%</span>
+</div>
+</div>
+<!-- Card Action Row -->
+<div class="flex items-center justify-between pt-1 border-t-0">
+<div class="flex items-center gap-1.5 text-text-secondary font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-accent-coral">record_voice_over</span>
+<span>录音已暂存，随时继续</span>
+</div>
+<button class="h-9 px-4 rounded-full bg-surface-container-high hover:bg-accent-purple-light text-primary font-label-md text-label-md flex items-center gap-1 active:scale-95 transition-all" id="resume-reading-btn">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>继续朗读</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Section 2: Quick Practice Entries (Practice Now row from Image 2) -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-bold">快速入口</h3>
+<span class="font-label-sm text-label-sm text-text-tertiary">便捷功能直达</span>
+</div>
+<!-- 4 Pill/Squircle Column Layout -->
+<div class="grid grid-cols-4 gap-2.5">
+<!-- 1. 拍照伴读 (Purple) -->
+<a class="bg-surface-white rounded-2xl p-2.5 flex flex-col items-center justify-center gap-2 shadow-[0_3px_12px_rgba(15,23,42,0.03)] active:scale-95 transition-all text-center" data-path="camera-reading" href="#">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-accent-purple-light to-primary-fixed flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[24px]">photo_camera</span>
+</div>
+<span class="font-label-md text-label-md text-text-primary font-semibold truncate w-full">拍照伴读</span>
+</a>
+<!-- 2. 生词复习 (Teal) -->
+<a class="bg-surface-white rounded-2xl p-2.5 flex flex-col items-center justify-center gap-2 shadow-[0_3px_12px_rgba(15,23,42,0.03)] active:scale-95 transition-all text-center" data-path="vocabulary" href="#">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-bg-gradient-bottom to-tertiary-fixed flex items-center justify-center text-tertiary-container shadow-sm">
+<span class="material-symbols-outlined text-[24px]">spellcheck</span>
+</div>
+<span class="font-label-md text-label-md text-text-primary font-semibold truncate w-full">生词复习</span>
+</a>
+<!-- 3. 听范读 (Orange / Amber) -->
+<button class="bg-surface-white rounded-2xl p-2.5 flex flex-col items-center justify-center gap-2 shadow-[0_3px_12px_rgba(15,23,42,0.03)] active:scale-95 transition-all text-center" onclick="handleListenSample()">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-warning-banner-bg to-amber-200 flex items-center justify-center text-accent-coral shadow-sm">
+<span class="material-symbols-outlined text-[24px]">headphones</span>
+</div>
+<span class="font-label-md text-label-md text-text-primary font-semibold truncate w-full">听范读</span>
+</button>
+<!-- 4. 我的奖状 (Blue) -->
+<a class="bg-surface-white rounded-2xl p-2.5 flex flex-col items-center justify-center gap-2 shadow-[0_3px_12px_rgba(15,23,42,0.03)] active:scale-95 transition-all text-center" data-path="badges" href="#">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-bg-gradient-top to-secondary-fixed flex items-center justify-center text-secondary shadow-sm">
+<span class="material-symbols-outlined text-[24px]">military_tech</span>
+</div>
+<span class="font-label-md text-label-md text-text-primary font-semibold truncate w-full">我的奖状</span>
+</a>
+</div>
+</div>
+<!-- Section 3: Next Badge Teaser (PRD FR-7-6 勋章预告: 下一枚待解锁勋章) -->
+<div class="flex flex-col gap-space-sm mb-2">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-1.5">
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-bold">下一枚待解锁勋章</h3>
+<span class="material-symbols-outlined text-[16px] text-accent-yellow" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<a class="font-label-sm text-label-sm text-primary font-semibold flex items-center" data-path="badges" href="#">
+<span>全部勋章</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</a>
+</div>
+<!-- Soft frosted badge card -->
+<div class="relative w-full rounded-2xl bg-surface-white/90 backdrop-blur-xl p-space-md shadow-[0_4px_18px_-2px_rgba(15,23,42,0.04)] flex items-center justify-between overflow-hidden">
+<!-- Ambient Starburst Accent Glow -->
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-32 h-32 bg-accent-purple-light/50 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center gap-3.5 z-10 min-w-0">
+<!-- Badge Silhouette with Lock & Sparkle Icon -->
+<div class="relative w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center flex-shrink-0 shadow-inner">
+<!-- Silhouette medal base -->
+<span class="material-symbols-outlined text-[36px] text-badge-locked-mask select-none">workspace_premium</span>
+<!-- Golden lock indicator -->
+<div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-accent-yellow text-warning-banner-text flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[14px] font-bold">lock</span>
+</div>
+<!-- Micro Sparkle -->
+<span class="material-symbols-outlined text-[14px] text-primary-container absolute -top-1 -left-1 animate-pulse">auto_awesome</span>
+</div>
+<!-- Badge Info & Progress -->
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<h4 class="font-headline-sm text-headline-sm text-text-primary font-bold truncate">『坚持三日』勋章</h4>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-text-secondary font-label-sm text-label-sm">普通</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary mt-0.5 truncate">连续打卡 3 天即可解锁此荣誉</p>
+<!-- Streak Progress Bar (2/3) -->
+<div class="flex items-center gap-2 mt-2">
+<div class="w-32 h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-accent-coral rounded-full" style="width: 66.6%;"></div>
+</div>
+<span class="font-label-sm text-label-sm text-accent-coral font-bold">2/3 天连续打卡</span>
+</div>
+</div>
+</div>
+<!-- Encouraging Tag -->
+<div class="hidden sm:flex flex-col items-end z-10 flex-shrink-0 pl-2">
+<span class="font-label-sm text-label-sm text-text-secondary bg-surface-container-low px-2 py-1 rounded-lg">明日可得</span>
+</div>
+</div>
+<!-- Motivational banner caption -->
+<div class="flex items-center justify-center gap-1.5 py-1 text-center font-body-sm text-body-sm text-text-secondary">
+<span class="material-symbols-outlined text-[16px] text-accent-yellow" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<span>太棒了！明天完成 1 句朗读，即可点亮全新勋章 🎉</span>
+</div>
+</div>
+<!-- Toast Notification Container for Micro-interactions -->
+<div class="fixed top-20 inset-x-0 mx-auto w-fit max-w-[85vw] px-4 py-2.5 rounded-full bg-inverse-surface/90 text-inverse-on-surface backdrop-blur-md shadow-xl flex items-center gap-2 z-50 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2" id="toast-message">
+<span class="material-symbols-outlined text-[18px] text-tertiary-fixed">check_circle</span>
+<span class="font-label-md text-label-md" id="toast-text">提示信息</span>
+</div>
+</div>
+<script>
+  // Simple Delight Micro-interactions & Toast Feedback
+  function showToast(text) {
+    const toast = document.getElementById('toast-message');
+    const toastText = document.getElementById('toast-text');
+    if (!toast || !toastText) return;
+    toastText.textContent = text;
+    toast.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+    toast.classList.add('opacity-100', 'translate-y-0');
+    setTimeout(() => {
+      toast.classList.remove('opacity-100', 'translate-y-0');
+      toast.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+    }, 2400);
+  }
+
+  function handleListenSample() {
+    showToast('正在加载古诗《望天门山》标准范读音频...');
+  }
+
+  document.getElementById('resume-reading-btn')?.addEventListener('click', function() {
+    showToast('正在恢复第 7 句朗读进度，准备录音...');
+  });
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe pointer-events-none" data-active-classes="text-primary-container font-semibold"><div class="px-margin pb-3 pointer-events-auto"><div class="relative bg-white/90 backdrop-blur-2xl rounded-full px-2 py-2 shadow-[0_12px_32px_-4px_rgba(30,41,59,0.12),0_4px_12px_-2px_rgba(124,58,237,0.08)] flex items-center justify-between"><a aria-current="page" class="flex flex-col items-center justify-center flex-1 min-w-[56px] min-h-[44px] transition-all text-primary-container font-semibold" data-path="home" href="#"><span class="material-symbols-outlined text-[24px]">cottage</span><span class="font-label-sm text-label-sm mt-0.5">首页</span></a><a class="flex flex-col items-center justify-center flex-1 min-w-[56px] min-h-[44px] text-text-secondary transition-all" data-path="vocabulary" href="#"><span class="material-symbols-outlined text-[24px]">auto_stories</span><span class="font-label-sm text-label-sm mt-0.5">生词本</span></a><div class="relative flex flex-col items-center justify-center flex-1 min-w-[64px]"><a class="absolute -top-7 w-14 h-14 rounded-full bg-gradient-to-tr from-primary to-primary-container flex items-center justify-center shadow-[0_6px_20px_rgba(124,58,237,0.45)] active:scale-95 transition-transform" data-path="camera-reading" href="#"><span class="material-symbols-outlined text-white text-[28px]">auto_awesome</span></a><span class="font-label-sm text-label-sm mt-8 text-primary-container font-semibold">拍照朗读</span></div><a class="flex flex-col items-center justify-center flex-1 min-w-[56px] min-h-[44px] text-text-secondary transition-all" data-path="badges" href="#"><span class="material-symbols-outlined text-[24px]">military_tech</span><span class="font-label-sm text-label-sm mt-0.5">勋章</span></a><a class="flex flex-col items-center justify-center flex-1 min-w-[56px] min-h-[44px] text-text-secondary transition-all" data-path="profile" href="#"><span class="material-symbols-outlined text-[24px]">face</span><span class="font-label-sm text-label-sm mt-0.5">我的</span></a></div></div></nav></body></html>

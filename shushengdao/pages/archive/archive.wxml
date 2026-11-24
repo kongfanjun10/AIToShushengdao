@@ -1,0 +1,351 @@
+<import src="../../templates/tabbar.wxml" />
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="hd {{navSolid ? 'hd-solid' : ''}}" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row">
+        <text class="t-18 truncate" style="max-width:250rpx">成长档案</text>
+      </view>
+      <view class="mini-ctrl">
+        <view class="row center" style="width:54rpx;height:54rpx" bindtap="toggleMore">
+          <view class="ico ico-more ico-34"></view>
+        </view>
+        <view class="hairline" style="height:27rpx;width:1px" wx:if="{{showBack}}"></view>
+        <view class="row center" style="width:54rpx;height:54rpx" bindtap="goHome" wx:if="{{showBack}}">
+          <view class="ico ico-close ico-34"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 用户卡（置顶）：谁在学，一眼看到 -->
+    <view class="card user-card shadow-soft">
+      <view class="row" style="gap:13rpx">
+        <view class="ava-ring">
+          <view class="ava-inner {{avatar ? 'ava-photo-box' : ''}}">
+            <image wx:if="{{avatar}}" class="ava-photo" src="{{avatar}}" mode="aspectFill" />
+            <text wx:else>🧒</text>
+          </view>
+          <view class="ava-badge"><view class="ico ico-trophy ico-29"></view></view>
+        </view>
+        <view class="col flex1">
+          <view class="row" style="gap:8rpx">
+            <text class="t-18 bold truncate">{{nickname}}</text>
+            <text class="mode-tag">三年级 · {{modeLabel}}</text>
+          </view>
+          <text class="t-13 c-s truncate" style="margin-top:2rpx" hover-class="pressed" bindtap="copyReaderId">小朗读者 ID: {{readerId}}（点按复制）</text>
+        </view>
+        <view class="col center" hover-class="pressed" bindtap="openGate">
+          <view class="ico ico-swap ico-38 c-t"></view>
+          <text class="t-10 c-t" style="margin-top:2rpx">模式</text>
+        </view>
+      </view>
+
+      <view class="streak">
+        <view class="row" style="gap:8rpx">
+          <view class="fire">
+            <view class="ico ico-fire ico-38" style="color:#f97316"></view>
+          </view>
+          <view class="col">
+            <view class="row" style="gap:4rpx">
+              <text class="t-14 bold">连续打卡 {{overview.streak}} 天</text>
+              <text class="t-10 semi" style="color:#f97316">超越 94% 同龄人</text>
+            </view>
+            <text class="t-13 c-s">今日朗读已完成 {{today.sentences}} 句，{{today.sentences ? '今日已打卡 ✓' : '还没开始，读一句就打卡'}}</text>
+          </view>
+        </view>
+        <view class="ico ico-chevron-right ico-34 c-t"></view>
+      </view>
+    </view>
+
+    <!-- 时间范围筛选：切换后下面的朗读数据按所选范围重算 -->
+    <view class="filters">
+      <view class="filter {{range === item ? 'filter-on' : ''}}"
+            wx:for="{{ranges}}" wx:key="*this"
+            data-range="{{item}}" bindtap="pickRange">{{item}}</view>
+    </view>
+
+    <!-- 总学情进度 -->
+    <view class="card prog-card shadow-soft">
+      <view class="row between">
+        <view class="col">
+          <text class="t-18 bold">总学情进度</text>
+          <text class="t-13 c-s">阶段 L2 · {{range}}数据</text>
+        </view>
+        <text class="t-hero" style="color:#0ea5e9">{{overview.percent}}%</text>
+      </view>
+      <view class="track">
+        <view class="track-fill" style="width:{{overview.percent}}%"></view>
+      </view>
+    </view>
+
+    <!-- 三项统计 -->
+    <view class="stats">
+      <view class="stat">
+        <view class="stat-ico" style="background:#fff7ed;color:#f97316"><view class="ico ico-fire ico-34"></view></view>
+        <view class="row" style="align-items:baseline;gap:2rpx">
+          <text class="t-18 bold">{{overview.sentences}}</text>
+          <text class="t-10 c-s">句</text>
+        </view>
+        <text class="t-13 c-s" style="margin-top:2rpx">{{range}}朗读</text>
+      </view>
+      <view class="stat">
+        <view class="stat-ico" style="background:#e0f2fe;color:#0369a1"><view class="ico ico-speed ico-34"></view></view>
+        <view class="row" style="align-items:baseline;gap:2rpx">
+          <text class="t-18 bold">{{overview.hours}}</text><text class="t-10 c-s">h</text>
+          <text class="t-18 bold" style="margin-left:2rpx">{{overview.minutesRest}}</text><text class="t-10 c-s">m</text>
+        </view>
+        <text class="t-13 c-s" style="margin-top:2rpx">{{range}}时长</text>
+      </view>
+      <view class="stat">
+        <view class="stat-ico" style="background:#fffbeb;color:#fbbf24"><view class="ico ico-star ico-34"></view></view>
+        <view class="row" style="align-items:baseline;gap:2rpx">
+          <text class="t-18 bold">{{overview.certCount}}</text>
+          <text class="t-10 c-s">张</text>
+        </view>
+        <text class="t-13 c-s" style="margin-top:2rpx">收集奖状</text>
+      </view>
+    </view>
+
+    <!-- 能力雷达 -->
+    <view class="card radar shadow-soft">
+      <view class="row between">
+        <view class="row" style="gap:8rpx">
+          <view class="ico ico-chart ico-42 c-pc"></view>
+          <text class="t-18 bold">能力与习惯雷达</text>
+        </view>
+        <view class="row" hover-class="pressed" bindtap="openSkillSheet">
+          <text class="t-10 semi c-pc">查看明细</text>
+          <view class="ico ico-chevron-right ico-30 c-pc"></view>
+        </view>
+      </view>
+
+      <view class="skills">
+        <view class="skill" wx:for="{{skills}}" wx:key="name">
+          <view class="row between">
+            <view class="row" style="gap:8rpx">
+              <view class="skill-ico" style="background:{{item.bg}};color:{{item.color}}">
+                <view class="ico ico-{{item.icon}} ico-30"></view>
+              </view>
+              <text class="t-14 semi">{{item.name}}</text>
+            </view>
+            <text class="t-12 bold">{{item.value}}%</text>
+          </view>
+          <view class="skill-track">
+            <view class="skill-fill" style="width:{{item.value}}%;background:{{item.grad}}"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 勋章墙 -->
+    <view class="card badges shadow-soft" id="badgeWall">
+      <view class="row between">
+        <view class="row" style="gap:8rpx">
+          <view class="badge-h-ico"><view class="ico ico-medal ico-30 c-pc"></view></view>
+          <text class="t-18 bold">勋章墙</text>
+          <text class="count-pill">已得 {{badgeUnlocked}} / {{badgeTotal}}</text>
+        </view>
+        <view class="row" hover-class="pressed" bindtap="openBadgeSheet">
+          <text class="t-10 semi c-pc">全部 {{badgeTotal}} 枚</text>
+          <view class="ico ico-chevron-right ico-28 c-pc"></view>
+        </view>
+      </view>
+
+      <view class="badge-grid">
+        <view class="badge-tile" wx:for="{{badges}}" wx:key="name" data-index="{{index}}" bindtap="badgeDetail">
+          <view class="tile-tag" style="{{item.tagStyle}}">{{item.tag}}</view>
+          <view class="tile-ring" style="background:{{item.ring}}">
+            <view class="tile-inner" style="color:{{item.color}};background:{{item.locked ? 'transparent' : '#fff'}}">
+              <view class="ico ico-{{item.icon}} ico-62"></view>
+            </view>
+          </view>
+          <text class="t-14 bold" style="color:{{item.locked ? '#64748b' : '#0f172a'}}">{{item.name}}</text>
+          <text class="t-10" style="margin-top:2rpx;color:{{item.color2 || '#94a3b8'}};{{item.subStyle}}">{{item.sub}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 家长中心 -->
+    <view class="card parent-card shadow-soft" hover-class="pressed" bindtap="openGate">
+      <view class="row between">
+        <view class="row" style="gap:15rpx">
+          <view class="parent-ico"><view class="ico ico-shield ico-46" style="color:#fff"></view></view>
+          <view class="col flex1">
+            <view class="row" style="gap:6rpx">
+              <text class="t-18 bold">家长中心</text>
+              <text class="gate-tag">门禁保护</text>
+            </view>
+            <text class="t-13 c-s truncate" style="margin-top:2rpx">学习周报 · 语速与拼音设置 · 安全管控</text>
+          </view>
+        </view>
+        <view class="lock-circle"><view class="ico ico-lock ico-34"></view></view>
+      </view>
+      <view class="row between parent-foot">
+        <view class="row" style="gap:4rpx">
+          <view class="ico ico-fire ico-27" style="color:#f97316"></view>
+          <text class="t-10 c-t">防儿童误触：需通过算术题验证进入</text>
+        </view>
+        <text class="t-10 semi c-pc">点击验证 →</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 家长门禁弹窗 -->
+  <view class="mask" wx:if="{{gateVisible}}" bindtap="closeGate">
+    <view class="gate-modal" catchtap="noop">
+      <view class="gate-ico"><view class="ico ico-calc ico-70 c-pc"></view></view>
+      <text class="t-18 bold">家长验证</text>
+      <text class="t-13 c-s" style="margin:4rpx 0 15rpx;text-align:center">请计算以下算术题以进入家长中心：</text>
+      <view class="gate-q"><text class="t-hero" style="color:#0ea5e9">{{gateExpr}} = ?</text></view>
+      <input class="gate-input" type="number" placeholder="输入计算结果" value="{{gateAnswer}}" bindinput="onGateInput" />
+      <view class="row" style="gap:10rpx;width:100%">
+        <view class="gate-btn ghost" bindtap="closeGate"><text class="t-14 semi c-s">取消</text></view>
+        <view class="gate-btn solid" bindtap="submitGate"><text class="t-14 semi" style="color:#fff">确认进入</text></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部悬浮导航 -->
+  <view class="tabbar-wrap">
+    <view class="tabbar">
+      <view class="tab tab-off" bindtap="goHome">
+        <view class="ico ico-home ico-46"></view>
+        <text class="t-10" style="margin-top:2rpx">首页</text>
+      </view>
+      <view class="tab tab-off" bindtap="goVocab">
+        <view class="ico ico-stories ico-46"></view>
+        <text class="t-10" style="margin-top:2rpx">生词本</text>
+      </view>
+      <view class="tab-center">
+        <view class="tab-fab" hover-class="pressed" bindtap="goReader">
+          <view class="ico ico-sparkle ico-54" style="color:#fff"></view>
+        </view>
+        <text class="t-10 semi c-pc" style="margin-top:62rpx">拍照朗读</text>
+      </view>
+      <view class="tab" bindtap="scrollToBadges">
+        <view class="ico ico-medal ico-46"></view>
+        <text class="t-10" style="margin-top:2rpx">勋章</text>
+      </view>
+      <view class="tab tab-off" bindtap="openGate">
+        <view class="ico ico-person ico-46"></view>
+        <text class="t-10" style="margin-top:2rpx">我的</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 顶部更多菜单 -->
+  <view class="mask mask-clear" wx:if="{{moreMenu}}" bindtap="closeMore">
+    <view class="more-panel" catchtap="noop">
+      <view class="more-item" hover-class="pressed" bindtap="exportReport">
+        <view class="row" style="gap:10rpx">
+          <view class="ico ico-download ico-32 c-pc"></view>
+          <view class="col" style="gap:0">
+            <text class="t-13 semi">导出学习报告</text>
+            <text class="t-10 c-t">复制为文本，可发给老师</text>
+          </view>
+        </view>
+      </view>
+      <view class="hairline"></view>
+      <view class="more-item" hover-class="pressed" bindtap="goVocab">
+        <view class="row" style="gap:10rpx">
+          <view class="ico ico-stories ico-32 c-pc"></view>
+          <view class="col" style="gap:0">
+            <text class="t-13 semi">生词本</text>
+            <text class="t-10 c-t">复习读错的词</text>
+          </view>
+        </view>
+      </view>
+      <view class="hairline"></view>
+      <view class="more-item" hover-class="pressed" bindtap="openGate">
+        <view class="row" style="gap:10rpx">
+          <view class="ico ico-shield ico-32 c-pc"></view>
+          <view class="col" style="gap:0">
+            <text class="t-13 semi">家长中心</text>
+            <text class="t-10 c-t">需通过算术验证</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 能力明细半屏 -->
+  <view class="mask" wx:if="{{skillSheet}}" bindtap="closeSkillSheet">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-grab"></view>
+      <view class="row between">
+        <text class="t-18 bold">能力明细</text>
+        <view class="sheet-close" hover-class="pressed" bindtap="closeSkillSheet">
+          <view class="ico ico-close ico-30 c-s"></view>
+        </view>
+      </view>
+      <text class="t-11 c-t">数据来自本机朗读记录，每读完一句自动更新</text>
+
+      <scroll-view scroll-y class="sheet-scroll">
+        <view class="sk-item" wx:for="{{skillDetail}}" wx:key="key">
+          <view class="row between">
+            <view class="row" style="gap:8rpx">
+              <view class="skill-ico" style="background:{{item.bg}};color:{{item.color}}">
+                <view class="ico ico-{{item.icon}} ico-30"></view>
+              </view>
+              <text class="t-14 semi">{{item.name}}</text>
+              <text class="lv-tag">{{item.level}}</text>
+            </view>
+            <text class="t-16 bold" style="color:{{item.color}}">{{item.value}}%</text>
+          </view>
+          <view class="skill-track">
+            <view class="skill-fill" style="width:{{item.value}}%;background:{{item.grad}}"></view>
+          </view>
+          <text class="t-10 c-t" style="margin-top:8rpx">算法：{{item.how}}</text>
+          <view class="tip-box">
+            <view class="ico ico-bulb ico-26" style="color:#f59e0b"></view>
+            <text class="t-11" style="color:#92400e;flex:1">{{item.tip}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 全部勋章半屏 -->
+  <view class="mask" wx:if="{{badgeSheet}}" bindtap="closeBadgeSheet">
+    <view class="sheet sheet-tall" catchtap="noop">
+      <view class="sheet-grab"></view>
+      <view class="row between">
+        <text class="t-18 bold">全部勋章</text>
+        <view class="sheet-close" hover-class="pressed" bindtap="closeBadgeSheet">
+          <view class="ico ico-close ico-30 c-s"></view>
+        </view>
+      </view>
+      <text class="t-11 c-t">已点亮 {{badgeUnlocked}} 枚 · 共 {{badgeTotal}} 枚，继续朗读逐个解锁</text>
+
+      <scroll-view scroll-y class="sheet-scroll">
+        <block wx:for="{{badgeGroups}}" wx:key="key" wx:for-item="group">
+          <text class="grp-title">{{group.title}} · {{group.hint}}</text>
+          <view class="b-row {{item.locked ? 'b-locked' : ''}}" wx:for="{{group.items}}" wx:key="name">
+            <view class="b-ico" style="background:{{item.ring}}">
+              <view class="b-ico-in" style="color:{{item.color}};background:{{item.locked ? 'rgba(255,255,255,0.35)' : '#fff'}}">
+                <view class="ico ico-{{item.icon}} ico-40"></view>
+              </view>
+            </view>
+            <view class="col flex1" style="gap:2rpx">
+              <view class="row" style="gap:6rpx">
+                <text class="t-13 bold">{{item.name}}</text>
+                <text class="b-tag {{item.locked ? 'b-tag-off' : ''}}">{{item.tag}}</text>
+              </view>
+              <text class="t-10 c-s">{{item.desc}}</text>
+              <view class="b-track" wx:if="{{item.locked}}">
+                <view class="b-fill" style="width:{{item.percent}}%"></view>
+              </view>
+              <text class="t-10 c-t" wx:if="{{item.locked}}">{{item.current}} / {{item.target}} · 还差 {{item.target - item.current}}</text>
+            </view>
+          </view>
+        </block>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 底部任务栏（页签式，共享模板） -->
+  <template is="tabbar" data="{{active: 'archive'}}" />
+</view>
+<include src="../../pages/common/veil.wxml" />

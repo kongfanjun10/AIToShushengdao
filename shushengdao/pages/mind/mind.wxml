@@ -1,0 +1,188 @@
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row hd-left" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <view class="col" style="gap:0;min-width:0">
+          <text class="t-18">思维游戏</text>
+          <text class="t-10 c-t truncate">动动小脑筋，越玩越聪明</text>
+        </view>
+      </view>
+      <view class="hd-right">
+        <view class="today-chip">
+          <view class="ico ico-trophy ico-26"></view>
+          <text class="t-10 semi">今日 {{stats.todayRight}} 关</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 游戏页签 -->
+    <view class="tabs">
+      <view class="tab {{game === 'maze' ? 'tab-on' : ''}}" data-g="maze" bindtap="pickGame" hover-class="pressed">
+        <view class="ico ico-flag ico-30"></view>
+        <text class="t-12 semi">走迷宫</text>
+      </view>
+      <view class="tab {{game === 'blocks' ? 'tab-on' : ''}}" data-g="blocks" bindtap="pickGame" hover-class="pressed">
+        <view class="ico ico-crop ico-30"></view>
+        <text class="t-12 semi">方块滑块</text>
+      </view>
+      <view class="tab {{game === 'odd' ? 'tab-on' : ''}}" data-g="odd" bindtap="pickGame" hover-class="pressed">
+        <view class="ico ico-bulb ico-30"></view>
+        <text class="t-12 semi">找不同</text>
+      </view>
+    </view>
+
+    <!-- ================= 迷宫 ================= -->
+    <block wx:if="{{game === 'maze'}}">
+      <!-- 尺寸 -->
+      <scroll-view class="lv-scroll" scroll-x enable-flex show-scrollbar="{{false}}">
+        <view class="lv-row">
+          <view
+            class="lv-chip {{item.key === mazeKey ? 'lv-on' : ''}}"
+            wx:for="{{mazeLevels}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="pickMazeLevel"
+            hover-class="pressed"
+          >
+            <text class="lv-name">{{item.name}}</text>
+            <text class="lv-sub">{{item.sub}}</text>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="paper paper-park">
+        <view class="paper-glow"></view>
+        <view class="row between" style="z-index:2;width:100%">
+          <view class="q-badge"><text class="t-10 semi">{{palName}} · 步数 {{steps}}</text></view>
+          <text class="t-10 c-t">只有一条路能到出口</text>
+        </view>
+
+        <!-- 迷宫盘面（练习册风格 canvas：粗圆头墙条 + 果点 + 红进蓝出箭头 + 死胡同装饰）
+             玩法：手指按住盘面滑，小人跟着沿通道走（不设方向键） -->
+        <view class="maze-wrap">
+          <view
+            class="maze-frame {{dragOn ? 'drag-on' : ''}}"
+            bindtouchstart="onBoardTouchStart"
+            catchtouchmove="onBoardTouchMove"
+            bindtouchend="onBoardTouchEnd"
+            bindtouchcancel="onBoardTouchEnd"
+          >
+            <canvas type="2d" id="mazeCanvas" class="maze-canvas" style="width:{{cvW}}px;height:{{cvH}}px" disable-scroll="{{true}}"></canvas>
+          </view>
+        </view>
+
+        <!-- 拖动提示（原来这里是上下左右方向键，已按需求移除） -->
+        <view class="drag-hint {{dragOn ? 'drag-hint-on' : ''}}">
+          <text class="t-10 c-t">👆 按住小人，顺着通道往出口滑</text>
+        </view>
+
+        <view class="maze-tip">
+          <text class="t-10 {{mazeDone ? 'semi' : ''}} {{mazeDone ? 'c-ok' : 'c-t'}}">{{mazeDone ? '走到出口啦！马上来新迷宫' : '从 红箭头 进入，按住盘面顺着通道滑到出口 🎯'}}</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- ================= 方块滑块 ================= -->
+    <block wx:if="{{game === 'blocks'}}">
+      <view class="paper">
+        <view class="paper-glow"></view>
+        <view class="row between" style="z-index:2;width:100%">
+          <view class="q-badge"><text class="t-10 semi">步数 {{moves}}</text></view>
+          <text class="t-10 c-t">把 1~8 排好队，最好成绩 {{bestMoves || '—'}} 步</text>
+        </view>
+
+        <view class="bgrid" id="bgrid" catchtouchmove="onTileMove" bindtouchend="onTileEnd" bindtouchcancel="onTileEnd">
+          <view
+            class="btile {{item.n === 0 ? 'bblank' : ''}} {{drag && drag.n === item.n ? 'bdrag' : ''}} {{drag && drag.n === item.n && drag.anim ? 'banim' : ''}}"
+            wx:for="{{bview}}"
+            wx:key="n"
+            data-i="{{item.i}}"
+            data-n="{{item.n}}"
+            style="{{item.style}}{{drag && drag.n === item.n ? drag.style : ''}}"
+            bindtouchstart="onTileStart"
+          >
+            <text class="bnum" wx:if="{{item.n !== 0}}">{{item.n}}</text>
+          </view>
+        </view>
+
+        <view class="maze-tip">
+          <text class="t-10 {{blocksDone ? 'semi c-ok' : 'c-t'}}">{{blocksDone ? tip2 : '按住方块往空位拖，松手就滑过去'}}</text>
+        </view>
+
+        <view class="btools">
+          <view class="btool" hover-class="pressed" bindtap="newBlocks">
+            <view class="ico ico-refresh ico-26"></view>
+            <text class="t-10">重新打乱</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="note-row">
+        <view class="ico ico-bulb ico-30" style="color:#fbbf24"></view>
+        <text class="t-10 c-t">小窍门：先把 1 和 2 送回第一行左边的位置，再慢慢收拾后面。</text>
+      </view>
+    </block>
+
+    <!-- ================= 找不同（类别归类，幼儿园阶段） ================= -->
+    <block wx:if="{{game === 'odd'}}">
+      <view class="paper">
+        <view class="paper-glow"></view>
+        <view class="row between" style="z-index:2;width:100%">
+          <view class="q-badge"><text class="t-10 semi">找不同</text></view>
+          <text class="t-10 c-t">哪个和别的不是一类？</text>
+        </view>
+
+        <view class="ogrid">
+          <view
+            class="ocard {{oddDone && oddPick === index ? 'oc-right' : ''}} {{oddShake === index ? 'shake' : ''}}"
+            wx:for="{{oddOpts}}"
+            wx:key="e"
+            data-i="{{index}}"
+            bindtap="tapOdd"
+            hover-class="pressed"
+          >
+            <text class="oc-emoji">{{item.e}}</text>
+          </view>
+        </view>
+
+        <view class="maze-tip">
+          <text class="t-10 {{oddDone ? 'semi c-ok' : 'c-t'}}">{{oddTip}}</text>
+        </view>
+
+        <view class="btools">
+          <view class="btool" hover-class="pressed" bindtap="newOdd">
+            <view class="ico ico-refresh ico-26"></view>
+            <text class="t-10">换一题</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="note-row">
+        <view class="ico ico-bulb ico-30" style="color:#fbbf24"></view>
+        <text class="t-10 c-t">先说说每个是什么，再找一找哪三个是一家人。</text>
+      </view>
+    </block>
+
+    <!-- 今日战绩 -->
+    <view class="stat-row">
+      <view class="stat">
+        <text class="stat-num">{{stats.todayRight}}</text>
+        <text class="stat-lab">今日过关</text>
+      </view>
+      <view class="stat">
+        <text class="stat-num">{{stats.best}}</text>
+        <text class="stat-lab">最长连过</text>
+      </view>
+      <view class="stat">
+        <text class="stat-num">{{stats.allRight}}</text>
+        <text class="stat-lab">累计过关</text>
+      </view>
+    </view>
+  </view>
+</view>

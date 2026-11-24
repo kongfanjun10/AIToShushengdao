@@ -1,0 +1,630 @@
+/* 页面骨架：整页不滚动，只让中间的「朗读舞台」滚动 */
+.page {
+  height: 100vh;
+  overflow: hidden;
+}
+.shell {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 导航 */
+.hd {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: #f2f9ff;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.03);
+}
+.hd-inner {
+  height: 108rpx;
+  padding: 0 38rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.back-btn {
+  width: 84rpx;
+  height: 84rpx;
+  margin-left: -15rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hover-bg {
+  background: rgba(0, 0, 0, 0.05);
+}
+.avatar {
+  width: 61rpx;
+  height: 61rpx;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mini-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: 9999rpx;
+  padding: 4rpx 8rpx;
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.06);
+}
+
+/* ===== ① 吸顶追踪条：课文原件对齐 + 分句追踪 ===== */
+.track-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin: 10rpx 25rpx 0;
+  padding: 14rpx 16rpx;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 26rpx;
+  box-shadow: 0 3rpx 12rpx rgba(15, 23, 42, 0.05);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.track-bar.on {
+  border-color: rgba(3, 105, 161, 0.45);
+  box-shadow: 0 0 0 3rpx rgba(3, 105, 161, 0.16), 0 4rpx 16rpx rgba(3, 105, 161, 0.12);
+}
+.tb-thumb {
+  position: relative;
+  width: 88rpx;
+  height: 112rpx;
+  border-radius: 14rpx;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f1f5f9;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+.tb-img {
+  opacity: 0.92;
+}
+.tb-paper {
+  padding: 8rpx 6rpx;
+  gap: 6rpx;
+  opacity: 1;
+}
+.tb-paper .paper-line {
+  height: 5rpx;
+}
+.tb-band {
+  position: absolute;
+  left: 3rpx;
+  right: 3rpx;
+  border-radius: 4rpx;
+  background: rgba(3, 105, 161, 0.12);
+  transition: background 0.2s ease;
+}
+.tb-band-on {
+  background: rgba(3, 105, 161, 0.5);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.85);
+}
+.tb-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+.tb-title {
+  font-size: 23rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  max-width: 320rpx;
+}
+.tb-tag {
+  font-size: 18rpx;
+  line-height: 26rpx;
+  color: var(--primary);
+  background: #e0f2fe;
+  padding: 2rpx 9rpx;
+  border-radius: 9999rpx;
+  flex-shrink: 0;
+}
+.tb-segs {
+  display: flex;
+  gap: 6rpx;
+  width: 100%;
+}
+.tb-seg {
+  flex: 1;
+  height: 11rpx;
+  border-radius: 9999rpx;
+  background: #e2e8f0;
+}
+.tb-seg-on {
+  background: linear-gradient(90deg, #0369a1, #0ea5e9);
+  box-shadow: 0 0 12rpx rgba(3, 105, 161, 0.45);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.tb-sub {
+  font-size: 18rpx;
+  line-height: 26rpx;
+  color: var(--text-secondary);
+}
+.tb-state {
+  font-size: 18rpx;
+  line-height: 26rpx;
+  font-weight: 600;
+  color: #007650;
+  background: #ecfdf5;
+  padding: 1rpx 8rpx;
+  border-radius: 9999rpx;
+}
+.tb-state.on {
+  color: #0369a1;
+  background: #e0f2fe;
+}
+.tb-expand {
+  width: 62rpx;
+  height: 62rpx;
+  border-radius: 50%;
+  background: var(--surface-container-low);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ===== ② 朗读舞台（唯一滚动区） ===== */
+.stage {
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 12rpx 25rpx 0;
+}
+.stage .toast-pill {
+  margin-bottom: 12rpx;
+}
+
+/* 鼓励胶囊 */
+.toast-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 6rpx 13rpx;
+  border-radius: 9999rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.06);
+}
+.tiny-dot {
+  width: 6rpx;
+  height: 6rpx;
+  border-radius: 50%;
+  background: #fbbf24;
+}
+.pulse-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: var(--primary);
+}
+.listen-again {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 9999rpx;
+  background: var(--accent-purple-light);
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.05);
+}
+
+/* 当前句卡 */
+.sentence-card {
+  position: relative;
+  background: var(--surface-white);
+  border-radius: 31rpx;
+  padding: 30rpx;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 12rpx;
+}
+.amb-a {
+  position: absolute;
+  top: -46rpx;
+  right: -46rpx;
+  width: 215rpx;
+  height: 215rpx;
+  border-radius: 50%;
+  background: rgba(237, 233, 254, 0.4);
+}
+.amb-b {
+  position: absolute;
+  bottom: -38rpx;
+  left: -38rpx;
+  width: 184rpx;
+  height: 184rpx;
+  border-radius: 50%;
+  background: rgba(209, 250, 229, 0.5);
+}
+.core-tag {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 9999rpx;
+  background: var(--accent-purple-light);
+}
+
+/* 逐字注音：拼音压在字正上方，一字一列，可点字发音 */
+.reader-ruby {
+  width: 100%;
+  padding: 6rpx 0;
+  z-index: 2;
+}
+.reader-ruby .ruby {
+  min-width: 50rpx;
+}
+.reader-ruby .ruby-py {
+  font-size: 21rpx;
+  height: 30rpx;
+  line-height: 30rpx;
+}
+.reader-ruby .ruby-char {
+  font-size: 56rpx;
+  line-height: 82rpx;
+  letter-spacing: 2rpx;
+}
+.reader-ruby .ruby-punct .ruby-char {
+  font-size: 46rpx;
+  letter-spacing: 0;
+}
+/* 长句自动降字号：一屏内读完，卡片不会被撑成两屏 */
+.sentence-card.long .reader-ruby .ruby {
+  min-width: 44rpx;
+}
+.sentence-card.long .reader-ruby .ruby-char {
+  font-size: 46rpx;
+  line-height: 66rpx;
+}
+.sentence-card.long .reader-ruby .ruby-py {
+  font-size: 18rpx;
+  height: 26rpx;
+  line-height: 26rpx;
+}
+.sentence-card.long .reader-ruby .ruby-punct .ruby-char {
+  font-size: 40rpx;
+}
+.sentence-card.xlong .reader-ruby .ruby {
+  min-width: 38rpx;
+}
+.sentence-card.xlong .reader-ruby .ruby-char {
+  font-size: 40rpx;
+  line-height: 58rpx;
+}
+.sentence-card.xlong .reader-ruby .ruby-py {
+  font-size: 16rpx;
+  height: 22rpx;
+  line-height: 22rpx;
+}
+.sentence-card.xlong .reader-ruby .ruby-punct .ruby-char {
+  font-size: 34rpx;
+}
+.char-tap {
+  border-radius: 12rpx;
+}
+.char-tap:active {
+  background: rgba(3, 105, 161, 0.08);
+}
+
+/* 范读 / 回听：两条精简行 */
+.coach {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  margin-bottom: 12rpx;
+}
+.coach-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  padding: 14rpx 18rpx;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 26rpx;
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.04);
+}
+.coach-ico {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #0369a1, #0ea5e9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.coach-ico.kid {
+  background: rgba(78, 222, 163, 0.5);
+}
+.coach-btn {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--accent-purple-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== ③ 底部控制台（吸底常驻） ===== */
+.dock {
+  flex-shrink: 0;
+  margin: 10rpx 25rpx calc(14rpx + env(safe-area-inset-bottom));
+  padding: 14rpx 22rpx 16rpx;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid var(--card-border);
+  border-radius: 38rpx;
+  box-shadow: 0 -4rpx 24rpx rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+}
+.wave {
+  width: 100%;
+  height: 74rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  overflow: hidden;
+}
+.wave-bar {
+  border-radius: 9999rpx;
+}
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 9999rpx;
+  background: var(--surface-container-low);
+  box-shadow: 0 1rpx 4rpx rgba(15, 23, 42, 0.04);
+}
+.rec-dot {
+  position: relative;
+  width: 6rpx;
+  height: 6rpx;
+  border-radius: 50%;
+  background: #10b981;
+}
+.ping-ring2 {
+  position: absolute;
+  left: 0;right: 0;top: 0;bottom: 0;
+  border-radius: 50%;
+  background: #10b981;
+  animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.mic-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rpx;
+}
+.mic-glow {
+  position: absolute;
+  left: -8rpx;
+  right: -8rpx;
+  top: -8rpx;
+  bottom: -8rpx;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #0369a1, #f97316);
+  opacity: 0.25;
+}
+.mic-btn {
+  position: relative;
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #0369a1, #0369a1 55%, #0ea5e9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12rpx 30rpx rgba(3, 105, 161, 0.35);
+  transition: transform 0.15s ease;
+}
+.mic-active {
+  transform: scale(0.94);
+  box-shadow: 0 0 0 12rpx rgba(3, 105, 161, 0.12), 0 12rpx 30rpx rgba(3, 105, 161, 0.45);
+}
+.ctrl-grid {
+  width: 100%;
+  display: flex;
+  gap: 8rpx;
+  padding-top: 8rpx;
+  border-top: 1px solid #f1f5f9;
+  margin-top: 2rpx;
+}
+.ctrl {
+  flex: 1;
+  height: 70rpx;
+  border-radius: 9999rpx;
+  background: var(--surface-container-low);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+}
+.ctrl-next {
+  background: #eaddff;
+}
+.pressed {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
+
+/* ===== 课文原件大图（从追踪条展开） ===== */
+.track-modal {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 60;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 38rpx;
+}
+.tm-card {
+  width: 100%;
+  background: #fff;
+  border-radius: 34rpx;
+  padding: 26rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 24rpx 60rpx rgba(15, 23, 42, 0.3);
+}
+.tm-card .preview-canvas {
+  height: 470rpx;
+}
+.tm-close {
+  margin-top: 18rpx;
+  padding: 10rpx 46rpx;
+  border-radius: 9999rpx;
+  background: var(--accent-purple-light);
+}
+.preview-canvas {
+  position: relative;
+  width: 100%;
+  border-radius: 23rpx;
+  overflow: hidden;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.paper {
+  position: absolute;
+  left: 0;right: 0;top: 0;bottom: 0;
+  background: linear-gradient(150deg, #fdfcf7 0%, #f6f2e8 55%, #eee9dc 100%);
+  padding: 26rpx 30rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  opacity: 0.85;
+}
+.paper-line {
+  height: 7rpx;
+  border-radius: 4rpx;
+  background: rgba(120, 113, 100, 0.28);
+}
+/* 课文原件原图（拍照识别的第一张），铺满预览区 */
+.paper-img {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.9;
+}
+/* 分句追踪带：一行一句 */
+.band {
+  position: absolute;
+  left: 16rpx;
+  right: 16rpx;
+  border-radius: 12rpx;
+  background: rgba(255, 255, 255, 0.06);
+  border-bottom: 1rpx dashed rgba(120, 113, 100, 0.25);
+  transition: background 0.2s ease;
+}
+.band-on {
+  background: rgba(3, 105, 161, 0.12);
+}
+/* 追踪态：范读/按住朗读时整个预览区亮起，追踪框加重 */
+.preview-canvas.track-on {
+  box-shadow: inset 0 0 0 3rpx rgba(3, 105, 161, 0.35);
+}
+.preview-canvas.track-on .band-on {
+  background: rgba(3, 105, 161, 0.22);
+}
+.preview-canvas.track-on .bbox {
+  background: rgba(3, 105, 161, 0.22);
+  border-color: rgba(3, 105, 161, 0.85);
+  animation: bboxBreath 1.2s ease-in-out infinite;
+}
+@keyframes bboxBreath {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(3, 105, 161, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 10rpx rgba(3, 105, 161, 0.12);
+  }
+}
+.bbox {
+  position: absolute;
+  left: 31rpx;
+  right: 31rpx;
+  border-radius: 15rpx;
+  background: rgba(3, 105, 161, 0.15);
+  border: 3rpx solid rgba(3, 105, 161, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 23rpx;
+  transition: top 0.3s ease;
+}
+.bbox-ping {
+  position: relative;
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: var(--primary);
+}
+.ping-ring {
+  position: absolute;
+  left: 0;right: 0;top: 0;bottom: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.bbox-label {
+  font-size: 19rpx;
+  line-height: 27rpx;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 2rpx 6rpx;
+  border-radius: 6rpx;
+}
+
+/* 自定义头像：照片铺满圆形 */
+.avatar-photo-box {
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(3, 105, 161, 0.18);
+}
+.avatar-photo {
+  width: 61rpx;
+  height: 61rpx;
+  border-radius: 50%;
+  display: block;
+}

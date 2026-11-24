@@ -1,0 +1,409 @@
+<!-- ===================== 学伴宠物（点击换皮肤） ===================== -->
+<template name="petMascot">
+  <view class="pet-wrap {{state}}" catchtap="cyclePet">
+    <view class="pet pet-{{skin}}">
+      <view class="pet-ear pet-ear-l"></view>
+      <view class="pet-ear pet-ear-r"></view>
+      <view class="pet-crest"></view>
+      <view class="pet-bulge pet-bulge-l"><view class="pet-bulge-eye"></view></view>
+      <view class="pet-bulge pet-bulge-r"><view class="pet-bulge-eye"></view></view>
+      <view class="pet-body">
+        <view class="pet-eye pet-eye-l"></view>
+        <view class="pet-eye pet-eye-r"></view>
+        <view class="pet-blush pet-blush-l"></view>
+        <view class="pet-blush pet-blush-r"></view>
+        <view class="pet-beak"></view>
+        <view class="pet-nose"></view>
+        <view class="pet-mouth"></view>
+      </view>
+      <view class="pet-wing pet-wing-l"></view>
+      <view class="pet-wing pet-wing-r"></view>
+      <view class="pet-foot pet-foot-l"></view>
+      <view class="pet-foot pet-foot-r"></view>
+    </view>
+    <view class="pet-heart pet-heart-1">♥</view>
+    <view class="pet-heart pet-heart-2">♥</view>
+    <view class="pet-star">✦</view>
+  </view>
+</template>
+
+<!-- ===================== 横屏：左笔顺教程 + 右真实描写 ===================== -->
+<view class="ls" wx:if="{{landscape}}" style="height:{{ls.h}}px">
+  <!-- 顶栏（避开微信胶囊） -->
+  <view class="ls-hd" style="height:{{ls.head}}px;padding-right:{{ls.navRight}}px">
+    <view class="ls-hd-l">
+      <view class="ls-back" hover-class="hover-bg" bindtap="goBack">
+        <view class="ico ico-chevron-left ico-34"></view>
+      </view>
+      <text class="ls-char">{{char.c}}</text>
+      <view class="ls-meta">
+        <text class="ls-py">{{char.py}}</text>
+        <text class="ls-sub">{{levelName}} · 第 {{index + 1}}/{{total}} 字</text>
+      </view>
+      <view class="say-pill {{speaking ? 'say-on' : ''}}" hover-class="pressed" bindtap="speakChar">
+        <view class="ico ico-volume ico-26"></view>
+        <text class="t-10 semi">{{speaking ? '正在读…' : '读音'}}</text>
+      </view>
+    </view>
+    <view class="ls-hd-r">
+      <view class="ls-flag" wx:if="{{justDone}}">
+        <view class="ico ico-check-circle ico-22" style="color:#059669"></view>
+        <text class="t-10" style="color:#059669">已写过</text>
+      </view>
+      <view class="ls-chip">
+        <view class="ico ico-edit ico-22 c-primary"></view>
+        <text>今日 {{todayCount}} 字</text>
+      </view>
+      <view class="ls-chip" hover-class="pressed" bindtap="showPortraitTip">
+        <view class="ico ico-phone ico-22"></view>
+        <text>竖屏</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="ls-body" style="height:{{ls.bodyH}}px;gap:{{ls.gap}}px;padding:0 {{ls.pad}}px">
+    <!-- 左：笔画教程 -->
+    <view class="ls-card ls-left" style="width:{{ls.leftW}}px;padding:{{ls.cardPad}}px">
+      <view class="ls-card-hd">
+        <view class="ls-title">
+          <view class="ico ico-play ico-22 c-primary"></view>
+          <text class="t-12 semi">笔顺教程</text>
+          <text class="t-10 c-t">共 {{tut.total}} 笔</text>
+        </view>
+        <text class="t-10 c-primary semi" wx:if="{{tut.total}}">
+          {{tut.playing ? '演示中…' : '第 ' + (tut.index + 1) + ' 笔'}}
+        </text>
+      </view>
+
+      <view class="ls-left-row">
+        <view class="ls-tut-col" style="width:{{ls.tut}}px">
+          <view class="tian" style="width:{{ls.tut}}px;height:{{ls.tut}}px">
+            <view class="tian-v"></view>
+            <view class="tian-h"></view>
+            <canvas class="ink tut-canvas" id="tut" type="2d" disable-scroll="{{true}}"></canvas>
+          </view>
+
+          <view class="tut-bar">
+            <view class="tut-btn" hover-class="hover-bg" bindtap="tutReplay">
+              <view class="ico ico-refresh ico-26"></view>
+            </view>
+            <view class="tut-btn" hover-class="hover-bg" data-d="-1" bindtap="tutStep">
+              <view class="ico ico-chevron-left ico-26"></view>
+            </view>
+            <view class="tut-play {{tut.playing ? 'tut-play-on' : ''}}" hover-class="pressed" bindtap="toggleTut">
+              <view class="ico {{tut.playing ? 'ico-pause' : 'ico-play'}} ico-26"></view>
+              <text class="t-10 semi">{{tut.playing ? '暂停' : '看一遍'}}</text>
+            </view>
+            <view class="tut-btn" hover-class="hover-bg" data-d="1" bindtap="tutStep">
+              <view class="ico ico-chevron-right ico-26"></view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 字的信息：拼音、组词点读、提示 -->
+        <view class="ls-info">
+          <text class="ls-info-py">{{char.py}}</text>
+          <view class="ls-info-py-hint">
+            <text class="t-10 c-t">读作「{{char.c}}」</text>
+          </view>
+          <view class="ls-words">
+            <view
+              class="word-chip ls-word {{speakingWord === item ? 'word-on' : ''}}"
+              wx:for="{{char.words}}"
+              wx:key="*this"
+              data-word="{{item}}"
+              bindtap="speakWord"
+              hover-class="pressed"
+            >
+              <view class="ico ico-volume ico-22"></view>
+              <text class="t-13">{{item}}</text>
+            </view>
+          </view>
+          <view class="tut-dots-wrap" wx:if="{{!tutCompact && tut.total}}">
+            <view
+              class="tut-dot {{i < tut.index ? 'dot-done' : ''}} {{i === tut.index ? 'dot-on' : ''}}"
+              wx:for="{{tutDots}}"
+              wx:for-item="i"
+              wx:key="*this"
+            ></view>
+          </view>
+          <text class="ls-info-note">先看左边写一遍，再在右边田字格里跟着描</text>
+          <view class="ls-pet">
+            <template is="petMascot" data="{{skin: petSkin, state: petState}}" />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 右：真实描写 -->
+    <view class="ls-card ls-right" style="width:{{ls.rightW}}px;padding:{{ls.cardPad}}px">
+      <view class="swap-zone {{swap}}">
+      <view class="ls-right-row">
+        <view class="tian" style="width:{{ls.ink}}px;height:{{ls.ink}}px">
+          <view class="tian-v"></view>
+          <view class="tian-h"></view>
+          <text class="ghost ls-ghost {{ghostOn ? '' : 'ghost-off'}}" style="line-height:{{ls.ink}}px;font-size:{{ls.ink * 0.72}}px">{{char.c}}</text>
+          <canvas
+            class="ink"
+            id="ink"
+            type="2d"
+            disable-scroll="{{true}}"
+            bindtouchstart="onInkStart"
+            bindtouchmove="onInkMove"
+            bindtouchend="onInkEnd"
+            bindtouchcancel="onInkEnd"
+          ></canvas>
+          <view class="grid-tip" wx:if="{{!canUndo && !reviewing}}">
+            <text class="t-10 c-t">沿着灰字描一遍</text>
+          </view>
+          <view class="ls-review" wx:if="{{reviewing}}" catchtap="restartInk">
+            <view class="ico ico-edit ico-22"></view>
+            <text class="t-10 semi">上次写的 · 重描</text>
+          </view>
+        </view>
+
+        <view class="ls-tools">
+          <view class="ls-tool" hover-class="hover-bg" bindtap="cyclePen">
+            <view class="ico ico-edit ico-30"></view>
+            <text class="ls-tool-t">笔粗</text>
+          </view>
+          <view class="ls-tool {{canUndo ? '' : 'tool-off'}}" hover-class="hover-bg" bindtap="undo">
+            <view class="ico ico-refresh ico-30"></view>
+            <text class="ls-tool-t">撤销</text>
+          </view>
+          <view class="ls-tool" hover-class="hover-bg" bindtap="restartInk">
+            <view class="ico ico-trash ico-30"></view>
+            <text class="ls-tool-t">清空</text>
+          </view>
+          <view class="ls-tool {{ghostOn ? 'ls-tool-on' : ''}}" hover-class="hover-bg" bindtap="toggleGhost">
+            <view class="ico ico-book-open ico-30"></view>
+            <text class="ls-tool-t">底字</text>
+          </view>
+          <view class="ls-tool" hover-class="hover-bg" bindtap="prevChar">
+            <view class="ico ico-chevron-left ico-30"></view>
+            <text class="ls-tool-t">上一字</text>
+          </view>
+          <view class="ls-tool" hover-class="hover-bg" bindtap="nextChar">
+            <view class="ico ico-chevron-right ico-30"></view>
+            <text class="ls-tool-t">下一字</text>
+          </view>
+        </view>
+      </view>
+      </view>
+
+      <view class="ls-cta" hover-class="pressed" bindtap="markDone" style="height:{{ls.ctaH}}px">
+        <view class="ico ico-check-circle ico-27" style="color:#fff"></view>
+        <text class="t-14 semi" style="color:#fff">我写好啦，下一个</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- ===================== 竖屏：原来的单栏 ===================== -->
+<view class="page" wx:else>
+  <!-- 顶部导航 -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row hd-left" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <view class="col" style="gap:0;min-width:0">
+          <text class="t-18">文字描写</text>
+          <text class="t-10 c-t truncate">一笔一画，把字写端正</text>
+        </view>
+      </view>
+      <view class="today-chip">
+        <view class="ico ico-edit ico-27 c-primary"></view>
+        <text class="t-10 c-primary">今日 {{todayCount}} 字</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 学段切换 -->
+    <scroll-view class="lv-scroll" scroll-x enable-flex show-scrollbar="{{false}}">
+      <view class="lv-row">
+        <view
+          class="lv-chip {{item.key === levelKey ? 'lv-on' : ''}}"
+          wx:for="{{levels}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="pickLevel"
+          hover-class="pressed"
+        >
+          <text class="t-12 {{item.key === levelKey ? 'semi' : ''}}">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 练习卡 -->
+    <view class="paper">
+      <view class="paper-glow"></view>
+
+      <view class="swap-zone {{swap}}">
+      <view class="row between" style="z-index:2;width:100%">
+        <view class="col" style="gap:2rpx">
+          <view class="row" style="gap:10rpx">
+            <text class="py-big">{{char.py}}</text>
+            <view class="say-pill {{speaking ? 'say-on' : ''}}" hover-class="pressed" bindtap="speakChar">
+              <view class="ico ico-volume ico-26"></view>
+              <text class="t-10 semi">{{speaking ? '正在读…' : '读音'}}</text>
+            </view>
+          </view>
+          <text class="t-10 c-t">{{levelName}} · {{levelSub}}</text>
+        </view>
+        <view class="col" style="align-items:flex-end;gap:6rpx">
+          <view class="idx-pill"><text class="t-10 semi c-primary">{{index + 1}} / {{total}}</text></view>
+          <view class="pens">
+            <view
+              class="pen-dot {{penWidth === 16 ? 'pen-on' : ''}}"
+              data-w="16"
+              bindtap="setPen"
+            ><view class="pen-core" style="width:8rpx;height:8rpx"></view></view>
+            <view
+              class="pen-dot {{penWidth === 24 ? 'pen-on' : ''}}"
+              data-w="24"
+              bindtap="setPen"
+            ><view class="pen-core" style="width:14rpx;height:14rpx"></view></view>
+            <view
+              class="pen-dot {{penWidth === 32 ? 'pen-on' : ''}}"
+              data-w="32"
+              bindtap="setPen"
+            ><view class="pen-core" style="width:20rpx;height:20rpx"></view></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 横屏入口 -->
+      <view class="rot-tip" wx:if="{{tut.total}}" hover-class="pressed" bindtap="showRotateTip">
+        <view class="ico ico-swap ico-22 c-primary"></view>
+        <text class="t-10 c-primary flex1">把手机横过来 · 左边看笔顺，右边跟着写</text>
+        <view class="ico ico-chevron-right ico-22 c-primary"></view>
+      </view>
+
+      <!-- 田字格 -->
+      <view class="grid-row">
+        <view class="tian">
+          <view class="tian-v"></view>
+          <view class="tian-h"></view>
+          <text class="ghost {{ghostOn ? '' : 'ghost-off'}}">{{char.c}}</text>
+          <canvas
+            class="ink"
+            id="ink"
+            type="2d"
+            disable-scroll="{{true}}"
+            bindtouchstart="onInkStart"
+            bindtouchmove="onInkMove"
+            bindtouchend="onInkEnd"
+            bindtouchcancel="onInkEnd"
+          ></canvas>
+          <view class="grid-tip" wx:if="{{!canUndo && !reviewing}}">
+            <text class="t-10 c-t">沿着灰字描一遍</text>
+          </view>
+        </view>
+        <!-- 学伴宠物：站在田字格上沿 -->
+        <view class="pet-holder">
+          <template is="petMascot" data="{{skin: petSkin, state: petState}}" />
+        </view>
+      </view>
+
+      <!-- 回看旧笔迹时的提示条 -->
+      <view class="review-row" wx:if="{{reviewing}}">
+        <view class="review-tip">
+          <view class="ico ico-edit ico-22"></view>
+          <text class="t-10 semi">上次写的，已保存</text>
+          <view class="review-redo" hover-class="pressed" bindtap="restartInk">重新描写</view>
+        </view>
+      </view>
+
+      <!-- 组词（点一下听读音） -->
+      <view class="word-row">
+        <view
+          class="word-chip {{speakingWord === item ? 'word-on' : ''}}"
+          wx:for="{{char.words}}"
+          wx:key="*this"
+          data-word="{{item}}"
+          bindtap="speakWord"
+          hover-class="pressed"
+        >
+          <view class="ico ico-volume ico-22"></view>
+          <text class="t-13">{{item}}</text>
+        </view>
+        <view class="row" style="gap:2rpx" wx:if="{{justDone}}">
+          <view class="ico ico-check-circle ico-27" style="color:#005b3d"></view>
+          <text class="t-10" style="color:#005b3d">已写过</text>
+        </view>
+      </view>
+
+      <!-- 工具行 -->
+      <view class="tools">
+        <view class="tool {{canUndo ? '' : 'tool-off'}}" hover-class="hover-bg" bindtap="undo">
+          <view class="ico ico-refresh ico-34"></view>
+          <text class="t-10">撤销</text>
+        </view>
+        <view class="tool" hover-class="hover-bg" bindtap="restartInk">
+          <view class="ico ico-trash ico-34"></view>
+          <text class="t-10">清空</text>
+        </view>
+        <view class="tool" hover-class="hover-bg" bindtap="toggleGhost">
+          <view class="ico ico-book-open ico-34"></view>
+          <text class="t-10">底字{{ghostOn ? '开' : '关'}}</text>
+        </view>
+        <view class="tool" hover-class="hover-bg" bindtap="prevChar">
+          <view class="ico ico-chevron-left ico-34"></view>
+          <text class="t-10">上一个</text>
+        </view>
+        <view class="tool" hover-class="hover-bg" bindtap="nextChar">
+          <view class="ico ico-chevron-right ico-34"></view>
+          <text class="t-10">下一个</text>
+        </view>
+      </view>
+      </view>
+    </view>
+
+    <!-- 本册字库 -->
+    <view class="section">
+      <view class="sec-head">
+        <view class="row" style="gap:8rpx">
+          <text class="t-18 bold">本册字库</text>
+          <text class="t-10 c-t">{{levelSub}}</text>
+        </view>
+        <text class="t-10 semi c-primary">已完成 {{doneCount}} / {{total}}</text>
+      </view>
+
+      <view class="bar">
+        <view class="bar-fill" style="width:{{percent}}%"></view>
+      </view>
+
+      <view class="lib">
+        <view
+          class="lib-cell {{item.c === char.c ? 'lib-on' : ''}}"
+          wx:for="{{chars}}"
+          wx:key="id"
+          data-index="{{index}}"
+          bindtap="pickChar"
+          hover-class="pressed"
+        >
+          <text class="lib-char">{{item.c}}</text>
+          <view class="lib-check" wx:if="{{item.done}}">
+            <view class="ico ico-check ico-22" style="color:#fff"></view>
+          </view>
+        </view>
+      </view>
+
+      <view class="note-row">
+        <view class="ico ico-bulb ico-30" style="color:#fbbf24"></view>
+        <text class="t-10 c-t">{{levelNote}}；写完自动打勾，点打勾的字可以回看笔迹</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部主按钮 -->
+  <view class="cta-bar">
+    <view class="btn-main" hover-class="pressed" bindtap="markDone">
+      <view class="ico ico-check-circle ico-34" style="color:#fff"></view>
+      <text class="t-14 semi" style="color:#fff">我写好啦，下一个</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,9 @@
+{
+  "name": "stats",
+  "version": "1.0.0",
+  "description": "使用统计：启动上报、手机号同步、管理员后台查询",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

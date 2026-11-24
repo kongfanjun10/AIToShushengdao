@@ -1,0 +1,9 @@
+{
+  "name": "phone",
+  "version": "1.0.0",
+  "description": "书声岛 · 手机号绑定云函数（getPhoneNumber code 换取手机号）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

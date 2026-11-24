@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>poster mock</title>
+<style>
+  body{margin:0;background:#e5e7eb;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  .poster{position:relative;width:600px;height:960px;background:linear-gradient(180deg,#0369a1,#22d3ee);overflow:hidden;margin:0 0 20px 0}
+  .card{position:absolute;left:28px;top:28px;width:544px;height:904px;background:#fff;border-radius:24px}
+  .dash{position:absolute;left:46px;top:46px;width:508px;height:868px;border:2px dashed #e9defc;border-radius:16px;box-sizing:border-box}
+  .c{position:absolute;width:100%;text-align:center}
+  .star{position:absolute;left:282px;top:80px;font-size:36px;color:#fbbf24}
+  .t1{top:170px;font-size:44px;font-weight:700;color:#0369a1}
+  .t2{top:217px;font-size:17px;color:#94a3b8;letter-spacing:2px}
+  .t3{top:279px;font-size:32px;font-weight:700;color:#0f172a}
+  .t4{top:325px;font-size:23px;color:#475569;width:430px;left:85px;line-height:40px}
+  .t5{top:447px;font-size:40px;font-weight:700;color:#0369a1}
+  .t6{top:500px;font-size:19px;color:#64748b}
+  .seal{position:absolute;left:254px;top:550px;width:92px;height:92px;border:3px solid #e11d48;border-radius:50%;color:#e11d48;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:serif}
+  .seal b{font-size:24px}.seal span{font-size:15px}
+  .div{position:absolute;left:88px;top:672px;width:424px;border-top:1.5px solid #eef2f7}
+  .qrbox{position:absolute;left:372px;top:684px;width:172px;height:172px;background:#f8fbff;border:1.5px solid #e2eefb;border-radius:18px;box-sizing:border-box}
+  .qr{position:absolute;left:384px;top:696px;width:148px;height:148px}
+  .l1{left:88px;top:723px;font-size:22px;font-weight:700;color:#0f172a;text-align:left;width:260px}
+  .l2{left:88px;top:758px;font-size:20px;color:#0369a1;text-align:left;width:260px}
+  .l3{left:88px;top:795px;font-size:14px;color:#94a3b8;text-align:left;width:260px}
+  .fb{position:absolute;left:88px;top:684px;width:424px;height:172px;background:#f7fbff;border:1.5px dashed #d7e8f7;border-radius:18px;box-sizing:border-box}
+  .fb1{top:732px;font-size:26px;font-weight:700;color:#0369a1}
+  .fb2{top:775px;font-size:16px;color:#94a3b8}
+  .ft1{top:872px;font-size:17px;color:#94a3b8}
+  .ft2{top:902px;font-size:17px;color:#94a3b8}
+</style>
+</head>
+<body>
+<!-- 变体 1：有小程序码 -->
+<div class="poster">
+  <div class="card"></div><div class="dash"></div>
+  <div class="star">★</div>
+  <div class="c t1">朗读奖状</div>
+  <div class="c t2">书 声 岛 · 每 天 读 一 点</div>
+  <div class="c t3">沐沐 小朋友</div>
+  <div class="c t4">完成了《小学语文三年级上册 · 第1课〈童话三则〉》的朗读挑战，声音响亮、状态满满，特发此状，以资鼓励！</div>
+  <div class="c t5">23 / 24 句</div>
+  <div class="c t6">用时 14:20 · 生词 5 个 · 完成度 96%</div>
+  <div class="seal"><b>书声岛</b><span>认 证</span></div>
+  <div class="div"></div>
+  <svg class="qr" viewBox="0 0 21 21" shape-rendering="crispEdges">
+    <rect width="21" height="21" fill="#fff"/>
+    <g fill="#0f172a">
+      <path d="M0 0h7v7H0zM14 0h7v7h-7zM0 14h7v7H0z"/>
+      <path d="M2 2h3v3H2zM16 2h3v3h-3zM2 16h3v3H2z" fill="#fff"/>
+      <path d="M9 0h1v2H9zM12 1h2v1h-2zM9 3h2v1H9zM13 3h1v2h-1zM9 6h1v2H9zM11 6h2v2h-2zM0 9h2v1H0zM3 9h2v2H3zM6 9h1v1H6zM8 8h1v3H8zM10 9h2v1h-2zM13 9h1v2h-1zM15 8h2v2h-2zM18 9h3v1h-3zM0 12h1v2H0zM2 13h2v1H2zM5 12h2v2H5zM9 12h1v2H9zM11 13h2v1h-2zM14 12h2v1h-2zM17 12h1v2h-1zM19 13h2v1h-2zM9 15h2v2H9zM12 16h2v2h-2zM15 15h1v2h-1zM17 16h2v1h-2zM19 15h2v3h-2zM9 18h1v3H9zM11 19h3v1h-3zM15 19h2v2h-2z"/>
+    </g>
+  </svg>
+  <div class="c l1">微信扫一扫</div>
+  <div class="c l2">打开「书声岛」</div>
+  <div class="c l3">和沐沐一起每天读一点</div>
+  <div class="c ft1">NO.20261105-123 · 2026年11月05日</div>
+  <div class="c ft2">保持朗读，下一段更精彩 ✨</div>
+</div>
+
+<!-- 变体 2：无码降级 -->
+<div class="poster">
+  <div class="card"></div><div class="dash"></div>
+  <div class="star">★</div>
+  <div class="c t1">朗读奖状</div>
+  <div class="c t2">书 声 岛 · 每 天 读 一 点</div>
+  <div class="c t3">沐沐 小朋友</div>
+  <div class="c t4">完成了《小学语文三年级上册 · 第1课〈童话三则〉》的朗读挑战，声音响亮、状态满满，特发此状，以资鼓励！</div>
+  <div class="c t5">23 / 24 句</div>
+  <div class="c t6">用时 14:20 · 生词 5 个 · 完成度 96%</div>
+  <div class="seal"><b>书声岛</b><span>认 证</span></div>
+  <div class="div"></div>
+  <div class="fb"></div>
+  <div class="c fb1">微信搜索「书声岛」</div>
+  <div class="c fb2">和小伙伴一起，每天读一点</div>
+  <div class="c ft1">NO.20261105-123 · 2026年11月05日</div>
+  <div class="c ft2">保持朗读，下一段更精彩 ✨</div>
+</div>
+</body>
+</html>

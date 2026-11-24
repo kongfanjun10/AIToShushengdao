@@ -1,0 +1,298 @@
+.page {
+  min-height: 100vh;
+  padding-bottom: 60rpx;
+}
+
+/* ---------- 导航 ---------- */
+.hd {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: #f2f9ff;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.03);
+}
+.hd-inner {
+  height: 108rpx;
+  padding: 0 38rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hd-left {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.back-btn {
+  width: 84rpx;
+  height: 84rpx;
+  margin-left: -15rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hover-bg {
+  background: rgba(0, 0, 0, 0.05);
+}
+.admin-chip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 5rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 9999rpx;
+  background: #ffffff;
+  border: 1px solid rgba(3, 105, 161, 0.16);
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.05);
+}
+.pressed {
+  transform: scale(0.97);
+  opacity: 0.95;
+}
+
+/* ---------- 主体 ---------- */
+.main {
+  padding: 0 38rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+/* 门禁 */
+.gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14rpx;
+  padding: 60rpx 40rpx 40rpx;
+  border-radius: 36rpx;
+  background: rgba(255, 255, 255, 0.94);
+}
+.gate-ico {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 36rpx;
+  background: linear-gradient(135deg, #0369a1, #0ea5e9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12rpx 28rpx rgba(14, 165, 233, 0.3);
+}
+.gate-input {
+  width: 100%;
+  height: 88rpx;
+  border-radius: 24rpx;
+  background: var(--surface-container-low);
+  padding: 0 28rpx;
+  font-size: 28rpx;
+  margin-top: 8rpx;
+}
+.gate-error {
+  font-size: 22rpx;
+  color: #c2410c;
+}
+.btn-main {
+  height: 88rpx;
+  border-radius: 26rpx;
+  background: linear-gradient(135deg, #0369a1, #0ea5e9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12rpx 28rpx rgba(14, 165, 233, 0.3);
+  margin-top: 8rpx;
+}
+.ph {
+  color: var(--text-tertiary);
+}
+
+/* 失败重试 */
+.err-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  padding: 22rpx;
+  border-radius: 22rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+}
+
+/* ---------- 四格概览 ---------- */
+.card {
+  border-radius: 32rpx;
+  background: rgba(255, 255, 255, 0.94);
+}
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  padding: 10rpx 26rpx 8rpx;
+}
+.g-cell {
+  width: calc(50% - 8rpx);
+  border-radius: 24rpx;
+  padding: 20rpx 24rpx;
+  background: var(--surface-container-low);
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+.g-green {
+  background: #ecfdf5;
+}
+.g-amber {
+  background: #fff7ed;
+}
+.g-violet {
+  background: #eef2ff;
+}
+.g-ico {
+  font-size: 26rpx;
+  line-height: 30rpx;
+}
+.g-k {
+  font-size: 20rpx;
+  line-height: 26rpx;
+  color: var(--text-secondary);
+}
+.g-v {
+  font-size: 52rpx;
+  line-height: 60rpx;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+}
+.g-unit {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0;
+}
+.g-d {
+  font-size: 18rpx;
+  line-height: 24rpx;
+}
+
+/* 近 7 日柱状图 */
+.trend {
+  padding: 10rpx 26rpx 24rpx;
+}
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 14rpx;
+  height: 150rpx;
+}
+.barcol {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4rpx;
+}
+.bar-v {
+  font-size: 17rpx;
+  line-height: 22rpx;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.bar {
+  width: 100%;
+  border-radius: 10rpx 10rpx 4rpx 4rpx;
+  background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+}
+.bar-today {
+  background: linear-gradient(180deg, #34d399, #10b981);
+}
+.bar-x {
+  font-size: 17rpx;
+  line-height: 22rpx;
+  color: var(--text-tertiary);
+}
+.bar-x-on {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* ---------- 用户表格 ---------- */
+.thead {
+  display: flex;
+  padding: 12rpx 0;
+  border-bottom: 1px solid rgba(204, 195, 216, 0.6);
+}
+.th {
+  font-size: 18rpx;
+  color: var(--text-tertiary);
+  font-weight: 600;
+}
+.th-r {
+  text-align: right;
+}
+.urow {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 0;
+  border-bottom: 1px solid rgba(204, 195, 216, 0.35);
+}
+.urow:last-child {
+  border-bottom: none;
+}
+.ava {
+  flex-shrink: 0;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 19rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  box-shadow: 0 3rpx 10rpx rgba(15, 23, 42, 0.14);
+}
+/* 昵称与年龄模式：同一套字阶，只靠字重和颜色分级（原来一个 23rpx、一个退回 16px，看着像两种字体） */
+.u-name {
+  max-width: 132rpx;
+  font-size: 25rpx;
+  line-height: 34rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.u-mode {
+  font-size: 18rpx;
+  line-height: 26rpx;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+.u-unit {
+  font-size: 18rpx;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+.phone {
+  font-size: 22rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.phone-none {
+  color: var(--badge-locked-mask);
+}
+.hot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #10b981;
+  flex-shrink: 0;
+}
+
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10rpx;
+  padding: 6rpx 10rpx 0;
+}

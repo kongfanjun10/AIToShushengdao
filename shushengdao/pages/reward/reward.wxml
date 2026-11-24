@@ -1,0 +1,151 @@
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <text class="t-18 truncate" style="max-width:269rpx">完成激励</text>
+      </view>
+      <view class="row" style="gap:15rpx">
+        <view class="avatar {{avatar ? 'avatar-photo-box' : ''}}"><image wx:if="{{avatar}}" class="avatar-photo" src="{{avatar}}" mode="aspectFill" /><view wx:else class="ico ico-person ico-34"></view></view>
+        <view class="mini-ctrl">
+          <view class="row center" style="width:54rpx;height:54rpx"><view class="ico ico-more ico-34"></view></view>
+          <view class="hairline" style="height:27rpx;width:1px"></view>
+          <view class="row center" style="width:54rpx;height:54rpx"><view class="ico ico-close ico-34"></view></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 装饰纸屑 -->
+    <view class="confetti">
+      <view class="c1"></view>
+      <view class="c2"></view>
+      <view class="c3"></view>
+      <view class="c4"></view>
+      <view class="c5"></view>
+    </view>
+
+    <!-- 庆祝头部 -->
+    <view class="head-block">
+      <view class="stars">
+        <view class="ico ico-star star-61"></view>
+        <view class="ico ico-star star-69"></view>
+        <view class="ico ico-star star-81 star-big"></view>
+        <view class="ico ico-star star-69"></view>
+        <view class="ico ico-star star-61"></view>
+      </view>
+      <text class="t-24" style="margin-bottom:4rpx">太厉害了！课文朗读达成</text>
+      <view class="title-pill">
+        <view class="ico ico-trophy ico-31 c-primary"></view>
+        <text class="t-12 semi c-primary">恭喜{{nickname}}获得『朗读小能手』称号！</text>
+      </view>
+    </view>
+
+    <!-- 荣誉证书（与保存的海报同款蓝金证书风） -->
+    <view class="cert-wrap">
+      <view class="cert">
+        <view class="cert-frame">
+          <view class="cert-ribbon"><text class="cert-ribbon-txt">READING AWARD</text></view>
+          <text class="cert-title">荣 誉 证 书</text>
+          <text class="cert-sub">书声岛 · 朗读荣誉证书</text>
+          <view class="cert-name-row">
+            <text class="cert-name">{{nickname}}</text>
+          </view>
+          <text class="cert-award">授予「{{badgeName}}」称号</text>
+          <text class="cert-body">在《{{lessonName}}》朗读练习中读音准确、声音响亮，特发此状，以资鼓励！</text>
+          <view class="cert-meta">
+            <text class="cert-meta-i">完成 {{summary.percent}}%</text>
+            <text class="cert-meta-i">用时 {{summary.duration}}</text>
+            <text class="cert-meta-i">生词 {{summary.vocab}} 个</text>
+          </view>
+          <view class="cert-medal">
+            <view class="cert-medal-in">
+              <view class="ico ico-star ico-34" style="color:#fdf6dd"></view>
+              <text class="cert-medal-t">书声岛</text>
+            </view>
+          </view>
+          <view class="cert-foot">
+            <text class="cert-date">{{dateText}}</text>
+            <text class="cert-no">{{certNo}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 朗读小结 -->
+    <view class="summary">
+      <view class="row between" style="margin-bottom:12rpx">
+        <view class="row" style="gap:6rpx">
+          <view class="ico ico-chart ico-38 c-primary"></view>
+          <text class="t-18">本次朗读小结</text>
+        </view>
+        <view class="row" style="gap:2rpx">
+          <view class="ico ico-check-circle ico-27" style="color:#005b3d"></view>
+          <text class="t-10 semi" style="color:#005b3d">达标完成</text>
+        </view>
+      </view>
+      <view class="metrics">
+        <view class="metric">
+          <text class="t-10 c-s" style="margin-bottom:4rpx">完成句数</text>
+          <view class="row" style="align-items:baseline;gap:2rpx">
+            <text class="t-20 bold">{{summary.read}}</text>
+            <text class="t-10 c-t">/{{summary.total}}</text>
+          </view>
+          <text class="t-10" style="color:#005b3d;margin-top:2rpx;font-weight:500">{{summary.percent}}% 完成</text>
+        </view>
+        <view class="metric">
+          <text class="t-10 c-s" style="margin-bottom:4rpx">跟读用时</text>
+          <text class="t-20 bold">{{summary.duration}}</text>
+          <text class="t-10 c-s" style="margin-top:2rpx;font-weight:500">语速适中</text>
+        </view>
+        <view class="metric" bindtap="goVocab">
+          <text class="t-10 c-s" style="margin-bottom:4rpx">收录生词</text>
+          <view class="row" style="align-items:baseline;gap:2rpx">
+            <text class="t-20 bold c-primary">{{summary.vocab}}</text>
+            <text class="t-10 c-s">个</text>
+          </view>
+          <text class="t-10 c-primary" style="margin-top:2rpx;font-weight:500">已入生词本 ›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 勋章解锁 -->
+    <view class="unlock" bindtap="goArchive">
+      <view class="unlock-glow"></view>
+      <view class="row" style="gap:13rpx;z-index:2">
+        <view class="unlock-ico"><view class="ico ico-mic ico-54" style="color:#fbbf24"></view></view>
+        <view class="col flex1">
+          <view class="row" style="gap:6rpx;margin-bottom:2rpx">
+            <text class="t-12 bold" style="color:#fff">🎉 解锁新勋章！</text>
+            <text class="unlock-tag">【{{badgeName}}】</text>
+          </view>
+          <text class="t-13 truncate" style="color:#ede0ff">{{badgeDesc}}</text>
+        </view>
+        <view class="unlock-arrow"><view class="ico ico-chevron-right ico-34" style="color:#fff"></view></view>
+      </view>
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="actions">
+      <view class="btn-primary" hover-class="pressed" bindtap="savePoster">
+        <view class="ico ico-photo ico-38" style="color:#fff"></view>
+        <text class="t-14 semi" style="color:#fff">保存奖状海报到相册</text>
+      </view>
+      <view class="btn-secondary" hover-class="pressed" bindtap="review">
+        <view class="ico ico-headphones ico-38 c-primary"></view>
+        <text class="t-14 semi c-primary">回听本次朗读 / 复习生词 (3)</text>
+      </view>
+      <view class="btn-link" hover-class="pressed" bindtap="goHome">
+        <text class="t-12 c-s">返回首页</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 离屏画布：生成奖状海报 -->
+<canvas type="2d" id="posterCanvas" class="poster-canvas"></canvas>
+<include src="../../pages/common/veil.wxml" />

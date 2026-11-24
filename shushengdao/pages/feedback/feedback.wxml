@@ -1,0 +1,142 @@
+<view class="page">
+  <!-- 顶部导航（右侧留出微信胶囊位置） -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row hd-left" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <view class="col" style="gap:0;min-width:0">
+          <text class="t-18">欢迎留言</text>
+          <text class="t-10 c-t truncate">你的建议，我们都会认真读</text>
+        </view>
+      </view>
+      <view class="admin-chip" wx:if="{{isAdmin}}">
+        <view class="ico ico-shield ico-22" style="color:#005b3d"></view>
+        <text class="t-10 semi" style="color:#005b3d">管理{{pending ? ' · ' + pending + ' 条待回' : ''}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 欢迎语 -->
+    <view class="welcome shadow-soft">
+      <view class="wel-ico"><view class="ico ico-smile ico-44" style="color:#fff"></view></view>
+      <view class="col flex1" style="gap:4rpx;min-width:0">
+        <text class="t-14 bold">感谢您使用书声岛！</text>
+        <text class="t-10 c-s">如果这里有您期待的新功能，或发现可以做得更好的地方，非常欢迎留下宝贵建议。每一条留言我们都会认真阅读、尽快回复，小朋友的学习体验因您而更精彩～</text>
+      </view>
+    </view>
+
+    <!-- 写留言 -->
+    <view class="compose shadow-card">
+      <view class="cat-row">
+        <view
+          class="cat-chip {{catKey === item.key ? 'cat-on' : ''}}"
+          wx:for="{{cats}}"
+          wx:for-item="item"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="pickCat"
+          hover-class="pressed"
+        >
+          <text class="cat-ico">{{item.icon}}</text>
+          <text class="cat-name">{{item.name}}</text>
+        </view>
+      </view>
+
+      <view class="ta-wrap">
+        <textarea
+          class="ta"
+          value="{{draft}}"
+          maxlength="{{maxLen}}"
+          placeholder="想说什么都可以：期待的功能、用着别扭的地方、发现的 bug……"
+          placeholder-class="ph"
+          bindinput="onInput"
+          disabled="{{sending}}"
+        ></textarea>
+        <text class="ta-count">{{draftCount}}/{{maxLen}}</text>
+      </view>
+
+      <input
+        class="contact-input"
+        value="{{contact}}"
+        maxlength="60"
+        placeholder="联系方式（微信号 / 手机号，选填）"
+        placeholder-class="ph"
+        bindinput="onContactInput"
+      />
+
+      <view class="btn-main {{sending ? 'btn-busy' : ''}}" hover-class="pressed" bindtap="submit">
+        <text class="t-14 semi" style="color:#fff">{{sending ? '正在发送…' : '提交留言'}}</text>
+      </view>
+      <text class="t-9 c-t" style="text-align:center">留言与回复会公开显示在留言板，请勿填写隐私信息</text>
+    </view>
+
+    <!-- 云开发未开通 -->
+    <view class="off-card" wx:if="{{!cloudOk}}">
+      <view class="ico ico-cloud-off ico-40" style="color:#94a3b8"></view>
+      <text class="t-12 semi" style="margin-top:8rpx">留言板还没有连上云端</text>
+      <text class="t-10 c-s" style="text-align:center;margin-top:4rpx">需要开通微信云开发并部署 cloudfunctions/feedback，详见 README「留言板」一节</text>
+    </view>
+
+    <!-- 留言列表 -->
+    <view class="section">
+      <view class="sec-head">
+        <text class="t-18 bold">大家的留言</text>
+        <text class="t-10 c-t">{{loading ? '加载中…' : '共 ' + total + ' 条'}}</text>
+      </view>
+
+      <!-- 加载失败 -->
+      <view class="err-card" wx:if="{{loadErr}}" bindtap="retry" hover-class="pressed">
+        <view class="ico ico-refresh ico-30 c-pc"></view>
+        <text class="t-10 c-s">{{loadErr}}，点这里重试</text>
+      </view>
+
+      <!-- 空状态 -->
+      <view class="empty" wx:if="{{!loading && !loadErr && !list.length}}">
+        <text class="empty-emoji">💬</text>
+        <text class="t-12 c-s">还没有留言，写下第一条吧</text>
+      </view>
+
+      <!-- 留言卡 -->
+      <view class="msg shadow-soft" wx:for="{{list}}" wx:for-item="item" wx:key="id">
+        <view class="row between" style="width:100%">
+          <view class="row" style="gap:10rpx;min-width:0">
+            <view class="cat-tag" style="background:{{item.catBg}}">
+              <text class="t-9 semi" style="color:{{item.catColor}}">{{item.catName}}</text>
+            </view>
+            <text class="t-9 c-t" wx:if="{{item.mine}}">我的留言</text>
+          </view>
+          <text class="t-9 c-t">{{item.timeText}}</text>
+        </view>
+        <text class="msg-content">{{item.content}}</text>
+        <text class="msg-contact" wx:if="{{item.contact}}">联系方式：{{item.contact}}</text>
+
+        <!-- 岛主回复 -->
+        <view class="reply" wx:if="{{item.reply}}">
+          <view class="row" style="gap:8rpx">
+            <view class="ico ico-smile ico-26" style="color:#0369a1"></view>
+            <text class="t-10 semi c-primary">岛主回复 · {{item.replyTimeText}}</text>
+          </view>
+          <text class="reply-text">{{item.reply}}</text>
+        </view>
+
+        <!-- 管理员操作 -->
+        <view class="admin-row" wx:if="{{isAdmin && adminUnlocked}}">
+          <view class="admin-btn" hover-class="pressed" data-id="{{item.id}}" bindtap="tapReply">
+            <text class="t-10 semi c-primary">{{replyingId === item.id ? '发布中…' : (item.reply ? '修改回复' : '回复')}}</text>
+          </view>
+          <view class="admin-btn admin-del" hover-class="pressed" data-id="{{item.id}}" bindtap="tapRemove">
+            <text class="t-10 semi" style="color:#c2410c">{{deletingId === item.id ? '删除中…' : '删除'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="note">
+      <view class="ico ico-bulb ico-26" style="color:#fbbf24"></view>
+      <text class="t-10 c-t">被采纳的建议会在这里回复说明，也会出现在下个版本里。感谢每一位帮书声岛变好的朋友！</text>
+    </view>
+  </view>
+</view>

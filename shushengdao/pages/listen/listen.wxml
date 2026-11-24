@@ -1,0 +1,199 @@
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <view class="col" style="gap:0">
+          <text class="t-18">先听一听</text>
+          <text class="t-10 c-t truncate">磨耳朵 · 听熟了再开口</text>
+        </view>
+      </view>
+      <view class="row" style="gap:8rpx">
+        <view class="rate-chip {{voiceOk ? '' : 'chip-dim'}}" hover-class="pressed" bindtap="onVoiceTap">
+          <view class="ico ico-person ico-27 {{voiceOk ? 'c-primary' : 'c-t'}}"></view>
+          <text class="t-10 {{voiceOk ? 'c-primary' : 'c-t'}}">{{voiceName}}</text>
+        </view>
+        <view class="rate-chip" hover-class="pressed" bindtap="changeRate">
+          <view class="ico ico-volume ico-27 c-primary"></view>
+          <text class="t-10 c-primary">{{rateLabel}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 两阶段指示：听 → 读 -->
+    <view class="stage">
+      <view class="stage-step on">
+        <text class="stage-n">1</text>
+        <text class="t-11 semi c-primary">听一听</text>
+      </view>
+      <view class="stage-line">
+        <view class="stage-fill" style="width:{{percent}}%"></view>
+      </view>
+      <view class="stage-step {{allHeard ? 'on' : ''}}">
+        <view class="stage-n">
+          <view class="ico ico-check ico-22" wx:if="{{allHeard}}"></view>
+          <text class="t-10" wx:else>2</text>
+        </view>
+        <text class="t-11 {{allHeard ? 'semi c-primary' : 'c-t'}}">我来读</text>
+      </view>
+    </view>
+
+    <!-- 当前句大字卡 -->
+    <view class="say-card {{playing ? 'say-on' : ''}}">
+      <view class="amb-a"></view>
+      <view class="amb-b"></view>
+
+      <view class="row between" style="width:100%;z-index:2">
+        <view class="core-tag">
+          <view class="ico ico-headphones ico-26"></view>
+          <text class="t-10 c-primary">正在听第 {{index + 1}} 句</text>
+        </view>
+        <view class="row" style="gap:4rpx" bindtap="togglePinyin">
+          <view class="ico ico-spellcheck ico-27 c-t"></view>
+          <text class="t-10 c-t">拼音{{pinyinOn ? '开启' : '关闭'}}</text>
+        </view>
+      </view>
+
+      <view class="say-ruby">
+        <view class="ruby-line {{pinyinOn ? '' : 'no-py'}}" wx:for="{{charLines}}" wx:for-item="line" wx:key="index">
+          <view
+            class="ruby {{item.punct ? 'ruby-punct' : ''}} {{hl === item.gi ? 'ruby-hl' : ''}}"
+            wx:for="{{line}}"
+            wx:for-item="cell"
+            wx:key="gi"
+          >
+            <text class="ruby-py">{{cell.py}}</text>
+            <text class="ruby-char">{{cell.c}}{{cell.tail}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 语音波形：播放时起伏 -->
+      <view class="wave {{playing ? 'wave-on' : ''}}">
+        <view class="bar" wx:for="{{wave}}" wx:key="index" style="height:{{item.h}}rpx;animation-delay:{{item.d}}s"></view>
+      </view>
+    </view>
+
+    <!-- 播放大按钮：光晕与波纹都在与按钮同心的圆形舞台内 -->
+    <view class="play-zone">
+      <view class="play-stage {{playing ? 'stage-on' : ''}}">
+        <view class="play-halo"></view>
+        <view class="play-ring r1"></view>
+        <view class="play-ring r2"></view>
+        <view class="play-btn" hover-class="pressed" bindtap="togglePlay">
+          <view class="ico {{playing ? 'ico-pause' : 'ico-play'}} ico-62" style="color:#fff"></view>
+        </view>
+      </view>
+      <text class="t-12 semi">{{playing ? '正在读给你听…' : '点一下，听我给你读'}}</text>
+
+      <view class="row" style="gap:8rpx">
+        <view class="chip {{auto ? 'chip-on' : ''}}" hover-class="pressed" bindtap="toggleAuto">
+          <text class="t-10 {{auto ? 'c-primary' : 'c-s'}}">自动连播{{auto ? ' · 开' : ' · 关'}}</text>
+        </view>
+        <view class="chip {{loop ? 'chip-on' : ''}}" hover-class="pressed" bindtap="toggleLoop">
+          <text class="t-10 {{loop ? 'c-primary' : 'c-s'}}">单句循环{{loop ? ' · 开' : ' · 关'}}</text>
+        </view>
+      </view>
+
+      <view class="row" style="gap:10rpx;margin-top:4rpx">
+        <view class="mini-btn" hover-class="pressed" bindtap="prevSentence">
+          <view class="ico ico-arrow-left ico-26 c-s"></view>
+          <text class="t-10 c-s">上一句</text>
+        </view>
+        <view class="mini-btn" hover-class="pressed" bindtap="nextSentence">
+          <text class="t-10 c-s">下一句</text>
+          <view class="ico ico-arrow-right ico-26 c-s"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 语音不可用提示 -->
+    <view class="warn" wx:if="{{!ttsOk}}">
+      <view class="ico ico-bulb ico-30" style="color:#f59e0b"></view>
+      <view class="col flex1" style="gap:0">
+        <text class="t-11 semi" style="color:#92400e">范读语音还没打开</text>
+        <text class="t-10" style="color:#b45309">可以先自己读，或检查插件 / 云函数配置</text>
+      </view>
+      <view class="warn-btn" hover-class="pressed" bindtap="retryTts">
+        <text class="t-10 c-primary">重试</text>
+      </view>
+    </view>
+
+    <!-- 句子清单 -->
+    <view class="list-card">
+      <view class="row between" style="padding:0 4rpx">
+        <text class="t-12 semi">全部 {{sentenceTotal}} 句</text>
+        <text class="t-10 c-t">已听 {{heardCount}} 句 · 点句子直接听</text>
+      </view>
+      <scroll-view scroll-y class="list-scroll" enable-flex>
+        <view
+          class="s-item {{item.on ? 's-on' : ''}}"
+          wx:for="{{list}}"
+          wx:key="index"
+          data-index="{{index}}"
+          hover-class="s-hover"
+          bindtap="onItemTap"
+        >
+          <view class="s-idx {{item.heard ? 's-heard' : ''}}">
+            <view class="ico ico-check ico-22" wx:if="{{item.heard}}"></view>
+            <text class="t-10" wx:else>{{index + 1}}</text>
+          </view>
+          <text class="s-text">{{item.text}}</text>
+          <view class="ico ico-volume ico-27" style="color:{{item.on ? '#0369a1' : '#cbd5e1'}}"></view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 底部行动区 -->
+    <view class="cta-bar">
+      <view class="btn-main" hover-class="pressed" bindtap="goRead">
+        <view class="ico ico-mic ico-34" style="color:#fff"></view>
+        <text class="t-14 semi" style="color:#fff">我听熟啦，我来读</text>
+        <view class="ico ico-arrow-right ico-30" style="color:#fff"></view>
+      </view>
+      <text class="t-10 c-t" style="text-align:center">
+        {{unHeard > 0 ? '还有 ' + unHeard + ' 句没听，也可以直接读，读的时候随时能回来' : '全部听完啦，开口读一遍记得更牢'}}
+      </text>
+    </view>
+  </view>
+
+  <!-- 音色选择半屏面板 -->
+  <view class="v-mask {{voiceSheet ? 'v-show' : ''}}" bindtap="closeVoice" catchtouchmove="noop">
+    <view class="v-sheet {{voiceSheet ? 'v-up' : ''}}" catchtap="noop">
+      <view class="v-grab"></view>
+      <view class="row between" style="padding:0 4rpx">
+        <text class="t-16 bold">选择音色</text>
+        <view class="v-done" hover-class="pressed" bindtap="closeVoice">
+          <text class="t-11 semi c-primary">完成</text>
+        </view>
+      </view>
+      <text class="t-10 c-t">点一下就用这一句试听，选中即保存为默认</text>
+
+      <view
+        class="v-item {{item.on ? 'v-on' : ''}}"
+        wx:for="{{voices}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        hover-class="v-hover"
+        bindtap="pickVoice"
+      >
+        <view class="v-ico">
+          <view class="ico ico-{{item.id === 'male' ? 'users' : 'person'}} ico-36" style="color:{{item.on ? '#0369a1' : '#94a3b8'}}"></view>
+        </view>
+        <view class="col flex1" style="gap:0">
+          <text class="t-13 semi">{{item.name}}</text>
+          <text class="t-10 c-s" style="margin-top:2rpx">{{item.desc}}</text>
+        </view>
+        <view class="ico ico-check-circle ico-32" wx:if="{{item.on}}" style="color:#0369a1"></view>
+      </view>
+
+      <text class="t-10 c-t" style="text-align:center">音色由云函数语音通道提供，可在家长中心改默认</text>
+    </view>
+  </view>
+</view>
+<include src="../../pages/common/veil.wxml" />

@@ -1,0 +1,377 @@
+.page {
+  min-height: 100vh;
+  padding-bottom: 60rpx;
+}
+
+/* ---------- 导航 ---------- */
+.hd {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: #f2f9ff;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.03);
+}
+.hd-inner {
+  height: 108rpx;
+  padding: 0 38rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hd-left {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.hd-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.back-btn {
+  width: 84rpx;
+  height: 84rpx;
+  margin-left: -15rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hover-bg {
+  background: rgba(0, 0, 0, 0.05);
+}
+.today-chip {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 9999rpx;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--card-border);
+  color: var(--primary);
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.06);
+}
+.pressed {
+  transform: scale(0.985);
+  opacity: 0.95;
+}
+
+/* ---------- 主体 ---------- */
+.main {
+  padding: 0 38rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+/* 难度 */
+.lv-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+.lv-row {
+  display: flex;
+  align-items: stretch;
+  gap: 12rpx;
+  padding: 2rpx 0;
+}
+.lv-chip {
+  flex-shrink: 0;
+  padding: 12rpx 22rpx;
+  border-radius: 22rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.04);
+}
+.lv-name {
+  font-size: 24rpx;
+  line-height: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.lv-sub {
+  font-size: 18rpx;
+  line-height: 24rpx;
+  color: var(--text-tertiary);
+}
+.lv-on {
+  background: linear-gradient(135deg, #00687a, #0891b2);
+  border-color: transparent;
+  box-shadow: 0 10rpx 24rpx rgba(8, 145, 178, 0.28);
+}
+.lv-on .lv-name,
+.lv-on .lv-sub {
+  color: #fff;
+}
+.lv-desc {
+  font-size: 20rpx;
+  line-height: 28rpx;
+  color: var(--text-tertiary);
+  padding: 0 4rpx;
+}
+
+/* ---------- 棋盘卡 ---------- */
+.paper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 22rpx 24rpx 18rpx;
+  border-radius: 36rpx;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 12rpx 40rpx rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+.paper-glow {
+  position: absolute;
+  left: 50%;
+  top: -180rpx;
+  transform: translateX(-50%);
+  width: 560rpx;
+  height: 460rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(206, 246, 255, 0.85), rgba(125, 211, 252, 0.3) 58%, transparent 74%);
+  pointer-events: none;
+}
+.q-badge {
+  padding: 5rpx 16rpx;
+  border-radius: 9999rpx;
+  background: rgba(8, 145, 178, 0.12);
+  color: #00687a;
+  z-index: 2;
+}
+.note-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding-top: 8rpx;
+  z-index: 2;
+}
+
+/* ---------- 连线棋盘 ---------- */
+.board {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8rpx 0 4rpx;
+}
+.ln {
+  position: absolute;
+  height: 5px;
+  border-radius: 9999rpx;
+  background: linear-gradient(90deg, #0891b2, #22d3ee);
+  transform-origin: 0 50%;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 0;
+}
+/* 手指正在拖的线：半透明虚线 + 末端小圆点，松手前不判定 */
+.ln-live {
+  height: 4px;
+  background: repeating-linear-gradient(90deg, #0891b2 0, #0891b2 10px, rgba(8, 145, 178, 0.15) 10px, rgba(8, 145, 178, 0.15) 18px);
+  opacity: 0.9;
+}
+.ln-live::after {
+  content: "";
+  position: absolute;
+  right: -9px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  border-radius: 50%;
+  background: rgba(8, 145, 178, 0.28);
+  border: 2px solid #0891b2;
+}
+/* 拖拽起点的小圆点（暗示可以「从这里拉出去」） */
+.ln-handle {
+  position: absolute;
+  right: -9rpx;
+  top: 50%;
+  width: 16rpx;
+  height: 16rpx;
+  margin-top: -8rpx;
+  border-radius: 50%;
+  background: #fff;
+  border: 4rpx solid #0891b2;
+  box-shadow: 0 2rpx 6rpx rgba(8, 145, 178, 0.3);
+}
+.rc-handle {
+  position: absolute;
+  left: -9rpx;
+  top: 50%;
+  width: 16rpx;
+  height: 16rpx;
+  margin-top: -8rpx;
+  border-radius: 50%;
+  background: #fff;
+  border: 4rpx solid #0891b2;
+  box-shadow: 0 2rpx 6rpx rgba(8, 145, 178, 0.3);
+}
+.col-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  z-index: 2;
+}
+.col-right {
+  align-items: flex-end;
+}
+
+/* 点阵卡 → 小动物数量卡（高度由 JS 按难度行数统一给定，左右两列等高） */
+.lc-item {
+  position: relative;
+  width: 300rpx;
+  box-sizing: border-box;
+  padding: 12rpx 16rpx;
+  border-radius: 24rpx;
+  background: #fff;
+  border: 2rpx solid rgba(148, 163, 184, 0.28);
+  box-shadow: 0 4rpx 14rpx rgba(15, 23, 42, 0.05);
+  transition: transform 0.15s ease, border-color 0.15s ease, opacity 0.2s ease;
+}
+.lc-sel {
+  border-color: #0891b2;
+  box-shadow: 0 0 0 6rpx rgba(8, 145, 178, 0.14), 0 6rpx 18rpx rgba(8, 145, 178, 0.2);
+  transform: scale(1.02);
+}
+/* 拖拽中：抬起感 + 高亮 */
+.lc-act {
+  border-color: #0891b2;
+  box-shadow: 0 0 0 8rpx rgba(8, 145, 178, 0.16), 0 10rpx 24rpx rgba(8, 145, 178, 0.24);
+  transform: scale(1.03);
+}
+.lc-done {
+  opacity: 0.5;
+  border-color: rgba(16, 185, 129, 0.6);
+}
+/* 小动物网格：每行 5 只，空位占住格子保持队形 */
+.face-grid {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8rpx;
+}
+.f-row {
+  display: flex;
+  gap: 6rpx;
+}
+.f-cell {
+  width: 44rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.f-emoji {
+  font-size: 38rpx;
+  line-height: 48rpx;
+  filter: drop-shadow(0 2rpx 3rpx rgba(15, 23, 42, 0.18));
+}
+.lc-check {
+  position: absolute;
+  right: -8rpx;
+  top: -8rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 10rpx rgba(16, 185, 129, 0.4);
+}
+
+/* 数字卡（高度与左列统一，由 JS inline style 给定） */
+.rc-item {
+  position: relative;
+  min-width: 128rpx;
+  box-sizing: border-box;
+  padding: 0 22rpx;
+  border-radius: 24rpx;
+  background: #fff;
+  border: 2rpx solid rgba(148, 163, 184, 0.28);
+  box-shadow: 0 4rpx 14rpx rgba(15, 23, 42, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, border-color 0.15s ease, opacity 0.2s ease;
+}
+.rc-num {
+  font-family: "DIN Alternate", "SF Pro Rounded", "Helvetica Neue", Arial, sans-serif;
+  font-size: 56rpx;
+  line-height: 1;
+  font-weight: 800;
+  color: #0f172a;
+  font-variant-numeric: tabular-nums;
+}
+.rc-sel {
+  border-color: #0891b2;
+  box-shadow: 0 0 0 6rpx rgba(8, 145, 178, 0.14), 0 6rpx 18rpx rgba(8, 145, 178, 0.2);
+  transform: scale(1.04);
+}
+.rc-act {
+  border-color: #0891b2;
+  box-shadow: 0 0 0 8rpx rgba(8, 145, 178, 0.16), 0 10rpx 24rpx rgba(8, 145, 178, 0.24);
+  transform: scale(1.05);
+}
+.rc-done {
+  opacity: 0.5;
+  border-color: rgba(16, 185, 129, 0.6);
+}
+.rc-done .rc-num {
+  color: #047857;
+}
+
+/* 抖动 */
+.shake {
+  animation: shakeX 0.4s ease;
+  border-color: rgba(249, 115, 22, 0.7) !important;
+}
+@keyframes shakeX {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10rpx); }
+  40% { transform: translateX(10rpx); }
+  60% { transform: translateX(-6rpx); }
+  80% { transform: translateX(6rpx); }
+}
+
+/* ---------- 统计 ---------- */
+.stat-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 10rpx;
+  border-radius: 26rpx;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4rpx 16rpx rgba(15, 23, 42, 0.04);
+}
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rpx;
+}
+.stat-num {
+  font-size: 36rpx;
+  line-height: 42rpx;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: #00687a;
+}
+.stat-lab {
+  font-size: 19rpx;
+  line-height: 26rpx;
+  color: var(--text-tertiary);
+}

@@ -1,0 +1,660 @@
+<import src="../../templates/tabbar.wxml" />
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack" wx:if="{{showBack}}">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <text class="t-18 truncate" style="max-width:240rpx">家长中心</text>
+      </view>
+      <view class="safe-pill">
+        <view class="ico ico-shield ico-28" style="color:#005b3d"></view>
+        <text class="t-10 semi" style="color:#005b3d">家长专属</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- ============ 门禁 ============ -->
+    <block wx:if="{{!verified}}">
+      <view class="gate shadow-card">
+        <view class="gate-ico"><view class="ico ico-lock ico-54" style="color:#fff"></view></view>
+        <text class="t-20 bold">家长验证</text>
+        <text class="t-12 c-s" style="text-align:center;max-width:430rpx">这里包含学习报告与管控设置，请家长完成一道小题后进入</text>
+        <view class="gate-expr">{{gateExpr}} = ?</view>
+        <input
+          class="gate-input"
+          type="number"
+          value="{{gateAnswer}}"
+          placeholder="输入答案"
+          placeholder-class="ph"
+          bindinput="onGateInput"
+          confirm-type="done"
+          bindconfirm="submitGate"
+        />
+        <view class="gate-error" wx:if="{{gateError}}">{{gateError}}</view>
+        <view class="btn-main" style="width:100%" hover-class="pressed" bindtap="submitGate">
+          <text class="t-14 semi" style="color:#fff">验证并进入</text>
+        </view>
+        <text class="t-10 c-t">验证结果仅本次有效，退出后需重新验证</text>
+      </view>
+    </block>
+
+    <!-- ============ 家长中心内容 ============ -->
+    <block wx:else>
+      <view class="notice">
+        <view class="ico ico-shield ico-30" style="color:#00687a"></view>
+        <text class="t-10" style="color:#00687a;flex:1">孩子端不会看到这一页，报告与设置仅家长可见</text>
+      </view>
+
+      <!-- 首次进入引导：设置昵称 + 手机号（保存/绑定后或点「暂不」不再提示） -->
+      <view class="pc-guide shadow-card" wx:if="{{profileGuide}}">
+        <view class="col flex1" style="gap:6rpx;min-width:0">
+          <view class="row" style="gap:10rpx">
+            <text class="t-14 bold" style="color:#7c2d12">👋 欢迎来到书声岛</text>
+          </view>
+          <text class="t-11" style="color:#9a3412;line-height:1.5">先给孩子取个昵称、绑定手机号——学习记录跟着孩子走，换设备也能找回。</text>
+        </view>
+        <view class="col" style="align-items:flex-end;gap:8rpx">
+          <view class="pc-guide-btn" hover-class="pressed" bindtap="openNick">去设置</view>
+          <text class="t-10" style="color:#c2410c" bindtap="skipGuide">暂不</text>
+        </view>
+      </view>
+
+      <!-- 孩子资料（微信「我的」风格）：头像昵称行 + 手机号行 -->
+      <view class="profile-card shadow-card {{focusProfile ? 'pf-focus' : ''}}">
+        <view class="pc-row" hover-class="hover-bg" bindtap="openNick">
+          <view class="pf-ava-wrap" hover-class="pressed" catchtap="onAvatarTap">
+            <image wx:if="{{avatar}}" class="pf-ava" src="{{avatar}}" mode="aspectFill" />
+            <view wx:else class="pf-ava pf-ava-empty">
+              <view class="ico ico-person ico-62" style="color:#fff"></view>
+            </view>
+            <view class="pf-cam">
+              <view class="ico ico-camera ico-22" style="color:#fff"></view>
+            </view>
+          </view>
+          <view class="col flex1" style="gap:6rpx;min-width:0">
+            <text class="pf-name truncate">{{user.nickname || '未设置昵称'}}</text>
+            <text class="t-11 c-s truncate">{{avatar ? '点头像换一张照片' : '点头像可拍照或从相册选一张'}} · 点这里改昵称</text>
+          </view>
+          <view class="ico ico-chevron-right ico-28 c-t"></view>
+        </view>
+
+        <view class="hairline" style="margin:0 22rpx"></view>
+
+        <view class="pc-row pc-row-phone">
+          <view class="row-ico" style="background:#ecfdf5;flex-shrink:0">
+            <view class="ico ico-phone ico-32" style="color:#005b3d"></view>
+          </view>
+          <view class="col flex1" style="gap:4rpx;min-width:0">
+            <text class="t-13 bold">手机号</text>
+            <text class="t-11 c-s truncate">{{phoneBound ? phoneMasked + (phoneSource === 'wechat' ? ' · 微信手机号' : ' · 手动填写') : '未绑定 · 绑定后换设备可凭号码恢复记录'}}</text>
+          </view>
+          <button
+            class="bind-btn"
+            style="flex-shrink:0"
+            open-type="getPhoneNumber"
+            bindgetphonenumber="onGetPhone"
+            disabled="{{phoneBusy}}"
+          >
+            <text class="t-10 semi c-primary">{{phoneBusy ? '获取中' : (phoneBound ? '更换' : '去绑定')}}</text>
+          </button>
+        </view>
+        <!-- 云备份状态行（绑定后显示）：最近备份时间 + 恢复口令 + 立即备份 -->
+        <view class="pc-subrow" wx:if="{{phoneBound}}">
+          <text class="t-10 c-t flex1 truncate">☁ {{backupText}} · 恢复口令 {{phonePin}}</text>
+          <text class="pc-link" bindtap="saveBackupNow">{{backupBusy ? '备份中…' : '立即备份'}}</text>
+        </view>
+        <!-- 次要操作：细链接行，不与主行挤在一排 -->
+        <view class="pc-subrow" style="padding-top:0">
+          <text class="t-10 c-t flex1 truncate">学习记录随号码云备份，换设备输入号码 + 口令即可恢复</text>
+          <view class="row" style="gap:18rpx;flex-shrink:0">
+            <text class="pc-link" bindtap="inputPhone">其他号码</text>
+            <text class="pc-link" bindtap="unbindPhone">解绑</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 学习周报 -->
+      <view class="report-card shadow-card">
+        <view class="row between">
+          <view class="col">
+            <text class="t-18 bold" style="color:#fff">近 7 天学习报告</text>
+            <text class="t-10" style="color:#d8c8ff">{{user.nickname || '小朋友'}} · {{rangeLabel}}</text>
+          </view>
+          <view class="report-badge">
+            <view class="ico ico-chart ico-28" style="color:#fff"></view>
+            <text class="t-10 semi" style="color:#fff">周报</text>
+          </view>
+        </view>
+
+        <view class="chart">
+          <view class="chart-col" wx:for="{{week}}" wx:key="date">
+            <view class="chart-bar-wrap">
+              <view class="chart-bar {{item.active ? '' : 'chart-bar-idle'}}" style="height:{{item.h}}%"></view>
+            </view>
+            <text class="chart-x">{{item.label}}</text>
+          </view>
+        </view>
+
+        <view class="report-metrics">
+          <view class="rm">
+            <text class="rm-v">{{report.sentences}}</text>
+            <text class="rm-k">累计朗读（句）</text>
+          </view>
+          <view class="rm-div"></view>
+          <view class="rm">
+            <text class="rm-v {{report.durationText.length > 5 ? 'rm-v-sm' : ''}}">{{report.durationText}}</text>
+            <text class="rm-k">累计时长</text>
+          </view>
+          <view class="rm-div"></view>
+          <view class="rm">
+            <text class="rm-v">{{report.streak}}</text>
+            <text class="rm-k">连续打卡（天）</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 本周概览列表 -->
+      <view class="section">
+        <view class="sec-head">
+          <text class="t-18 bold">每日完成情况</text>
+          <text class="t-10 c-t">目标：每天 {{user.dailyGoal}} 组</text>
+        </view>
+        <view class="week-list">
+          <view class="week-row" wx:for="{{weekList}}" wx:key="date">
+            <view class="week-date">
+              <text class="week-date-v {{item.today ? 'week-date-today' : ''}}">{{item.md}}</text>
+            </view>
+            <view class="week-bar">
+              <view class="week-fill" style="width:{{item.h}}%"></view>
+            </view>
+            <text class="t-10 c-s" style="width:200rpx;text-align:right">{{item.sentences}} 句 · {{item.durationText}}</text>
+            <view class="ico ico-check-circle ico-26" style="color:#005b3d" wx:if="{{item.active}}"></view>
+            <view class="ico ico-close-circle ico-26" style="color:#d8dbe4" wx:else></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 书单进度 -->
+      <view class="section" wx:if="{{groups.length}}">
+        <view class="sec-head">
+          <text class="t-18 bold">孩子的书单</text>
+          <text class="t-10 c-t">共 {{groups.length}} 组</text>
+        </view>
+        <view class="group-list">
+          <view class="group-card" wx:for="{{groups}}" wx:key="id" hover-class="pressed" data-id="{{item.id}}" bindtap="openGroup">
+            <view class="row" style="gap:10rpx;flex:1;min-width:0">
+              <view class="group-ico"><view class="ico ico-book-open ico-40 c-pc"></view></view>
+              <view class="col flex1">
+                <text class="t-14 bold truncate">{{item.title}}</text>
+                <text class="t-10 c-s truncate" style="margin-top:2rpx">{{item.lessonTitle}}</text>
+                <view class="group-bar">
+                  <view class="group-fill" style="width:{{item.percent}}%"></view>
+                </view>
+              </view>
+            </view>
+            <view class="col" style="align-items:flex-end">
+              <text class="t-14 bold c-primary">{{item.percent}}%</text>
+              <text class="t-10 c-t">{{item.read}}/{{item.total}} 句</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 设置 -->
+      <view class="section">
+        <view class="sec-head">
+          <text class="t-18 bold">伴读设置</text>
+          <text class="t-10 c-t">改动立即生效</text>
+        </view>
+        <view class="setting-card">
+          <view class="set-row">
+            <view class="col flex1">
+              <text class="t-13 bold">年龄模式</text>
+              <text class="t-10 c-s" style="margin-top:2rpx">幼儿园模式不评分，只鼓励</text>
+            </view>
+            <view class="seg">
+              <view class="seg-item {{user.ageMode === 'primary' ? 'seg-on' : ''}}" data-mode="primary" bindtap="setAgeMode">
+                <text class="t-11 semi">小学</text>
+              </view>
+              <view class="seg-item {{user.ageMode === 'kid' ? 'seg-on' : ''}}" data-mode="kid" bindtap="setAgeMode">
+                <text class="t-11 semi">幼儿园</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="hairline" style="margin:0 20rpx"></view>
+
+          <view class="set-row">
+            <view class="col flex1">
+              <text class="t-13 bold">拼音显示</text>
+              <text class="t-10 c-s" style="margin-top:2rpx">低年级建议开启</text>
+            </view>
+            <switch checked="{{user.pinyinOn}}" color="#0369a1" bindchange="togglePinyin" />
+          </view>
+
+          <view class="hairline" style="margin:0 20rpx"></view>
+
+          <view class="set-row">
+            <view class="col flex1">
+              <text class="t-13 bold">范读语速</text>
+              <text class="t-10 c-s" style="margin-top:2rpx">当前 {{rateLabel}}</text>
+            </view>
+            <view class="seg">
+              <view class="seg-item {{user.speechRate === 0.8 ? 'seg-on' : ''}}" data-rate="0.8" bindtap="setRate">
+                <text class="t-11 semi">慢</text>
+              </view>
+              <view class="seg-item {{user.speechRate === 1 ? 'seg-on' : ''}}" data-rate="1" bindtap="setRate">
+                <text class="t-11 semi">正常</text>
+              </view>
+              <view class="seg-item {{user.speechRate === 1.2 ? 'seg-on' : ''}}" data-rate="1.2" bindtap="setRate">
+                <text class="t-11 semi">快</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="hairline" style="margin:0 20rpx"></view>
+
+          <view class="set-row">
+            <view class="col flex1">
+              <text class="t-13 bold">范读音色</text>
+              <text class="t-10 c-s" style="margin-top:2rpx">当前 {{voiceName}}{{voiceOk ? ' · 孩子在听读页也可自己换' : ' · 需云函数语音通道'}}</text>
+            </view>
+            <view class="seg">
+              <view class="seg-item {{user.ttsVoice !== 'male' ? 'seg-on' : ''}}" data-voice="female" bindtap="setVoice">
+                <text class="t-11 semi">女声</text>
+              </view>
+              <view class="seg-item {{user.ttsVoice === 'male' ? 'seg-on' : ''}}" data-voice="male" bindtap="setVoice">
+                <text class="t-11 semi">男声</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="hairline" style="margin:0 20rpx"></view>
+
+          <view class="set-row">
+            <view class="col flex1">
+              <text class="t-13 bold">每日时长上限</text>
+              <text class="t-10 c-s" style="margin-top:2rpx">到点提醒休息，不强制退出</text>
+            </view>
+            <view class="seg">
+              <view class="seg-item {{user.dailyLimit === 10 ? 'seg-on' : ''}}" data-limit="10" bindtap="setLimit">
+                <text class="t-11 semi">10 分</text>
+              </view>
+              <view class="seg-item {{user.dailyLimit === 20 ? 'seg-on' : ''}}" data-limit="20" bindtap="setLimit">
+                <text class="t-11 semi">20 分</text>
+              </view>
+              <view class="seg-item {{user.dailyLimit === 30 ? 'seg-on' : ''}}" data-limit="30" bindtap="setLimit">
+                <text class="t-11 semi">30 分</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="hairline" style="margin:0 20rpx"></view>
+
+          <view class="set-row">
+            <view class="col flex1">
+              <text class="t-13 bold">夜览模式</text>
+              <text class="t-10 c-s" style="margin-top:2rpx">夜间把屏幕调暗护眼 · 主要页面生效</text>
+            </view>
+            <switch checked="{{user.nightMode}}" color="#0369a1" bindchange="setNight" />
+          </view>
+
+          <view class="hairline" style="margin:0 20rpx"></view>
+
+          <view class="set-row">
+            <view class="col flex1">
+              <text class="t-13 bold">每日目标</text>
+              <text class="t-10 c-s" style="margin-top:2rpx">每天完成几组朗读任务</text>
+            </view>
+            <view class="seg">
+              <view class="seg-item {{user.dailyGoal === 1 ? 'seg-on' : ''}}" data-goal="1" bindtap="setGoal">
+                <text class="t-11 semi">1 组</text>
+              </view>
+              <view class="seg-item {{user.dailyGoal === 2 ? 'seg-on' : ''}}" data-goal="2" bindtap="setGoal">
+                <text class="t-11 semi">2 组</text>
+              </view>
+              <view class="seg-item {{user.dailyGoal === 3 ? 'seg-on' : ''}}" data-goal="3" bindtap="setGoal">
+                <text class="t-11 semi">3 组</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 账号 -->
+      <view class="section">
+        <view class="sec-head">
+          <text class="t-18 bold">账号与数据</text>
+        </view>
+        <view class="setting-card">
+          <view class="set-row" hover-class="hover-bg" bindtap="openFeedback" wx:if="{{isAdmin}}">
+            <view class="row" style="gap:10rpx;flex:1">
+              <view class="row-ico" style="background:#e0f2fe">
+                <view class="ico ico-bell ico-32" style="color:#0369a1"></view>
+              </view>
+              <view class="col flex1">
+                <text class="t-13 bold">留言管理</text>
+                <text class="t-10 c-s" style="margin-top:2rpx">{{pendingFeedback ? pendingFeedback + ' 条留言等你回复' : '查看用户留言与建议'}}</text>
+              </view>
+            </view>
+            <view class="fb-badge" wx:if="{{pendingFeedback}}">
+              <text class="t-9 semi" style="color:#fff">{{pendingFeedback}}</text>
+            </view>
+            <view class="ico ico-chevron-right ico-28 c-t"></view>
+          </view>
+
+          <view class="hairline" style="margin:0 20rpx" wx:if="{{isAdmin}}"></view>
+
+          <view class="set-row" hover-class="hover-bg" bindtap="openAdmin" wx:if="{{isAdmin}}">
+            <view class="row" style="gap:10rpx;flex:1">
+              <view class="row-ico" style="background:#eef2ff">
+                <view class="ico ico-chart ico-32" style="color:#4f46e5"></view>
+              </view>
+              <view class="col flex1">
+                <text class="t-13 bold">数据后台</text>
+                <text class="t-10 c-s" style="margin-top:2rpx">使用次数与用户统计，仅你可见</text>
+              </view>
+            </view>
+            <view class="ico ico-chevron-right ico-28 c-t"></view>
+          </view>
+
+          <view class="hairline" style="margin:0 20rpx"></view>
+
+          <view class="set-row" hover-class="hover-bg" bindtap="exportReport">
+            <view class="row" style="gap:10rpx;flex:1">
+              <view class="row-ico" style="background:var(--accent-purple-light)">
+                <view class="ico ico-download ico-32 c-primary"></view>
+              </view>
+              <view class="col flex1">
+                <text class="t-13 bold">导出学习报告</text>
+                <text class="t-10 c-s" style="margin-top:2rpx">生成图片，一键分享给微信好友</text>
+              </view>
+            </view>
+            <view class="ico ico-chevron-right ico-28 c-t"></view>
+          </view>
+
+          <view class="hairline" style="margin:0 20rpx"></view>
+
+          <view class="set-row" hover-class="hover-bg" bindtap="undoRestore" wx:if="{{restoreAvailable}}">
+            <view class="row" style="gap:10rpx;flex:1">
+              <view class="row-ico" style="background:#ecfdf5">
+                <view class="ico ico-refresh ico-32" style="color:#005b3d"></view>
+              </view>
+              <view class="col flex1">
+                <text class="t-13 bold">恢复数据</text>
+                <text class="t-10 c-s" style="margin-top:2rpx">{{restoreDay}}清理过 · 可恢复到清理前（7 天内有效）</text>
+              </view>
+            </view>
+            <view class="ico ico-chevron-right ico-28 c-t"></view>
+          </view>
+
+          <view class="hairline" style="margin:0 20rpx"></view>
+
+          <view class="set-row" hover-class="hover-bg" bindtap="openClear">
+            <view class="row" style="gap:10rpx;flex:1">
+              <view class="row-ico" style="background:#fff7ed">
+                <view class="ico ico-trash ico-32" style="color:#f97316"></view>
+              </view>
+              <view class="col flex1">
+                <text class="t-13 bold">清理本地数据</text>
+                <text class="t-10 c-s" style="margin-top:2rpx">按程度选择清理范围 · 7 天内可恢复</text>
+              </view>
+            </view>
+            <view class="ico ico-chevron-right ico-28 c-t"></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 隐藏入口：长按版本号进入数据后台（仅小程序创建人知道，普通用户无感知） -->
+      <view class="about" bindlongpress="onSecretAdmin">
+        <text class="t-10 c-t">书声岛 v1.0 · 本地存储，数据只保存在这台设备</text>
+        <text class="t-10 c-t">朗读录音不上传服务器，仅本机留存供回听</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 昵称编辑半屏 -->
+  <view class="nick-mask" wx:if="{{nickEditing}}" bindtap="closeNick">
+    <view class="nick-sheet" catchtap="noop">
+      <view class="nick-head">
+        <text class="t-18 bold">给孩子改个昵称</text>
+        <view class="nick-close" hover-class="hover-bg" bindtap="closeNick">
+          <view class="ico ico-close ico-30 c-s"></view>
+        </view>
+      </view>
+      <text class="t-11 c-s">1~{{nickMax}} 个字，中文、字母、数字都可以，用小名更好记</text>
+      <view class="nick-field {{nickError ? 'nick-field-err' : ''}}">
+        <input
+          class="nick-input"
+          value="{{nickDraft}}"
+          maxlength="16"
+          placeholder="例如 孔老师 / 朵朵 / 小宇"
+          placeholder-class="ph"
+          focus="{{nickEditing}}"
+          confirm-type="done"
+          bindinput="onNickInput"
+          bindconfirm="saveNick"
+        />
+        <text class="nick-count {{nickCount > nickMax ? 'nick-count-err' : ''}}">{{nickCount}}/{{nickMax}}</text>
+      </view>
+      <text class="nick-err" wx:if="{{nickError}}">{{nickError}}</text>
+      <view class="nick-actions">
+        <view class="nick-btn nick-btn-ghost" hover-class="pressed" bindtap="closeNick">
+          <text class="t-13 semi c-s">取消</text>
+        </view>
+        <view class="nick-btn nick-btn-primary" hover-class="pressed" bindtap="saveNick">
+          <text class="t-13 semi" style="color:#fff">保存昵称</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 安全重置半屏：第一步选范围 / 第二步清单确认 + 长按执行 -->
+  <view class="nick-mask" wx:if="{{clearOpen}}" bindtap="closeClear">
+    <view class="nick-sheet clear-sheet" catchtap="noop">
+      <!-- 第一步：选择清理程度 -->
+      <block wx:if="{{clearStep === 1}}">
+        <view class="nick-head">
+          <text class="t-18 bold">想清理到什么程度？</text>
+          <view class="nick-close" hover-class="hover-bg" bindtap="closeClear">
+            <view class="ico ico-close ico-30 c-s"></view>
+          </view>
+        </view>
+        <text class="t-11 c-s">先选范围，下一步会列出「将删除 / 将保留」清单，确认后才执行</text>
+
+        <view class="clear-plan {{clearMode === 'learn' ? 'on' : ''}}" hover-class="hover-bg" bindtap="pickClearMode" data-mode="learn">
+          <view class="clear-radio {{clearMode === 'learn' ? 'on' : ''}}"></view>
+          <view class="col flex1">
+            <view class="row" style="gap:10rpx">
+              <text class="t-14 bold">只清学习记录</text>
+              <view class="clear-tag">推荐</view>
+            </view>
+            <text class="t-11 c-s" style="margin-top:6rpx;line-height:1.5">想重新开始，但资料和习惯设置都留着</text>
+            <view class="row" style="flex-wrap:wrap;gap:8rpx;margin-top:12rpx">
+              <text class="clear-chip del">书单朗读</text>
+              <text class="clear-chip del">生词错题</text>
+              <text class="clear-chip del">打卡勋章</text>
+              <text class="clear-chip keep">保留资料</text>
+              <text class="clear-chip keep">保留设置</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="clear-plan {{clearMode === 'profile' ? 'on' : ''}}" hover-class="hover-bg" bindtap="pickClearMode" data-mode="profile">
+          <view class="clear-radio {{clearMode === 'profile' ? 'on' : ''}}"></view>
+          <view class="col flex1">
+            <text class="t-14 bold">学习记录 + 孩子资料</text>
+            <text class="t-11 c-s" style="margin-top:6rpx;line-height:1.5">换一个孩子用，或彻底换个开始</text>
+            <view class="row" style="flex-wrap:wrap;gap:8rpx;margin-top:12rpx">
+              <text class="clear-chip del">全部学习数据</text>
+              <text class="clear-chip del">昵称头像</text>
+              <text class="clear-chip keep">保留手机号</text>
+              <text class="clear-chip keep">保留偏好</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="clear-plan {{clearMode === 'all' ? 'on' : ''}}" hover-class="hover-bg" bindtap="pickClearMode" data-mode="all">
+          <view class="clear-radio {{clearMode === 'all' ? 'on' : ''}}"></view>
+          <view class="col flex1">
+            <text class="t-14 bold">彻底恢复出厂</text>
+            <text class="t-11 c-s" style="margin-top:6rpx;line-height:1.5">把这台设备上的所有记录和设置都清掉</text>
+            <view class="row" style="flex-wrap:wrap;gap:8rpx;margin-top:12rpx">
+              <text class="clear-chip del">所有本地数据</text>
+              <text class="clear-chip del">手机号绑定</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="clear-warn">
+          <text class="t-11" style="color:#9a3412;line-height:1.5">⚠️ 无论选哪种，清理前都会自动备份一次，7 天内可在家长中心「恢复数据」找回</text>
+        </view>
+
+        <view class="btn-main" style="width:100%;margin-top:4rpx" hover-class="pressed" bindtap="goClearStep2">
+          <text class="t-14 semi" style="color:#fff">下一步 · 查看清单</text>
+        </view>
+        <text class="t-10 c-t" style="text-align:center">第 1 步，共 2 步</text>
+      </block>
+
+      <!-- 第二步：清单确认 + 长按执行 -->
+      <block wx:else>
+        <view class="nick-head">
+          <text class="t-18 bold">确认清理</text>
+          <view class="nick-close" hover-class="hover-bg" bindtap="backClearStep1">
+            <view class="ico ico-close ico-30 c-s"></view>
+          </view>
+        </view>
+        <view class="clear-alert">
+          <text class="t-11" style="color:#9a3412;line-height:1.5">你选择的是「{{clearMode === 'all' ? '彻底恢复出厂' : clearMode === 'profile' ? '学习记录+孩子资料' : '只清学习记录'}}」。下方内容会从这台设备删除{{clearMode !== 'all' ? '，加粗保留项不受影响' : ''}}。</text>
+        </view>
+
+        <view class="clear-card">
+          <view class="row" style="gap:10rpx;margin-bottom:8rpx">
+            <view class="clear-dot" style="background:#e11d48"></view>
+            <text class="t-13 bold">将删除</text>
+            <text class="t-10 c-t" style="margin-left:auto">共 {{clearDel.length}} 类</text>
+          </view>
+          <view class="clear-li" wx:for="{{clearDel}}" wx:key="label">
+            <text class="t-12">{{item.icon}} {{item.label}}</text>
+            <text class="t-10 c-t" style="margin-left:auto;flex-shrink:0">{{item.n}}</text>
+          </view>
+        </view>
+
+        <view class="clear-card" wx:if="{{clearKeep.length}}">
+          <view class="row" style="gap:10rpx;margin-bottom:8rpx">
+            <view class="clear-dot" style="background:#10b981"></view>
+            <text class="t-13 bold">将保留</text>
+            <text class="t-10 c-t" style="margin-left:auto">不受影响</text>
+          </view>
+          <view class="clear-li" wx:for="{{clearKeep}}" wx:key="label">
+            <text class="t-12">{{item.icon}} {{item.label}}</text>
+            <text class="t-10 c-t" style="margin-left:auto;flex-shrink:0">{{item.n}}</text>
+          </view>
+        </view>
+
+        <view class="clear-backup">
+          <text class="t-11" style="color:#0369a1;flex:1">🗂 清理前自动备份，7 天内可恢复</text>
+          <text class="t-11 semi" style="color:#0369a1" bindtap="exportReport">先导出报告 ›</text>
+        </view>
+
+        <view class="row" style="gap:24rpx;align-items:center;margin-top:8rpx">
+          <view class="col flex1">
+            <text class="t-12 bold">需要按住才生效</text>
+            <text class="t-10 c-s" style="margin-top:4rpx;line-height:1.5">松手立即取消，避免误触；清理后可一键恢复</text>
+          </view>
+          <view class="hold-btn" catchtouchstart="clearHoldStart" catchtouchend="clearHoldEnd" catchtouchcancel="clearHoldEnd">
+            <view class="hold-fill" style="height:{{holdPct}}%"></view>
+            <view class="hold-txt">
+              <text class="t-12 bold" style="color:#fff">{{holdText}}</text>
+              <text class="t-9" style="color:rgba(255,255,255,.85)">{{holdPct > 0 ? '继续按住' : '清理 ' + clearDel.length + ' 类'}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 学习报告图片弹窗：预览 → 分享给微信好友 / 保存相册 -->
+  <view class="nick-mask" wx:if="{{reportOpen}}" bindtap="closeReport">
+    <view class="nick-sheet report-sheet" catchtap="noop">
+      <view class="nick-head">
+        <text class="t-18 bold">学习报告已生成</text>
+        <view class="nick-close" hover-class="hover-bg" bindtap="closeReport">
+          <view class="ico ico-close ico-30 c-s"></view>
+        </view>
+      </view>
+      <text class="t-11 c-s">发到微信群或老师，一张图说清学习情况；长按图片也可直接转发</text>
+      <view class="report-img-wrap">
+        <image
+          wx:if="{{reportImg}}"
+          class="report-img"
+          src="{{reportImg}}"
+          mode="aspectFit"
+          show-menu-by-longpress="{{true}}"
+        />
+        <view wx:else class="report-loading">
+          <text class="t-12 c-s">{{reportBusy ? '正在生成图片…' : ''}}</text>
+        </view>
+      </view>
+      <view class="row" style="gap:16rpx">
+        <view class="nick-btn nick-btn-ghost" style="flex:1" hover-class="pressed" bindtap="saveReportImage">
+          <text class="t-13 semi c-s">保存到相册</text>
+        </view>
+        <view class="nick-btn nick-btn-primary" style="flex:1.4" hover-class="pressed" bindtap="shareReportImage">
+          <text class="t-13 semi" style="color:#fff">分享给微信好友</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 报告图离屏画布（600×920） -->
+  <canvas type="2d" id="reportCanvas" class="report-canvas"></canvas>
+
+  <!-- 书单详情：这本书的分句进度 + 继续朗读 -->
+  <view class="nick-mask" wx:if="{{gSheet}}" bindtap="closeGroupSheet">
+    <view class="nick-sheet group-sheet" catchtap="noop">
+      <view class="nick-head">
+        <view class="col flex1" style="min-width:0">
+          <text class="t-18 bold truncate">{{gSheet.title}}</text>
+          <text class="t-11 c-s truncate" style="margin-top:2rpx">{{gSheet.lessonTitle}}</text>
+        </view>
+        <view class="nick-close" hover-class="hover-bg" bindtap="closeGroupSheet">
+          <view class="ico ico-close ico-30 c-s"></view>
+        </view>
+      </view>
+
+      <view class="row between" style="padding-top:2rpx">
+        <text class="t-12 semi c-primary">已读 {{gSheet.read}}/{{gSheet.total}} 句 · {{gSheet.percent}}%</text>
+        <text class="t-10 c-t">{{gSheet.done ? '这本书读完啦 🎉' : gSheet.cursorText}}</text>
+      </view>
+      <view class="group-bar">
+        <view class="group-fill" style="width:{{gSheet.percent}}%"></view>
+      </view>
+
+      <!-- 分句列表：绿=已读 黄=听过 灰=未读 -->
+      <scroll-view class="gs-list" scroll-y>
+        <view class="gs-row" wx:for="{{gSheet.rows}}" wx:key="i">
+          <view class="gs-idx gs-idx-{{item.state}}"><text class="t-10 semi">{{item.i}}</text></view>
+          <text class="gs-text {{item.state === 'read' ? 'gs-text-read' : ''}}">{{item.text}}</text>
+          <view class="gs-badge gs-badge-{{item.state}}">
+            <text class="t-9 semi">{{item.state === 'read' ? '已读' : item.state === 'heard' ? '听过' : '未读'}}</text>
+          </view>
+          <text class="gs-now" wx:if="{{item.current}}">下次继续</text>
+        </view>
+      </scroll-view>
+
+      <view class="gs-btn" hover-class="pressed" bindtap="goGroupReader">
+        <view class="ico ico-play ico-30" style="color:#fff"></view>
+        <text class="t-14 semi" style="color:#fff">{{gSheet.done ? '再读一遍' : '继续朗读'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部任务栏（页签式，共享模板） -->
+  <template is="tabbar" data="{{active: 'parent'}}" />
+</view>
+<include src="../../pages/common/veil.wxml" />

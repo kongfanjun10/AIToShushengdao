@@ -1,0 +1,786 @@
+.page {
+  min-height: 100vh;
+  padding-top: 96rpx; /* 让开固定在导航下方的分类条（padding 不会外边距塌陷） */
+  padding-bottom: 220rpx;
+}
+
+/* 导航 */
+.hd {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: #f2f9ff;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.03);
+}
+.hd-inner {
+  height: 108rpx;
+  padding: 0 38rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hd-left {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.back-btn {
+  width: 84rpx;
+  height: 84rpx;
+  margin-left: -15rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hover-bg {
+  background: rgba(0, 0, 0, 0.05);
+}
+.today-chip {
+  flex-shrink: 0;
+  margin-left: 12rpx;
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 6rpx 14rpx;
+  border-radius: 9999rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.06);
+}
+
+/* 主体 */
+.main {
+  padding: 0 38rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 26rpx;
+}
+.pressed {
+  transform: scale(0.985);
+  opacity: 0.95;
+}
+
+/* 分类切换：固定条（不随页面滚动），底部不透明底 + 投影 */
+.lv-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: #f2f9ff;
+  padding: 12rpx 24rpx 16rpx;
+  box-shadow: 0 6rpx 16rpx rgba(15, 23, 42, 0.04);
+}
+.lv-bar-solid {
+  box-shadow: 0 8rpx 24rpx rgba(15, 23, 42, 0.12);
+}
+.lv-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+.lv-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  padding: 2rpx 0;
+}
+.lv-chip {
+  flex-shrink: 0;
+  padding: 12rpx 22rpx;
+  border-radius: 9999rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  color: var(--text-secondary);
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.04);
+}
+.lv-on {
+  background: linear-gradient(90deg, #047857, #10b981);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 8rpx 20rpx rgba(16, 185, 129, 0.28);
+}
+.lv-on text {
+  color: #fff;
+}
+/* 「全部」chip：左侧带个小图标，和分组区分开 */
+.lv-all {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  border-color: rgba(4, 120, 87, 0.28);
+}
+.lv-all .ico {
+  color: #047857;
+}
+.lv-all.lv-on .ico {
+  color: #fff;
+}
+
+/* ---------- 全部拼音：纯展示总览 ---------- */
+.all-panel {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 36rpx;
+  padding: 28rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  box-shadow: 0 12rpx 40rpx rgba(15, 23, 42, 0.06);
+}
+.all-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+.all-prog {
+  flex-shrink: 0;
+  padding: 4rpx 14rpx;
+  border-radius: 9999rpx;
+  background: #d1fae5;
+}
+.all-hint {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 10rpx 14rpx;
+  border-radius: 16rpx;
+  background: #f0fdf9;
+  border: 1px solid rgba(16, 185, 129, 0.16);
+}
+.all-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  margin-top: 4rpx;
+}
+.all-g-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 4rpx;
+}
+.all-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+.all-cell {
+  position: relative;
+  width: calc((100% - 30rpx) / 4);
+  padding: 14rpx 6rpx 12rpx;
+  border-radius: 18rpx;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rpx;
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.03);
+}
+.all-py {
+  font-size: 32rpx;
+  line-height: 40rpx;
+  font-weight: 600;
+  color: #0f172a;
+}
+.all-say {
+  max-width: 100%;
+  font-size: 18rpx;
+  line-height: 24rpx;
+  color: var(--text-tertiary);
+}
+.all-done {
+  background: #ecfdf5;
+  border-color: rgba(16, 185, 129, 0.45);
+}
+.all-done .all-py {
+  color: #047857;
+}
+.all-check {
+  position: absolute;
+  right: -6rpx;
+  top: -6rpx;
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  background: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid #fff;
+}
+
+/* 拼音卡 */
+.paper {
+  position: relative;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 36rpx;
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  overflow: hidden;
+  box-shadow: 0 12rpx 40rpx rgba(15, 23, 42, 0.06);
+}
+.paper-glow {
+  position: absolute;
+  right: -60rpx;
+  top: -60rpx;
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(110, 231, 183, 0.7), rgba(209, 250, 229, 0.35) 60%, transparent);
+}
+.py-big {
+  font-size: 64rpx;
+  line-height: 84rpx;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  color: #047857;
+}
+.kind-tag {
+  padding: 4rpx 14rpx;
+  border-radius: 9999rpx;
+  background: #d1fae5;
+  color: #047857;
+  font-size: 20rpx;
+  line-height: 26rpx;
+  font-weight: 600;
+}
+.idx-pill {
+  padding: 4rpx 14rpx;
+  border-radius: 9999rpx;
+  background: #d1fae5;
+}
+
+/* 读音胶囊 */
+.say-pill {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 26rpx;
+  border-radius: 9999rpx;
+  background: #d1fae5;
+  color: #047857;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.say-on {
+  background: linear-gradient(135deg, #047857, #34d399);
+  color: #fff;
+}
+.say-on .ico {
+  animation: sayPulse 1s ease-in-out infinite;
+}
+@keyframes sayPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.18); opacity: 0.75; }
+}
+
+/* 慢速开关 */
+.slow-chip {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 9999rpx;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: #fff;
+  color: var(--text-secondary);
+}
+.slow-on {
+  border-color: #047857;
+  background: #ecfdf5;
+  color: #047857;
+}
+/* 连读开启：琥珀色高亮，和慢速的绿色区分开 */
+.auto-on {
+  border-color: #b45309;
+  background: #fffbeb;
+  color: #b45309;
+}
+
+/* 口型舌位图 */
+.mouth-card {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+.mouth-left {
+  flex-shrink: 0;
+  width: 300rpx;
+  height: 240rpx;
+  border-radius: 18rpx;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  overflow: hidden;
+}
+.mouth-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* 画布不可用时的降级口型图 */
+.sim-mouth {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+.sim-face {
+  position: relative;
+  width: 92%;
+  height: 92%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sim-lip {
+  position: absolute;
+  top: 18rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fecaca;
+  border: 3rpx solid #f87171;
+  transition: all 0.28s ease;
+}
+.sim-tongue {
+  position: absolute;
+  width: 42%;
+  height: 26rpx;
+  border-radius: 9999rpx;
+  background: #fca5a5;
+  border: 2rpx solid #ef4444;
+  transition: all 0.28s ease;
+}
+.sim-voice {
+  position: absolute;
+  bottom: 2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18rpx;
+  line-height: 24rpx;
+  color: #047857;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 1rpx 10rpx;
+  border-radius: 9999rpx;
+}
+
+/* 语音失败提示条 */
+.tts-tip {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 12rpx 16rpx;
+  border-radius: 18rpx;
+  background: #fffbeb;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+.c-warn {
+  color: #b45309;
+}
+
+/* 词组 */
+.word-grid {
+  display: flex;
+  gap: 12rpx;
+}
+.w-card {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 16rpx 14rpx 14rpx;
+  border-radius: 24rpx;
+  background: var(--surface-container-low);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
+}
+.w-sy {
+  font-size: 26rpx;
+  line-height: 34rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.w-cn {
+  font-size: 20rpx;
+  line-height: 28rpx;
+  color: var(--text-secondary);
+  padding-right: 34rpx;
+}
+.w-play {
+  position: absolute;
+  right: 10rpx;
+  bottom: 10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #047857;
+  background: rgba(16, 185, 129, 0.1);
+}
+.w-on {
+  background: linear-gradient(135deg, #047857, #34d399);
+  color: #fff;
+}
+
+/* 工具行 */
+.tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6rpx;
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+}
+.tool {
+  flex: 1;
+  padding: 14rpx 0 8rpx;
+  border-radius: 18rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  color: var(--text-secondary);
+}
+
+/* 「再听一遍」放大成主按钮：老人小孩都点得准 */
+.tool-say {
+  flex: 1.4;
+  padding: 18rpx 0 12rpx;
+  background: #d1fae5;
+  border-radius: 22rpx;
+  color: #047857;
+  font-weight: 600;
+}
+.tool-say-on {
+  background: linear-gradient(135deg, #047857, #34d399);
+  color: #fff;
+}
+
+/* 区块 */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+.sec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4rpx;
+}
+.bar {
+  width: 100%;
+  height: 10rpx;
+  border-radius: 9999rpx;
+  background: var(--surface-container);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 9999rpx;
+  background: linear-gradient(90deg, #047857, #34d399);
+  transition: width 0.3s ease;
+}
+
+/* 分组总览 */
+.group-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  margin-top: 6rpx;
+}
+.g-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 4rpx;
+}
+.lib {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+.lib-cell {
+  position: relative;
+  width: 100rpx;
+  height: 88rpx;
+  border-radius: 20rpx;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.04);
+}
+.lib-py {
+  font-size: 30rpx;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.lib-on {
+  border-color: #047857;
+  background: #ecfdf5;
+  box-shadow: 0 8rpx 20rpx rgba(16, 185, 129, 0.2);
+}
+.lib-check {
+  position: absolute;
+  right: -4rpx;
+  top: -4rpx;
+  width: 30rpx;
+  height: 30rpx;
+  border-radius: 50%;
+  background: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid #fff;
+}
+.note-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
+  padding: 0 4rpx;
+}
+
+/* 底部主按钮 */
+.cta-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  padding: 18rpx 38rpx calc(18rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(249, 249, 255, 0), rgba(249, 249, 255, 0.92) 40%);
+}
+.btn-main {
+  height: 96rpx;
+  border-radius: 9999rpx;
+  background: linear-gradient(90deg, #047857, #10b981);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  box-shadow: 0 12rpx 32rpx rgba(16, 185, 129, 0.34);
+}
+
+/* ---------- 真机错误浮层 ---------- */
+.err-strip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  padding: 10rpx 20rpx;
+  background: #fef3c7;
+  border-bottom: 1px solid rgba(180, 83, 9, 0.25);
+}
+.err-txt {
+  color: #92400e;
+  line-height: 30rpx;
+}
+.err-x {
+  flex-shrink: 0;
+  width: 44rpx;
+  height: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(146, 64, 14, 0.12);
+  color: #92400e;
+}
+
+/* ---------- 拼音歌（「全部」总览页里的儿歌） ---------- */
+/* ---------- 儿歌播放器：滚动歌词 + 进度条 ---------- */
+.song-card {
+  padding: 20rpx 20rpx 16rpx;
+  border-radius: 26rpx;
+  background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+.sp-head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.song-badge {
+  width: 54rpx;
+  height: 54rpx;
+  border-radius: 18rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  line-height: 1;
+  flex-shrink: 0;
+  box-shadow: 0 2rpx 10rpx rgba(15, 23, 42, 0.06);
+}
+.song-modes {
+  display: flex;
+  gap: 4rpx;
+  padding: 4rpx;
+  border-radius: 9999rpx;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  flex-shrink: 0;
+}
+.song-mode {
+  padding: 8rpx 18rpx;
+  border-radius: 9999rpx;
+}
+.song-mode text {
+  color: #64748b;
+}
+.song-mode-on {
+  background: #047857;
+  box-shadow: 0 4rpx 10rpx rgba(4, 120, 87, 0.22);
+}
+.song-mode-on text {
+  color: #fff;
+}
+
+/* 歌词滚动区：固定高度，当前行自动滚到中间 */
+.sp-stage {
+  position: relative;
+  border-radius: 20rpx;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.62);
+}
+.sp-lyrics {
+  height: 372rpx;
+  overflow: hidden;
+}
+.sp-pad {
+  height: 110rpx;
+}
+.sp-line {
+  padding: 12rpx 20rpx;
+  display: flex;
+}
+.sp-pressed {
+  background: rgba(255, 255, 255, 0.9);
+}
+/* 首音/读行角标：跟着唱也能一眼分清这句是领唱还是拼音念读 */
+.sp-kind {
+  flex-shrink: 0;
+  margin: 4rpx 10rpx 0 0;
+  padding: 1rpx 10rpx;
+  border-radius: 9999rpx;
+  font-size: 17rpx;
+  font-weight: 600;
+  line-height: 24rpx;
+  color: #0369a1;
+  background: #e0f2fe;
+}
+.sp-on .sp-kind {
+  background: #fef3c7;
+  color: #b45309;
+}
+.sp-text {
+  font-size: 25rpx;
+  line-height: 38rpx;
+  font-weight: 500;
+  color: #94a3b8;
+  word-break: break-word;
+  white-space: normal;
+  transition: color 0.2s ease;
+}
+.sp-text-sm {
+  font-size: 22rpx;
+  line-height: 34rpx;
+}
+.sp-on .sp-text {
+  font-size: 30rpx;
+  line-height: 44rpx;
+  font-weight: 700;
+  color: #047857;
+}
+.sp-on .sp-text-sm {
+  font-size: 25rpx;
+  line-height: 38rpx;
+}
+.sp-done .sp-text {
+  color: #cbd5e1;
+}
+.sp-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 88rpx;
+  pointer-events: none;
+}
+.sp-fade-t {
+  top: 0;
+  background: linear-gradient(180deg, #f7fefa 0%, rgba(247, 254, 250, 0) 100%);
+}
+.sp-fade-b {
+  bottom: 0;
+  background: linear-gradient(0deg, #f7fefa 0%, rgba(247, 254, 250, 0) 100%);
+}
+
+/* 底部：播放键 + 进度 + 时间 */
+.sp-foot {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.sp-play {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #047857;
+  flex-shrink: 0;
+  box-shadow: 0 8rpx 20rpx rgba(4, 120, 87, 0.26);
+}
+.sp-play .ico {
+  color: #fff;
+}
+.sp-play-on {
+  background: linear-gradient(135deg, #047857, #34d399);
+}
+.sp-track {
+  height: 8rpx;
+  border-radius: 9999rpx;
+  background: rgba(4, 120, 87, 0.14);
+  overflow: hidden;
+}
+.sp-fill {
+  height: 100%;
+  border-radius: 9999rpx;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  transition: width 0.2s linear;
+}
+.sp-time {
+  font-size: 18rpx;
+  line-height: 24rpx;
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+.sp-tip {
+  font-size: 18rpx;
+  line-height: 26rpx;
+  color: #94a3b8;
+}
+

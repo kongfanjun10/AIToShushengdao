@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@breezystack/lamejs": "^1.2.7",
+    "lamejs": "^1.2.1",
+    "mespeak": "^2.0.2",
+    "mpg123-decoder": "^1.0.3",
+    "pngjs": "^7.0.0"
+  }
+}

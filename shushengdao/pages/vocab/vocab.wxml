@@ -1,0 +1,311 @@
+<import src="../../templates/tabbar.wxml" />
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack" wx:if="{{showBack}}">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <text class="t-18 truncate" style="max-width:240rpx">生词本</text>
+      </view>
+      <view class="row" style="gap:10rpx">
+        <view class="round-btn" hover-class="pressed" bindtap="toggleSearch">
+          <view class="ico ico-search ico-36"></view>
+        </view>
+        <view class="round-btn round-btn-primary" hover-class="pressed" bindtap="openScan">
+          <view class="ico ico-camera ico-36" style="color:#fff"></view>
+        </view>
+        <view class="round-btn" hover-class="pressed" bindtap="addWord">
+          <view class="ico ico-plus ico-36"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 概览卡 -->
+    <view class="overview shadow-card">
+      <view class="ov-glow"></view>
+      <view class="row between" style="z-index:2">
+        <view class="col">
+          <text class="t-13" style="color:#ede0ff">小词库</text>
+          <view class="row" style="align-items:baseline;gap:4rpx;margin-top:2rpx">
+            <text class="t-hero" style="color:#fff">{{stats.total}}</text>
+            <text class="t-12" style="color:#d8c8ff">个生词</text>
+          </view>
+        </view>
+        <view class="ov-right">
+          <view class="ov-item">
+            <text class="t-18 bold" style="color:#6ffbbe">{{stats.mastered}}</text>
+            <text class="t-10" style="color:#c7f5e2">已掌握</text>
+          </view>
+          <view class="ov-divider"></view>
+          <view class="ov-item">
+            <text class="t-18 bold" style="color:#fde68a">{{stats.pending}}</text>
+            <text class="t-10" style="color:#f7e6b6">待复习</text>
+          </view>
+        </view>
+      </view>
+      <view class="ov-bar">
+        <view class="ov-fill" style="width:{{stats.percent}}%"></view>
+      </view>
+      <text class="t-10" style="color:#cbb8f5;z-index:2">掌握率 {{stats.percent}}% · 每天复习 3 个，一个月就是 90 个</text>
+    </view>
+
+    <!-- 拍照收词入口 -->
+    <view class="scan-entry" hover-class="pressed" bindtap="openScan">
+      <view class="scan-entry-ico"><view class="ico ico-camera ico-40 c-primary"></view></view>
+      <view class="col flex1">
+        <text class="t-13 bold">拍照收词</text>
+        <text class="t-10 c-s" style="margin-top:2rpx">拍下课本或绘本，自动挑出不认识的词</text>
+      </view>
+      <view class="ico ico-chevron-right ico-28 c-t"></view>
+    </view>
+
+    <!-- 搜索 -->
+    <view class="search-wrap" wx:if="{{searchOpen}}">
+      <view class="ico ico-search ico-32 c-t"></view>
+      <input
+        class="search-input"
+        value="{{keyword}}"
+        placeholder="搜生词或课文原句"
+        placeholder-class="ph"
+        confirm-type="search"
+        bindinput="onSearch"
+      />
+      <view class="ico ico-close-circle ico-30 c-t" wx:if="{{keyword}}" bindtap="clearSearch"></view>
+    </view>
+
+    <!-- 筛选 -->
+    <view class="filters">
+      <view
+        class="filter {{filter === item.key ? 'filter-on' : ''}}"
+        wx:for="{{filters}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="pickFilter"
+      >
+        <text class="t-12">{{item.label}}</text>
+        <text class="filter-count">{{item.count}}</text>
+      </view>
+    </view>
+
+    <!-- 生词列表 -->
+    <view class="list" wx:if="{{words.length}}">
+      <view class="word-card shadow-soft" wx:for="{{words}}" wx:key="id">
+        <view class="row between" style="align-items:flex-start">
+          <view class="row" style="gap:10rpx;flex:1;min-width:0">
+            <view class="word-ico {{item.mastered ? 'word-ico-ok' : ''}}">
+              <text class="word-ini">{{item.initial}}</text>
+            </view>
+            <view class="col flex1">
+              <view class="row" style="gap:6rpx">
+                <text class="t-18 bold">{{item.word}}</text>
+                <text class="py-pill">{{item.pinyin}}</text>
+              </view>
+              <text class="t-11 c-s truncate" style="margin-top:2rpx">{{item.sentence || '手动收录'}}</text>
+            </view>
+          </view>
+          <view class="speak-btn {{playingId === item.id ? 'speak-on' : ''}}" hover-class="pressed" data-index="{{index}}" catchtap="speakWord">
+            <view class="speak-ring" wx:if="{{playingId === item.id}}"></view>
+            <view class="eq" wx:if="{{playingId === item.id}}">
+              <view class="eq-bar"></view>
+              <view class="eq-bar eq-b2"></view>
+              <view class="eq-bar eq-b3"></view>
+            </view>
+            <view class="ico ico-volume ico-34 c-primary" wx:else></view>
+          </view>
+        </view>
+
+        <view class="word-foot">
+          <view class="row" style="gap:6rpx">
+            <view class="tag-soft {{item.mastered ? 'tag-ok' : 'tag-new'}}">
+              <text class="t-10 semi">{{item.mastered ? '已掌握' : '待复习'}}</text>
+            </view>
+            <text class="t-10 c-t">{{item.reviews ? '复习 ' + item.reviews + ' 次' : '还没复习'}}</text>
+          </view>
+          <view class="row" style="gap:4rpx">
+            <view class="word-op" hover-class="hover-bg" data-index="{{index}}" catchtap="toggleMastered">
+              <view class="ico ico-check-circle ico-30" style="color:{{item.mastered ? '#005b3d' : '#94a3b8'}}"></view>
+            </view>
+            <view class="word-op" hover-class="hover-bg" data-index="{{index}}" catchtap="removeWord">
+              <view class="ico ico-trash ico-30 c-t"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty" wx:else>
+      <view class="empty-art"><view class="ico ico-search ico-70" style="color:#bfa9e8"></view></view>
+      <text class="t-16 semi">{{keyword ? '没找到这个词' : '还没有生词'}}</text>
+      <text class="t-11 c-s" style="text-align:center;max-width:430rpx">朗读时点一下不认识的字，就能把它收进这里，随时复习</text>
+      <view class="row" style="gap:12rpx;margin-top:16rpx">
+        <view class="empty-btn" style="margin-top:0" hover-class="pressed" bindtap="openScan">
+          <view class="ico ico-camera ico-32 c-primary"></view>
+          <text class="t-12 semi c-primary">拍照收词</text>
+        </view>
+        <view class="empty-btn" style="margin-top:0" hover-class="pressed" bindtap="addWord">
+          <view class="ico ico-plus-circle ico-32 c-primary"></view>
+          <text class="t-12 semi c-primary">手动添加</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部复习 -->
+  <view class="bottom-bar" wx:if="{{words.length}}">
+    <view class="btn-main {{stats.pending === 0 ? 'btn-disabled' : ''}}" hover-class="pressed" bindtap="startReview">
+      <view class="ico ico-sparkles ico-34" style="color:#fff"></view>
+      <text class="t-14 semi" style="color:#fff">开始复习{{stats.pending ? ' · ' + stats.pending + ' 个待复习' : ' · 都掌握啦'}}</text>
+    </view>
+  </view>
+
+  <!-- 复习弹层 -->
+  <view class="mask" wx:if="{{reviewMode}}">    <view class="review">
+      <view class="row between">
+        <text class="t-13 c-s">{{reviewDone ? '复习完成' : '第 ' + (reviewIndex + 1) + ' / ' + reviewList.length + ' 个'}}</text>
+        <view class="review-close" hover-class="pressed" bindtap="closeReview">
+          <view class="ico ico-close ico-32 c-s"></view>
+        </view>
+      </view>
+
+      <block wx:if="{{!reviewDone}}">
+        <view class="review-progress">
+          <view class="review-fill" style="width:{{reviewPercent}}%"></view>
+        </view>
+        <view class="review-card">
+          <text class="review-word">{{current.word}}</text>
+          <text class="review-py">{{current.pinyin}}</text>
+          <view class="review-speak {{reviewPlaying ? 'speak-on' : ''}}" hover-class="pressed" bindtap="speakCurrent">
+            <view class="eq" wx:if="{{reviewPlaying}}">
+              <view class="eq-bar"></view>
+              <view class="eq-bar eq-b2"></view>
+              <view class="eq-bar eq-b3"></view>
+            </view>
+            <view class="ico ico-volume ico-34 c-primary" wx:else></view>
+            <text class="t-12 semi">{{reviewPlaying ? '正在读…' : '听一听'}}</text>
+          </view>
+          <view class="review-sent" wx:if="{{current.sentence}}">
+            <text class="t-11 c-s">{{current.sentence}}</text>
+          </view>
+        </view>
+        <view class="review-actions">
+          <view class="btn-ghost" hover-class="pressed" bindtap="markUnknown">还不熟</view>
+          <view class="btn-main" hover-class="pressed" bindtap="markKnown">认识了</view>
+        </view>
+      </block>
+
+      <view class="review-done" wx:else>
+        <view class="done-badge"><view class="ico ico-trophy ico-70" style="color:#fbbf24"></view></view>
+        <text class="t-20 bold">复习完成！</text>
+        <text class="t-13 c-s" style="text-align:center">{{reviewKnownCount}} 个词记得很牢，{{reviewUnknownCount}} 个下次再过一遍</text>
+        <view class="row" style="gap:14rpx;width:100%;margin-top:10rpx">
+          <view class="btn-ghost" style="flex:1" hover-class="pressed" bindtap="restartReview">再过一遍</view>
+          <view class="btn-main" style="flex:1.4;width:auto" hover-class="pressed" bindtap="closeReview">
+            <text class="t-14 semi" style="color:#fff">回到词库</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 拍照收词弹层 ============ -->
+  <view class="mask scan-mask" wx:if="{{scanOpen}}" bindtap="closeScan">
+    <view class="scan" catchtap="noop">
+      <view class="row between" style="align-items:flex-start">
+        <view class="col" style="gap:2rpx">
+          <text class="t-16 bold">拍照收词</text>
+          <text class="t-10 c-t" wx:if="{{!scanning && !scanErr}}">{{scanLines}} 行 · {{scanModeLabel}} · 点词语选中/取消</text>
+        </view>
+        <view class="review-close" hover-class="pressed" bindtap="closeScan">
+          <view class="ico ico-close ico-32 c-s"></view>
+        </view>
+      </view>
+
+      <!-- 识别中 -->
+      <view class="scan-loading" wx:if="{{scanning}}">
+        <view class="scan-ring"></view>
+        <text class="t-13 semi c-p">正在认字…</text>
+        <text class="t-10 c-t">识别完成后会自动挑出可以收的词</text>
+      </view>
+
+      <!-- 识别失败 -->
+      <view class="scan-fail" wx:elif="{{scanErr}}">
+        <view class="ico ico-cloud-off ico-62" style="color:#7dd3fc"></view>
+        <text class="t-13 semi" style="text-align:center">{{scanErr}}</text>
+        <view class="row" style="gap:14rpx;margin-top:8rpx">
+          <view class="btn-ghost" style="height:76rpx;flex:1" hover-class="pressed" bindtap="retryScan">重拍一张</view>
+          <view class="btn-ghost" style="height:76rpx;flex:1" hover-class="pressed" bindtap="manualFromScan">手动输入</view>
+        </view>
+      </view>
+
+      <!-- 识别结果 -->
+      <block wx:else>
+        <view class="mock-tip" wx:if="{{isMock}}">
+          <view class="ico ico-cloud-off ico-26" style="color:#92400e"></view>
+          <text class="t-10" style="color:#92400e;flex:1">当前是演示识别（OCR 未接通），词来自示例课文；配置后即为真实拍照内容</text>
+        </view>
+
+        <view class="row between" wx:if="{{scanWords.length}}">
+          <text class="t-11 c-s">已选 <text class="semi c-p">{{scanPicked}}</text> / {{scanWords.length}} 个词</text>
+          <text class="t-11 semi c-p" bindtap="toggleAllWords">{{scanAllOn ? '全不选' : '全选'}}</text>
+        </view>
+
+        <scroll-view class="scan-chips" scroll-y show-scrollbar="{{false}}" wx:if="{{scanWords.length}}">
+          <view class="chips">
+            <view
+              class="chip {{item.on ? 'chip-on' : ''}}"
+              wx:for="{{scanWords}}"
+              wx:key="word"
+              data-index="{{index}}"
+              bindtap="toggleWord"
+              hover-class="pressed"
+            >
+              <view class="ico ico-check ico-22" wx:if="{{item.on}}" style="color:#fff"></view>
+              <text class="t-13">{{item.word}}</text>
+            </view>
+          </view>
+        </scroll-view>
+
+        <view class="scan-empty" wx:else>
+          <text class="t-11 c-t">这一页没挑出合适的词，用下面的输入框补一个吧</text>
+        </view>
+
+        <view class="scan-input-row">
+          <input
+            class="scan-input"
+            value="{{scanInput}}"
+            placeholder="没有想要的？手动补一个词"
+            placeholder-class="ph"
+            confirm-type="done"
+            bindinput="onScanInput"
+            bindconfirm="addScanWord"
+          />
+          <view class="scan-input-btn" hover-class="pressed" bindtap="addScanWord">
+            <text class="t-11 semi c-p">加入</text>
+          </view>
+        </view>
+
+        <view class="scan-text-toggle" bindtap="toggleText" wx:if="{{scanText}}">
+          <text class="t-10 c-t">{{textOpen ? '收起识别原文' : '看识别原文'}}</text>
+          <view class="ico ico-chevron-{{textOpen ? 'down' : 'right'}} ico-22 c-t"></view>
+        </view>
+        <scroll-view class="scan-text" scroll-y wx:if="{{textOpen}}">
+          <text class="t-11 c-s">{{scanText}}</text>
+        </scroll-view>
+
+        <view class="btn-main" style="width:100%" hover-class="pressed" bindtap="confirmScan">
+          <view class="ico ico-plus-circle ico-32" style="color:#fff"></view>
+          <text class="t-14 semi" style="color:#fff">收入词库（{{scanPicked}}）</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 底部任务栏（页签式，共享模板） -->
+  <template is="tabbar" data="{{active: 'vocab'}}" />
+</view>
+<include src="../../pages/common/veil.wxml" />

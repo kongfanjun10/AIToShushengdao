@@ -1,0 +1,9 @@
+{
+  "name": "qrcode",
+  "version": "1.0.0",
+  "description": "生成奖状海报用的小程序码（wxacode.getUnlimited）并缓存到云存储",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

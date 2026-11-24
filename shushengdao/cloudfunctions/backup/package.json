@@ -1,0 +1,9 @@
+{
+  "name": "backup",
+  "version": "1.0.0",
+  "description": "学习记录云备份（换设备找回），key = 手机号 + 4 位恢复口令",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

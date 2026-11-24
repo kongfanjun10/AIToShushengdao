@@ -1,0 +1,155 @@
+<view class="page">
+  <!-- 顶部导航（右侧留出微信胶囊位置） -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row hd-left" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <view class="col" style="gap:0;min-width:0">
+          <text class="t-18">单词与跟读</text>
+          <text class="t-10 c-t truncate">听一遍，跟读一遍，读给自己听</text>
+        </view>
+      </view>
+      <view class="today-chip">
+        <view class="ico ico-volume ico-26 c-primary"></view>
+        <text class="t-10 semi c-primary">今日 {{todayRead}} 个</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 主题 -->
+    <scroll-view class="theme-scroll" scroll-x enable-flex show-scrollbar="{{false}}">
+      <view class="theme-row">
+        <view
+          class="theme-chip {{item.key === themeKey ? 'theme-on' : ''}}"
+          wx:for="{{themes}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="pickTheme"
+          hover-class="pressed"
+        >
+          <text class="theme-ico">{{item.icon}}</text>
+          <text class="theme-name">{{item.name}}</text>
+          <text class="theme-en">{{item.sub}}</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 单词卡 -->
+    <view class="paper">
+      <view class="paper-glow"></view>
+
+      <view class="row between" style="width:100%;z-index:2">
+        <view class="q-badge">
+          <text class="t-10 semi">{{themeName}} · {{index + 1}} / {{list.length}}</text>
+        </view>
+        <view class="row" style="gap:10rpx">
+          <view class="mini-chip {{slow ? 'mini-on' : ''}}" hover-class="pressed" bindtap="toggleSlow">
+            <view class="ico ico-speed ico-22"></view>
+            <text class="t-9 semi">慢速</text>
+          </view>
+          <view class="mini-chip {{inVocab ? 'mini-on' : ''}}" hover-class="pressed" bindtap="addToVocab">
+            <view class="ico ico-bookmark ico-22"></view>
+            <text class="t-9 semi">{{inVocab ? '已收录' : '收藏'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="word-stage" bindtap="speakWord" hover-class="pressed">
+        <text class="word-en">{{word.en}}</text>
+        <text class="word-ipa">{{word.ipa}}</text>
+        <text class="word-cn">{{word.cn}}</text>
+        <view class="speak-badge {{speaking ? 'speak-on' : ''}}">
+          <view class="ico ico-volume ico-30"></view>
+          <text class="t-9 semi">{{speaking ? '正在读…' : '点单词听发音'}}</text>
+        </view>
+      </view>
+
+      <view class="sent" hover-class="pressed" bindtap="speakSentence">
+        <view class="ico ico-volume ico-24 c-primary"></view>
+        <view class="col flex1" style="min-width:0;gap:0">
+          <text class="sent-en">{{word.sentence}}</text>
+          <text class="sent-cn">{{word.sentenceCn}}</text>
+        </view>
+      </view>
+
+      <view class="word-nav">
+        <view class="wnav" hover-class="hover-bg" bindtap="prevWord">
+          <view class="ico ico-chevron-left ico-30"></view>
+          <text class="t-10">上一个</text>
+        </view>
+        <view class="wnav wnav-mid" hover-class="hover-bg" bindtap="speakWord">
+          <view class="ico ico-volume ico-30 c-primary"></view>
+          <text class="t-10 c-primary">再听一遍</text>
+        </view>
+        <view class="wnav" hover-class="hover-bg" bindtap="nextWord">
+          <text class="t-10">下一个</text>
+          <view class="ico ico-chevron-right ico-30"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 跟读 -->
+    <view class="follow">
+      <view class="follow-left">
+        <view
+          class="rec-btn {{phase === 'recording' ? 'rec-on' : ''}} {{phase === 'done' ? 'rec-done' : ''}}"
+          hover-class="rec-hover"
+          bindtap="tapFollow"
+        >
+          <view class="rec-ring" wx:if="{{phase === 'recording'}}"></view>
+          <view class="ico {{phase === 'recording' ? 'ico-pause' : phase === 'done' ? 'ico-headphones' : 'ico-mic'}} ico-50" style="color:#fff"></view>
+        </view>
+        <view class="rec-meta">
+          <text class="rec-title">{{phase === 'recording' ? '正在录 ' + seconds + '″' : phase === 'done' ? '录好啦' : '跟读一次'}}</text>
+          <text class="rec-sub">{{followTip}}</text>
+        </view>
+      </view>
+
+      <view class="judge-row" wx:if="{{phase === 'done' && hasFile}}">
+        <view class="judge ghost" hover-class="pressed" data-ok="0" bindtap="judge">再读一次</view>
+        <view class="judge solid" hover-class="pressed" data-ok="1" bindtap="judge">读对啦</view>
+      </view>
+    </view>
+
+    <!-- 本组单词 -->
+    <view class="section">
+      <view class="sec-head">
+        <view class="row" style="gap:8rpx">
+          <text class="t-16 bold">{{themeName}}</text>
+          <text class="t-10 c-t">点词就能听</text>
+        </view>
+        <text class="t-10 semi c-primary">已读 {{doneCount}} / {{total}}</text>
+      </view>
+
+      <view class="bar"><view class="bar-fill" style="width:{{percent}}%"></view></view>
+
+      <view class="wgrid">
+        <view
+          class="wcell {{index === idx ? 'wcell-on' : ''}} {{item.done ? 'wcell-done' : ''}}"
+          wx:for="{{list}}"
+          wx:for-item="item"
+          wx:for-index="idx"
+          wx:key="en"
+          data-i="{{idx}}"
+          bindtap="pickWord"
+          hover-class="pressed"
+        >
+          <text class="wcell-en">{{item.en}}</text>
+          <text class="wcell-cn">{{item.cn}}</text>
+          <view class="wcell-tick" wx:if="{{item.done}}">
+            <view class="ico ico-check ico-22" style="color:#fff"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="note">
+      <view class="ico ico-bulb ico-26" style="color:#fbbf24"></view>
+      <text class="t-10 c-t">跟读不评分，只录音给孩子自己回听；觉得读得像就点「读对啦」，会记进今日进度。</text>
+    </view>
+  </view>
+</view>
+<include src="../../pages/common/veil.wxml" />

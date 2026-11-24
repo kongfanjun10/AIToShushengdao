@@ -1,0 +1,352 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;background:#eef1f6;display:flex;justify-content:center;padding:20px;}canvas{width:600px;height:960px;}</style></head><body>
+<canvas id="c" width="1200" height="1920"></canvas>
+<script>
+const qrcode = { size: 148 };
+const obj = {
+  data: {"statusBar":20,"navH":44,"navRight":96,"windowWidth":375,"nickname":"朵朵","avatar":"","dateText":"2026年11月16日","groupId":"","lessonName":"秋天的课文","summary":{"read":5,"total":5,"percent":100,"duration":"01:36","vocab":3},"certNo":"NO.20261116-103","badgeName":"朗读小能手","badgeDesc":"完成第 1 次整组课文跟读，声音真好听！"},
+  drawPoster: function drawPoster(ctx, W, H, qrImg) {
+    const d = this.data;
+    const cx = W / 2;
+
+    /* ---- 1. 深蓝外底 + 米白内底（参考：蓝色大气荣誉证书） ---- */
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, "#16337a");
+    bg.addColorStop(1, "#2b5fd9");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    this.rr(ctx, 26, 26, W - 52, H - 52, 8);
+    ctx.fillStyle = "#fdfaf1";
+    ctx.fill();
+
+    /* ---- 2. 花纹边框：外金粗线 + 内蓝细线 + 四角扇贝花饰 ---- */
+    ctx.strokeStyle = "#d4a017";
+    ctx.lineWidth = 3;
+    this.rr(ctx, 40, 40, W - 80, H - 80, 4);
+    ctx.stroke();
+    ctx.strokeStyle = "#2b5fd9";
+    ctx.lineWidth = 1.5;
+    this.rr(ctx, 52, 52, W - 104, H - 104, 2);
+    ctx.stroke();
+    this.drawCorners(ctx, W, H);
+
+    /* ---- 3. 金色绶带 ---- */
+    this.ribbon(ctx, cx, 92);
+
+    /* ---- 4. 标题（衬线大字、宽字距） ---- */
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#1e3a8a";
+    ctx.font = "bold 54px serif";
+    this.spaced(ctx, "荣誉证书", cx, 236, 18);
+    ctx.fillStyle = "#a3821d";
+    ctx.font = "15px serif";
+    this.spaced(ctx, "书声岛 · 朗读荣誉证书", cx, 268, 2);
+
+    /* ---- 5. 证书正文 ---- */
+    ctx.fillStyle = "#5b5648";
+    ctx.font = "20px serif";
+    this.spaced(ctx, "兹 证 明", cx, 322, 10);
+    ctx.fillStyle = "#1e3a8a";
+    ctx.font = "bold 30px serif";
+    ctx.fillText(d.nickname + " 小朋友", cx, 368);
+    ctx.strokeStyle = "#d4a017";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - 96, 382);
+    ctx.lineTo(cx + 96, 382);
+    ctx.stroke();
+
+    ctx.fillStyle = "#5b5648";
+    ctx.font = "19px serif";
+    const bodyEnd = this.wrapText(
+      ctx,
+      `在《${d.lessonName}》朗读练习中读音准确、声音响亮，被授予「${d.badgeName}」称号，特发此状，以资鼓励！`,
+      cx,
+      400,
+      W - 210,
+      34
+    );
+
+    /* ---- 6. 核心数据（位置随正文行数自适应，避免重叠） ---- */
+    const numY = bodyEnd + 34;
+    ctx.fillStyle = "#d4a017";
+    ctx.font = "bold 30px serif";
+    ctx.fillText(`${d.summary.read} / ${d.summary.total} 句`, cx, numY);
+    ctx.fillStyle = "#8a8570";
+    ctx.font = "15px serif";
+    const subY = numY + 28;
+    ctx.fillText(
+      `用时 ${d.summary.duration} · 生词 ${d.summary.vocab} 个 · 完成度 ${d.summary.percent}%`,
+      cx,
+      subY
+    );
+
+    /* ---- 7. 金色奖章（替代旧红印章） ---- */
+    const medalY = subY + 60;
+    this.medal(ctx, cx, medalY);
+
+    /* ---- 8. 分隔线 + 推广码区块（沿用；正文过长时整段上收，保证落款不出内框） ---- */
+    const sepY = Math.min(medalY + 58, 668);
+    ctx.strokeStyle = "#e3d9bd";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(88, sepY);
+    ctx.lineTo(W - 88, sepY);
+    ctx.stroke();
+
+    const foot1 = this.drawQrBlock(ctx, W, qrImg, d, sepY + 10);
+
+    /* ---- 9. 落款（动态跟随，保持在蓝色内框线之上） ---- */
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#8a8570";
+    ctx.font = "16px serif";
+    ctx.fillText(`${d.certNo} · ${d.dateText}`, cx, foot1 + 24);
+    ctx.fillText("保持朗读，下一段更精彩 ✨", cx, foot1 + 48);
+  },
+  spaced: function spaced(ctx, text, cx, y, gap) {
+    const chars = Array.from(text);
+    const widths = chars.map((c) => ctx.measureText(c).width);
+    const total = widths.reduce((a, b) => a + b, 0) + gap * (chars.length - 1);
+    let x = cx - total / 2;
+    const prev = ctx.textAlign;
+    ctx.textAlign = "left";
+    chars.forEach((c, i) => {
+      ctx.fillText(c, x, y);
+      x += widths[i] + gap;
+    });
+    ctx.textAlign = prev;
+  },
+  drawCorners: function drawCorners(ctx, W, H) {
+    const cs = [
+      [40, 40, 0],
+      [W - 40, 40, Math.PI / 2],
+      [W - 40, H - 40, Math.PI],
+      [40, H - 40, Math.PI * 1.5],
+    ];
+    cs.forEach(([x, y, a]) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(a);
+      ctx.strokeStyle = "#d4a017";
+      [22, 32, 42].forEach((r, i) => {
+        ctx.lineWidth = i === 0 ? 2.5 : 1.5;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI / 2);
+        ctx.stroke();
+      });
+      ctx.fillStyle = "#d4a017";
+      const k = Math.SQRT1_2;
+      ctx.beginPath();
+      ctx.arc(50 * k, 50 * k, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(50, 0, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, 50, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+  },
+  ribbon: function ribbon(ctx, cx, cy) {
+    const halfW = 112;
+    // 左右翼（画在主体后面，深一号的金）
+    ctx.fillStyle = "#c9971b";
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW, cy + 4);
+    ctx.lineTo(cx - halfW - 40, cy + 4);
+    ctx.lineTo(cx - halfW - 18, cy + 24);
+    ctx.lineTo(cx - halfW - 40, cy + 44);
+    ctx.lineTo(cx - halfW, cy + 44);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(cx + halfW, cy + 4);
+    ctx.lineTo(cx + halfW + 40, cy + 4);
+    ctx.lineTo(cx + halfW + 18, cy + 24);
+    ctx.lineTo(cx + halfW + 40, cy + 44);
+    ctx.lineTo(cx + halfW, cy + 44);
+    ctx.closePath();
+    ctx.fill();
+    // 主体
+    const g = ctx.createLinearGradient(0, cy, 0, cy + 40);
+    g.addColorStop(0, "#eecb5a");
+    g.addColorStop(0.5, "#d4a017");
+    g.addColorStop(1, "#b8860b");
+    ctx.fillStyle = g;
+    this.rr(ctx, cx - halfW, cy, halfW * 2, 40, 4);
+    ctx.fill();
+    ctx.strokeStyle = "#a3750c";
+    ctx.lineWidth = 1.5;
+    this.rr(ctx, cx - halfW, cy, halfW * 2, 40, 4);
+    ctx.stroke();
+    // 主体上折角（表现翼在后面）
+    ctx.fillStyle = "#8f6a0c";
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW, cy);
+    ctx.lineTo(cx - halfW + 14, cy);
+    ctx.lineTo(cx - halfW, cy + 12);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(cx + halfW, cy);
+    ctx.lineTo(cx + halfW - 14, cy);
+    ctx.lineTo(cx + halfW, cy + 12);
+    ctx.closePath();
+    ctx.fill();
+    // 带面小字
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#7a5b0e";
+    ctx.font = "12px serif";
+    ctx.fillText("R E A D I N G   A W A R D", cx, cy + 25);
+  },
+  medal: function medal(ctx, cx, cy) {
+    // 缎带 V 形
+    ctx.fillStyle = "#2b5fd9";
+    ctx.beginPath();
+    ctx.moveTo(cx - 26, cy - 62);
+    ctx.lineTo(cx - 2, cy - 30);
+    ctx.lineTo(cx - 26, cy - 30);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(cx + 26, cy - 62);
+    ctx.lineTo(cx + 2, cy - 30);
+    ctx.lineTo(cx + 26, cy - 30);
+    ctx.closePath();
+    ctx.fill();
+    // 花边外圈（24 颗小金珠）
+    ctx.fillStyle = "#d4a017";
+    for (let i = 0; i < 24; i++) {
+      const a = (i * Math.PI) / 12;
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(a) * 50, cy + Math.sin(a) * 50, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // 主圆
+    const g = ctx.createLinearGradient(cx - 44, cy - 44, cx + 44, cy + 44);
+    g.addColorStop(0, "#f2cf6b");
+    g.addColorStop(1, "#cf9c17");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 45, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#a3750c";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 45, 0, Math.PI * 2);
+    ctx.stroke();
+    // 红内圆
+    ctx.fillStyle = "#cf3f35";
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#f6e3b0";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 27, 0, Math.PI * 2);
+    ctx.stroke();
+    // 白星 + 岛名
+    this.star(ctx, cx, cy - 8, 13, "#fdf6dd");
+    ctx.fillStyle = "#fdf6dd";
+    ctx.font = "bold 13px serif";
+    ctx.fillText("书声岛", cx, cy + 18);
+  },
+  rr: function rr(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  },
+  star: function star(ctx, cx, cy, R, color) {
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const r = i % 2 === 0 ? R : R * 0.45;
+      const a = -Math.PI / 2 + (i * Math.PI) / 5;
+      const x = cx + Math.cos(a) * r;
+      const y = cy + Math.sin(a) * r;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = color || "#fbbf24";
+    ctx.fill();
+  },
+  wrapText: function wrapText(ctx, text, cx, y, maxW, lineH) {
+    const chars = Array.from(text);
+    let line = "";
+    let yy = y;
+    for (const ch of chars) {
+      if (ctx.measureText(line + ch).width > maxW) {
+        ctx.fillText(line, cx, yy);
+        line = ch;
+        yy += lineH;
+      } else {
+        line += ch;
+      }
+    }
+    if (line) ctx.fillText(line, cx, yy);
+    return yy;
+  },
+  drawQrBlock: function drawQrBlock(ctx, W, img, d, boxY) {
+    const size = qrcode.size || 148;
+    const boxH = size + 24;
+    const left = 88;
+    const right = W - 56 - 24; // 内卡右内边距
+
+    if (img) {
+      const boxW = size + 24;
+      const boxX = right - boxW;
+      this.rr(ctx, boxX, boxY, boxW, boxH, 18);
+      ctx.fillStyle = "#faf5e6";
+      ctx.fill();
+      ctx.strokeStyle = "#e3d9bd";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      try {
+        ctx.drawImage(img, boxX + 12, boxY + 12, size, size);
+      } catch (e) {
+        /* 画图失败就当没有码，下面的文案单独看也成立 */
+      }
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#3f3a2e";
+      ctx.font = "bold 22px serif";
+      ctx.fillText("微信扫一扫", left, 744);
+      ctx.fillStyle = "#a3821d";
+      ctx.font = "20px serif";
+      ctx.fillText("打开「书声岛」", left, 778);
+      ctx.fillStyle = "#8a8570";
+      ctx.font = "14px serif";
+      ctx.fillText(`和${d.nickname || "孩子"}一起每天读一点`, left, boxY + 138);
+      return boxY + boxH;
+    }
+
+    const boxW = right - left;
+    this.rr(ctx, left, boxY, boxW, boxH, 18);
+    ctx.fillStyle = "#faf5e6";
+    ctx.fill();
+    ctx.strokeStyle = "#d9cba2";
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([8, 6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const mid = left + boxW / 2;
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#a3821d";
+    ctx.font = "bold 26px serif";
+    ctx.fillText("微信搜索「书声岛」", mid, boxY + 80);
+    ctx.fillStyle = "#8a8570";
+    ctx.font = "16px serif";
+    ctx.fillText("和小伙伴一起，每天读一点", mid, boxY + 120);
+    return boxY + boxH;
+  }
+};
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+ctx.scale(2, 2);
+obj.drawPoster(ctx, 600, 960, null);
+</script></body></html>

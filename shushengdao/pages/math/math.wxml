@@ -1,0 +1,240 @@
+<view class="page">
+  <!-- 顶部导航（右侧留出微信胶囊位置） -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row hd-left" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <view class="col" style="gap:0;min-width:0">
+          <text class="t-18">数字测试</text>
+          <text class="t-10 c-t truncate">看清数字，大声读出来</text>
+        </view>
+      </view>
+      <view class="today-chip">
+        <view class="ico ico-star ico-27" style="color:#fbbf24"></view>
+        <text class="t-10 c-primary">答对 {{stats.todayRight}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 数字区间 -->
+    <view class="range-bar">
+      <view class="row" style="gap:8rpx;min-width:0">
+        <view class="ico ico-target ico-30" style="color:#00687a"></view>
+        <text class="t-12 c-s">范围</text>
+        <text class="range-num">{{range.min}} ~ {{range.max}}</text>
+        <text class="range-tip">共 {{span}} 个数</text>
+      </view>
+      <view class="range-edit" hover-class="pressed" bindtap="openSettings">
+        <view class="ico ico-settings ico-24 c-primary"></view>
+        <text class="t-11 semi c-primary">改区间</text>
+      </view>
+    </view>
+
+    <!-- 题面 -->
+    <view class="paper {{phase === 'right' ? 'paper-ok' : ''}} {{phase === 'wrong' ? 'paper-bad' : ''}}">
+      <view class="paper-glow"></view>
+
+      <view class="row between" style="z-index:2;width:100%">
+        <view class="q-badge">
+          <text class="t-10 semi">{{onlyWrong ? '错题练习' : '第 ' + round + ' 题'}}</text>
+        </view>
+        <view class="dots">
+          <view class="hdot {{item.ok ? 'hdot-ok' : 'hdot-bad'}}" wx:for="{{history}}" wx:key="key"></view>
+          <view class="hdot hdot-empty" wx:if="{{!history.length}}"></view>
+        </view>
+      </view>
+
+      <view class="num-stage">
+        <text class="num-big {{numAnim ? 'num-in' : ''}}" style="font-size:{{numSize}}rpx">{{current}}</text>
+        <view class="ok-pop" wx:if="{{phase === 'right'}}">
+          <view class="ico ico-check ico-34" style="color:#fff"></view>
+        </view>
+        <view class="star s1" wx:if="{{phase === 'right'}}">✦</view>
+        <view class="star s2" wx:if="{{phase === 'right'}}">✦</view>
+        <view class="star s3" wx:if="{{phase === 'right'}}">✦</view>
+      </view>
+
+      <text class="read-tip {{phase === 'listening' ? 'tip-live' : ''}}">{{phaseTip}}</text>
+
+      <view class="hint-line" wx:if="{{hintOn}}">
+        <view class="ico ico-bulb ico-24" style="color:#fbbf24"></view>
+        <text class="t-10 c-s">这个数字读作「{{hintText}}」，可以照着念一遍</text>
+      </view>
+      <view class="hint-line hint-btn" wx:else hover-class="pressed" bindtap="toggleHint">
+        <view class="ico ico-bulb ico-24" style="color:#fbbf24"></view>
+        <text class="t-10 c-t">不会读？点一下看读法提示</text>
+      </view>
+    </view>
+
+    <!-- 录音区 -->
+    <view class="mic-zone">
+      <view class="wave" wx:if="{{phase === 'listening'}}">
+        <view
+          class="wv"
+          wx:for="{{waves}}"
+          wx:key="*this"
+          style="height:{{item}}rpx;animation-delay:{{index * 0.09}}s"
+        ></view>
+      </view>
+
+      <view
+        class="mic-btn {{phase === 'listening' ? 'mic-on' : ''}} {{phase === 'right' ? 'mic-ok' : ''}}"
+        hover-class="mic-hover"
+        bindtap="tapMic"
+      >
+        <view class="mic-ring" wx:if="{{phase === 'listening'}}"></view>
+        <view class="ico {{phase === 'listening' ? 'ico-pause' : 'ico-mic'}} ico-70" style="color:#fff"></view>
+      </view>
+
+      <text class="mic-label">{{micLabel}}</text>
+      <text class="mic-sub" wx:if="{{phase === 'listening'}}">{{seconds}}″ · 读完点一下停止</text>
+      <text class="mic-sub" wx:elif="{{!asrOk}}">本机语音识别未开通，录音后请家长帮忙确认</text>
+      <text class="mic-sub" wx:else>录音会自动打开，读完点一下就行</text>
+    </view>
+
+    <!-- 识别结果 / 反馈 -->
+    <view class="fb fb-ok" wx:if="{{phase === 'right'}}">
+      <text class="fb-emoji">🎉</text>
+      <view class="col flex1" style="min-width:0">
+        <text class="fb-title">你真棒哟</text>
+        <text class="fb-sub truncate">我听到「{{heard}}」，下一题马上来</text>
+      </view>
+      <view class="fb-skip" hover-class="pressed" bindtap="nextItem">
+        <text class="t-11 semi">下一个</text>
+        <view class="ico ico-chevron-right ico-24"></view>
+      </view>
+    </view>
+
+    <view class="fb fb-bad" wx:if="{{phase === 'wrong'}}">
+      <text class="fb-emoji">💪</text>
+      <view class="col flex1" style="min-width:0">
+        <text class="fb-title">答错咯，要加油哟</text>
+        <text class="fb-sub">我听到「{{heard}}」，正确答案是 {{current}}（{{hintText}}）</text>
+      </view>
+      <view class="fb-actions">
+        <view class="fb-btn ghost" hover-class="pressed" bindtap="retrySame">再读一次</view>
+        <view class="fb-btn solid" hover-class="pressed" bindtap="nextItem">下一个</view>
+      </view>
+    </view>
+
+    <view class="fb fb-retry" wx:if="{{phase === 'retry'}}">
+      <text class="fb-emoji">👂</text>
+      <view class="col flex1" style="min-width:0">
+        <text class="fb-title">没听清，再读一次吧</text>
+        <text class="fb-sub">靠近一点、大声一点，我就听得到啦</text>
+      </view>
+    </view>
+
+    <!-- 降级：没有语音识别时由家长确认 -->
+    <view class="fb fb-manual" wx:if="{{phase === 'manual'}}">
+      <text class="fb-emoji">🎧</text>
+      <view class="col flex1" style="min-width:0">
+        <text class="fb-title">家长听一下，读对了吗？</text>
+        <text class="fb-sub">这台设备没开通语音识别，先用耳朵帮忙判一下</text>
+      </view>
+      <view class="fb-actions">
+        <view class="fb-btn ghost" hover-class="pressed" data-ok="0" bindtap="manualJudge">没读对</view>
+        <view class="fb-btn solid" hover-class="pressed" data-ok="1" bindtap="manualJudge">读对了</view>
+      </view>
+    </view>
+
+    <!-- 回听自己的声音 -->
+    <view class="replay" wx:if="{{hasFile && (phase === 'wrong' || phase === 'right')}}" hover-class="pressed" bindtap="playMine">
+      <view class="ico ico-headphones ico-28 c-primary"></view>
+      <text class="t-11 c-primary">听听我刚才的声音</text>
+    </view>
+
+    <!-- 今日统计 -->
+    <view class="stats">
+      <view class="st">
+        <text class="st-n" style="color:#059669">{{stats.todayRight}}</text>
+        <text class="st-l">答对</text>
+      </view>
+      <view class="st-hair"></view>
+      <view class="st">
+        <text class="st-n" style="color:#f97316">{{stats.todayWrong}}</text>
+        <text class="st-l">答错</text>
+      </view>
+      <view class="st-hair"></view>
+      <view class="st">
+        <text class="st-n c-primary">{{stats.streak}}</text>
+        <text class="st-l">连对</text>
+      </view>
+      <view class="st-hair"></view>
+      <view class="st">
+        <text class="st-n c-s">{{stats.percent}}%</text>
+        <text class="st-l">正确率</text>
+      </view>
+    </view>
+
+    <view class="only-row" wx:if="{{stats.wrongCount > 0}}">
+      <view class="row" style="gap:8rpx;min-width:0;flex:1">
+        <view class="ico ico-refresh ico-26" style="color:#00687a"></view>
+        <text class="t-11 c-s truncate">还有 {{stats.wrongCount}} 个数字读错过</text>
+      </view>
+      <view class="only-btn {{onlyWrong ? 'only-on' : ''}}" hover-class="pressed" bindtap="toggleOnlyWrong">
+        {{onlyWrong ? '退出错题' : '只练错题'}}
+      </view>
+    </view>
+
+    <view class="note">
+      <view class="ico ico-bulb ico-26" style="color:#fbbf24"></view>
+      <text class="t-10 c-t">读对会说「你真棒哟」，读错会说「答错咯，要加油哟」。语音识别需要小程序后台开通「同声传译」插件。</text>
+    </view>
+  </view>
+
+  <!-- 区间设置半屏 -->
+  <view class="mask" wx:if="{{settingsOpen}}" bindtap="closeSettings">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-bar"></view>
+      <view class="row between" style="width:100%">
+        <view class="col" style="gap:2rpx">
+          <text class="t-18 bold">设置数字范围</text>
+          <text class="t-10 c-t">数字越大越难，先把小数字读顺再往上加</text>
+        </view>
+        <view class="sheet-x" hover-class="hover-bg" bindtap="closeSettings">
+          <view class="ico ico-close ico-34"></view>
+        </view>
+      </view>
+
+      <view class="range-inputs">
+        <view class="ri">
+          <text class="ri-label">最小</text>
+          <input class="ri-input" type="number" value="{{draftMin}}" data-k="min" bindinput="onDraft" />
+        </view>
+        <text class="ri-tilde">~</text>
+        <view class="ri">
+          <text class="ri-label">最大</text>
+          <input class="ri-input" type="number" value="{{draftMax}}" data-k="max" bindinput="onDraft" />
+        </view>
+      </view>
+
+      <view class="presets">
+        <view
+          class="preset {{draftMin === item.min + '' && draftMax === item.max + '' ? 'preset-on' : ''}}"
+          wx:for="{{presets}}"
+          wx:key="label"
+          data-i="{{index}}"
+          bindtap="pickPreset"
+          hover-class="pressed"
+        >
+          {{item.label}}
+        </view>
+      </view>
+
+      <view class="range-err" wx:if="{{draftErr}}">
+        <view class="ico ico-close-circle ico-24" style="color:#ef4444"></view>
+        <text class="t-11" style="color:#ef4444">{{draftErr}}</text>
+      </view>
+
+      <view class="sheet-btn" hover-class="pressed" bindtap="saveRange">
+        <view class="ico ico-check-circle ico-34" style="color:#fff"></view>
+        <text class="t-14 semi" style="color:#fff">用这个范围开始</text>
+      </view>
+      <text class="sheet-foot">建议 3 ~ 6 岁先练 0 ~ 10，一年级练到 1 ~ 100</text>
+    </view>
+  </view>
+</view>

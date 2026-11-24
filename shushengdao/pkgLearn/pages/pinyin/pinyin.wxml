@@ -1,0 +1,312 @@
+<view class="page">
+  <!-- 真机错误浮层 -->
+  <view class="err-strip" wx:if="{{pageError}}" bindtap="showError">
+    <text class="t-10 err-txt flex1">页面脚本出错：{{pageError}} · 点我复制详情</text>
+    <view class="err-x" catchtap="dismissError"><text class="t-10">×</text></view>
+  </view>
+
+  <!-- 顶部导航 -->
+  <view class="hd {{navSolid ? 'hd-solid' : ''}}" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row hd-left" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <view class="col" style="gap:0;min-width:0">
+          <text class="t-18">汉语拼音</text>
+          <text class="t-10 c-t truncate">63 个拼音 · 听一听再跟读</text>
+        </view>
+      </view>
+      <view class="today-chip">
+        <view class="ico ico-volume ico-27 c-pc"></view>
+        <text class="t-10 c-pc">已学 {{doneCount}} / {{total}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分类切换：固定条，页面滑动时不跟着走，随时能切换全部/声母/韵母… -->
+  <view class="lv-bar {{navSolid ? 'lv-bar-solid' : ''}}" style="top:{{statusBar + navH}}px">
+    <scroll-view class="lv-scroll" scroll-x enable-flex show-scrollbar="{{false}}">
+      <view class="lv-row">
+        <view
+          class="lv-chip {{item.key === groupKey ? 'lv-on' : ''}} {{item.key === 'all' ? 'lv-all' : ''}}"
+          wx:for="{{groups}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="pickGroup"
+          hover-class="pressed"
+        >
+          <view class="ico ico-stories ico-22" wx:if="{{item.key === 'all'}}"></view>
+          <text class="t-12 {{item.key === groupKey ? 'semi' : ''}}">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- 全部拼音：纯展示总览（分类条第一个「全部」进入） -->
+    <view class="all-panel" wx:if="{{mode === 'all'}}">
+      <view class="all-head">
+        <view class="col" style="gap:2rpx;min-width:0">
+          <text class="t-20 bold">63 个拼音一览</text>
+          <text class="t-11 c-s">声母 23 · 韵母 24 · 整体认读 16</text>
+        </view>
+        <view class="all-prog"><text class="t-10 semi c-pc">已学 {{doneCount}} / {{total}}</text></view>
+      </view>
+      <view class="bar"><view class="bar-fill" style="width:{{percent}}%"></view></view>
+
+      <!-- 拼音歌：真人录音 + 滚动歌词播放器 -->
+      <view class="song-card">
+        <view class="sp-head">
+          <view class="song-badge">{{song.emoji}}</view>
+          <view class="col flex1" style="gap:1rpx;min-width:0">
+            <text class="t-14 semi truncate">{{song.title}}</text>
+            <text class="t-10 c-t truncate">{{song.sub}}</text>
+          </view>
+          <view class="song-modes">
+            <view class="song-mode {{songMode === 'sing' ? 'song-mode-on' : ''}}" hover-class="pressed" catchtap="pickSongMode" data-mode="sing">
+              <text class="t-10 semi">跟唱</text>
+            </view>
+            <view class="song-mode {{songMode === 'read' ? 'song-mode-on' : ''}}" hover-class="pressed" catchtap="pickSongMode" data-mode="read">
+              <text class="t-10 semi">朗读</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="sp-stage">
+          <scroll-view
+            class="sp-lyrics"
+            scroll-y
+            scroll-top="{{songScroll}}"
+            scroll-with-animation
+            show-scrollbar="{{false}}"
+          >
+            <view class="sp-pad"></view>
+            <view
+              class="sp-line {{songLine === index ? 'sp-on' : ''}} {{songLine > index ? 'sp-done' : ''}}"
+              wx:for="{{song.lines}}"
+              wx:key="start"
+              id="ln{{index}}"
+              data-idx="{{index}}"
+              bindtap="tapSongLine"
+              hover-class="sp-pressed"
+            >
+              <text class="sp-kind" wx:if="{{item.kind === 'lead' || item.kind === 'read'}}">{{item.kind === 'lead' ? '首音' : '读行'}}</text>
+              <text class="sp-text {{item.text.length > 26 ? 'sp-text-sm' : ''}}">{{item.text}}</text>
+            </view>
+            <view class="sp-pad"></view>
+          </scroll-view>
+          <view class="sp-fade sp-fade-t"></view>
+          <view class="sp-fade sp-fade-b"></view>
+        </view>
+
+        <view class="sp-foot">
+          <view class="sp-play {{songPlaying ? 'sp-play-on' : ''}}" hover-class="pressed" bindtap="toggleSong">
+            <view class="ico {{songPlaying ? 'ico-pause' : 'ico-play'}} ico-26"></view>
+          </view>
+          <view class="col flex1" style="gap:6rpx;min-width:0">
+            <view class="sp-track"><view class="sp-fill" style="width:{{songPos}}%"></view></view>
+            <view class="row between">
+              <text class="sp-time">{{songClock}}</text>
+              <text class="sp-time">{{songTotal}}</text>
+            </view>
+          </view>
+        </view>
+
+        <text class="sp-tip">{{song.tip}}</text>
+      </view>
+
+      <view class="all-hint">
+        <view class="ico ico-bulb ico-24" style="color:#fbbf24"></view>
+        <text class="t-10 c-t flex1">这里只做展示，点任意一个拼音就进入它的跟读卡片</text>
+      </view>
+
+      <view class="all-block" wx:for="{{sections}}" wx:key="key" wx:for-item="g">
+        <view class="all-g-head">
+          <text class="t-13 semi">{{g.name}}</text>
+          <text class="t-10 c-t">{{g.count}} 个 · {{g.sub}}</text>
+        </view>
+        <view class="all-grid">
+          <view
+            class="all-cell {{cell.done ? 'all-done' : ''}}"
+            wx:for="{{g.items}}"
+            wx:key="id"
+            wx:for-item="cell"
+            data-id="{{cell.id}}"
+            bindtap="pickItem"
+            hover-class="pressed"
+          >
+            <text class="all-py">{{cell.py}}</text>
+            <text class="all-say truncate">{{cell.say}}</text>
+            <view class="all-check" wx:if="{{cell.done}}"><view class="ico ico-check ico-22" style="color:#fff"></view></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <block wx:if="{{mode !== 'all'}}">
+    <!-- 拼音卡 -->
+    <view class="paper">
+      <view class="paper-glow"></view>
+
+      <view class="row between" style="z-index:2;width:100%">
+        <view class="col" style="gap:6rpx;min-width:0">
+          <view class="row" style="gap:12rpx;align-items:center">
+            <text class="py-big">{{item.py}}</text>
+            <view class="say-pill {{speaking ? 'say-on' : ''}}" hover-class="pressed" bindtap="speakPinyin">
+              <view class="ico ico-volume ico-34"></view>
+              <text class="t-12 semi">{{speaking ? '正在读…' : '读音'}}</text>
+            </view>
+          </view>
+          <view class="row" style="gap:8rpx;flex-wrap:wrap">
+            <text class="kind-tag">{{groupName}}</text>
+            <text class="t-10 c-t truncate">示范 {{item.say}}</text>
+          </view>
+        </view>
+        <view class="col" style="align-items:flex-end;gap:8rpx">
+          <view class="idx-pill"><text class="t-10 semi c-pc">{{index + 1}} / {{groupTotal}}</text></view>
+          <view class="row" style="gap:8rpx">
+            <view class="slow-chip {{slow ? 'slow-on' : ''}}" hover-class="pressed" bindtap="toggleSlow">
+              <view class="ico ico-speed ico-24"></view>
+              <text class="t-10 semi">慢速</text>
+            </view>
+            <view class="slow-chip {{autoPlay ? 'auto-on' : ''}}" hover-class="pressed" bindtap="toggleAuto">
+              <view class="ico {{autoPlay ? 'ico-pause' : 'ico-play'}} ico-24"></view>
+              <text class="t-10 semi">{{autoPlay ? '连读中' : '连读'}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 口型舌位图 + 发音要点 -->
+      <view class="mouth-card">
+        <view class="mouth-left">
+          <canvas wx:if="{{!mouthFail}}" class="mouth-canvas" canvas-id="mouth" id="mouth" disable-scroll></canvas>
+          <view wx:else class="sim-mouth">
+            <view class="sim-face">
+              <view
+                class="sim-lip"
+                style="width:{{mouthSim.wide}}%;height:{{mouthSim.open}}px;border-radius:{{mouthSim.round}}%"
+              ></view>
+              <view
+                class="sim-tongue"
+                style="left:{{mouthSim.tongueLeft}}%;top:{{mouthSim.tongueTop}}px"
+              ></view>
+              <view class="sim-voice" wx:if="{{mouthSim.voiced}}">声带振动</view>
+            </view>
+          </view>
+        </view>
+        <view class="col flex1" style="gap:8rpx;min-width:0">
+          <view class="row" style="gap:6rpx">
+            <view class="ico ico-book-open ico-22 c-pc"></view>
+            <text class="t-12 semi c-pc">口型舌位图</text>
+          </view>
+          <text class="t-11 c-s">{{item.tip}}</text>
+          <text class="t-10 c-t" wx:if="{{mouthHint}}">{{mouthHint}}</text>
+          <text class="t-10 c-t">对照图：唇→齿→舌→上颚，看舌头该放哪、气从哪里出</text>
+        </view>
+      </view>
+
+      <view class="tts-tip" wx:if="{{ttsTip}}" bindtap="showTtsDiag" hover-class="pressed">
+        <view class="ico ico-volume ico-24" style="color:#b45309"></view>
+        <text class="t-10 c-warn flex1">{{ttsTip}} · 点这里看看原因</text>
+        <view class="ico ico-chevron-right ico-22 c-warn"></view>
+      </view>
+
+      <!-- 拼音词组：点一下听词语 -->
+      <view class="row" style="gap:6rpx;margin-bottom:2rpx">
+        <view class="ico ico-volume ico-22 c-t"></view>
+        <text class="t-10 c-t flex1">先听上面的「读音」，再点词组，听它在词语里的样子</text>
+      </view>
+      <view class="word-grid">
+        <view
+          class="w-card"
+          wx:for="{{item.words}}"
+          wx:key="sy"
+          data-word="{{item.word}}"
+          bindtap="speakWord"
+          hover-class="pressed"
+        >
+          <text class="w-sy truncate">{{item.sy}}</text>
+          <text class="w-cn truncate">{{item.word}}</text>
+          <view class="w-play {{speakingWord === item.word ? 'w-on' : ''}}">
+            <view class="ico ico-volume ico-22"></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 工具行 -->
+      <view class="tools">
+        <view class="tool tool-say {{speaking ? 'tool-say-on' : ''}}" hover-class="hover-bg" bindtap="speakPinyin">
+          <view class="ico ico-volume ico-46"></view>
+          <text class="t-12 semi">{{speaking ? '正在读…' : '再听一遍'}}</text>
+        </view>
+        <view class="tool" hover-class="hover-bg" bindtap="prevItem">
+          <view class="ico ico-chevron-left ico-34"></view>
+          <text class="t-10">上一个</text>
+        </view>
+        <view class="tool" hover-class="hover-bg" bindtap="nextItem">
+          <view class="ico ico-chevron-right ico-34"></view>
+          <text class="t-10">下一个</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 63 个拼音总览 -->
+    <view class="section">
+      <view class="sec-head">
+        <view class="row" style="gap:8rpx">
+          <text class="t-18 bold">63 个拼音</text>
+          <text class="t-10 c-t">声母 23 · 韵母 24 · 整体认读 16</text>
+        </view>
+        <text class="t-10 semi c-pc">已学 {{doneCount}} / {{total}}</text>
+      </view>
+
+      <view class="bar">
+        <view class="bar-fill" style="width:{{percent}}%"></view>
+      </view>
+
+      <view class="group-block" wx:for="{{sections}}" wx:key="key" wx:for-item="g">
+        <view class="g-head">
+          <view class="row" style="gap:8rpx">
+            <text class="t-12 semi">{{g.name}}</text>
+            <text class="t-10 c-t">{{g.count}} 个</text>
+          </view>
+          <text class="t-10 c-t">{{g.sub}}</text>
+        </view>
+        <view class="lib">
+          <view
+            class="lib-cell {{cell.id === item.id ? 'lib-on' : ''}}"
+            wx:for="{{g.items}}"
+            wx:key="id"
+            wx:for-item="cell"
+            data-id="{{cell.id}}"
+            data-auto="1"
+            bindtap="pickItem"
+            hover-class="pressed"
+          >
+            <text class="lib-py">{{cell.py}}</text>
+            <view class="lib-check" wx:if="{{cell.done}}">
+              <view class="ico ico-check ico-22" style="color:#fff"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="note-row">
+        <view class="ico ico-bulb ico-30" style="color:#fbbf24"></view>
+        <text class="t-10 c-t">点拼音就能切换，点哪个就从哪个开始连读；读完点「我读会啦」会自动打勾；开「连读」每个读 2 遍，读完一组自动进下一组。</text>
+      </view>
+    </view>
+    </block>
+  </view>
+
+  <!-- 底部主按钮 -->
+  <view class="cta-bar" wx:if="{{mode !== 'all'}}">
+    <view class="btn-main" hover-class="pressed" bindtap="markLearned">
+      <view class="ico ico-check-circle ico-34" style="color:#fff"></view>
+      <text class="t-14 semi" style="color:#fff">我读会啦，下一个</text>
+    </view>
+  </view>
+</view>
+<include src="../../../pages/common/veil.wxml" />

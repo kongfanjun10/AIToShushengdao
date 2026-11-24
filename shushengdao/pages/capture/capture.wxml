@@ -1,0 +1,210 @@
+<import src="../../templates/tabbar.wxml" />
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack" wx:if="{{showBack}}">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <text class="t-18 truncate" style="max-width:240rpx">拍照朗读</text>
+      </view>
+      <view class="step-pill">
+        <view class="step-dot {{step === 'pick' ? 'on' : 'done'}}"></view>
+        <text class="t-10 semi {{step === 'pick' ? 'c-primary' : 'c-s'}}">1 拍摄</text>
+        <view class="step-line"></view>
+        <view class="step-dot {{step === 'review' ? 'on' : ''}}"></view>
+        <text class="t-10 semi {{step === 'review' ? 'c-primary' : 'c-t'}}">2 校对</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="main" style="padding-top:{{statusBar + navH + 2}}px">
+    <!-- ============ 步骤一：拍摄与整理 ============ -->
+    <block wx:if="{{step === 'pick'}}">
+      <view class="tip-card shadow-soft">
+        <view class="row" style="gap:10rpx">
+          <view class="tip-ico"><view class="ico ico-camera ico-40" style="color:#fff"></view></view>
+          <view class="col flex1">
+            <text class="t-14 bold">拍下课本，我来带孩子读</text>
+            <text class="t-11 c-s" style="margin-top:2rpx">页面放平、光线均匀，一次最多 {{maxImages}} 张</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="sec-head">
+          <view class="row" style="gap:6rpx">
+            <text class="t-18 bold">课文照片</text>
+            <text class="count-pill">{{images.length}}/{{maxImages}}</text>
+          </view>
+          <text class="t-10 c-t" wx:if="{{images.length}}">按序号依次识别</text>
+        </view>
+
+        <view class="grid">
+          <view class="shot" wx:for="{{images}}" wx:key="path">
+            <image class="shot-img" src="{{item.path}}" mode="aspectFill" data-index="{{index}}" bindtap="previewImage" />
+            <view class="shot-idx">{{index + 1}}</view>
+            <view class="shot-del" data-index="{{index}}" catchtap="removeImage">
+              <view class="ico ico-close ico-24" style="color:#fff"></view>
+            </view>
+            <view class="shot-ops">
+              <view class="op {{index === 0 ? 'op-off' : ''}}" data-index="{{index}}" data-dir="-1" catchtap="moveImage">
+                <view class="ico ico-chevron-left ico-26"></view>
+              </view>
+              <view class="op {{index === images.length - 1 ? 'op-off' : ''}}" data-index="{{index}}" data-dir="1" catchtap="moveImage">
+                <view class="ico ico-chevron-right ico-26"></view>
+              </view>
+            </view>
+          </view>
+
+          <view class="add-tile" wx:if="{{images.length < maxImages}}" hover-class="pressed" bindtap="chooseSource">
+            <view class="ico ico-plus ico-54 c-primary"></view>
+            <text class="t-12 semi" style="margin-top:4rpx">拍照 / 相册</text>
+          </view>
+        </view>
+
+        <view class="empty-hint" wx:if="{{images.length === 0}}">
+          <view class="empty-art"><view class="ico ico-folder ico-70 c-t"></view></view>
+          <text class="t-13 c-s">还没有照片，点上面的虚线框开始</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ 步骤二：识别结果校对 ============ -->
+    <block wx:else>
+      <view class="result-card shadow-card">
+        <view class="row between">
+          <view class="row" style="gap:10rpx">
+            <view class="ok-badge"><view class="ico ico-check ico-34" style="color:#fff"></view></view>
+            <view class="col">
+              <text class="t-18 bold">识别完成</text>
+              <text class="t-10 c-s" style="margin-top:2rpx">共 {{stats.sentences}} 句 · {{stats.chars}} 字</text>
+            </view>
+          </view>
+          <view class="mode-tag {{isMock ? 'mode-mock' : 'mode-live'}}" bindtap="showModeInfo">
+            <view class="ico {{isMock ? 'ico-cloud-off' : 'ico-cloud'}} ico-26"></view>
+            <text class="t-10 semi">{{modeLabel}}</text>
+          </view>
+        </view>
+        <view class="mini-stats">
+          <view class="mini-stat">
+            <text class="t-10 c-t">识别图片</text>
+            <text class="t-14 bold">{{images.length}} 张</text>
+          </view>
+          <view class="mini-stat">
+            <text class="t-10 c-t">失败图片</text>
+            <text class="t-14 bold" style="color:{{ocrFailed ? '#f97316' : '#0f172a'}}">{{ocrFailed}} 张</text>
+          </view>
+          <view class="mini-stat">
+            <text class="t-10 c-t">平均句长</text>
+            <text class="t-14 bold">{{stats.avg}} 字</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="mock-warn" wx:if="{{isMock}}">
+        <view class="ico ico-bulb ico-30" style="color:#92400e"></view>
+        <text class="t-10" style="color:#92400e;flex:1">当前是演示数据（未接入 OCR 服务）。按 README 开通服务市场或部署云函数后即为真实识别。</text>
+      </view>
+
+      <view class="section">
+        <view class="sec-head">
+          <text class="t-18 bold">句子校对</text>
+          <text class="t-10 c-t">点铅笔可修改，识别错的句子可删掉</text>
+        </view>
+
+        <view class="sent-list">
+          <view class="sent" wx:for="{{sentences}}" wx:key="id">
+            <view class="sent-idx">{{index + 1}}</view>
+            <view class="sent-body">
+              <block wx:if="{{editingIndex === index}}">
+                <textarea
+                  class="sent-input"
+                  value="{{item.text}}"
+                  auto-height
+                  maxlength="120"
+                  focus="{{true}}"
+                  data-index="{{index}}"
+                  bindinput="onEditInput"
+                  bindblur="onEditBlur"
+                />
+              </block>
+              <text class="sent-text" wx:else>{{item.text}}</text>
+              <view class="sent-meta">
+                <text class="t-10 c-t">{{item.chars}} 字</text>
+              </view>
+            </view>
+            <view class="sent-ops">
+              <view class="sent-op" hover-class="hover-bg" data-index="{{index}}" catchtap="editSentence">
+                <view class="ico ico-edit ico-28 c-s"></view>
+              </view>
+              <view class="sent-op" hover-class="hover-bg" data-index="{{index}}" catchtap="removeSentence">
+                <view class="ico ico-trash ico-28" style="color:#f97316"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="add-sentence" hover-class="pressed" bindtap="addSentence">
+          <view class="ico ico-plus-circle ico-32 c-primary"></view>
+          <text class="t-12 semi c-primary">手动补一句</text>
+        </view>
+
+        <view class="empty-hint" wx:if="{{sentences.length === 0}}">
+          <text class="t-13 c-s">还没有句子，回去重拍一张试试</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <block wx:if="{{step === 'pick'}}">
+      <view class="btn-main {{images.length === 0 || scanning ? 'btn-disabled' : ''}}" hover-class="pressed" bindtap="startScan">
+        <view class="ico ico-sparkles ico-34" style="color:#fff"></view>
+        <text class="t-14 semi" style="color:#fff">{{images.length ? '开始识别 · ' + images.length + ' 张' : '先添加照片'}}</text>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="btn-ghost" hover-class="pressed" bindtap="backToPick">重拍</view>
+      <view class="btn-main {{sentences.length === 0 ? 'btn-disabled' : ''}}" hover-class="pressed" bindtap="startReading">
+        <view class="ico ico-headphones ico-34" style="color:#fff"></view>
+        <text class="t-14 semi" style="color:#fff">先听一遍 · {{sentences.length}} 句</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 识别中遮罩 -->
+  <view class="mask" wx:if="{{scanning}}">
+    <view class="scan-card">
+      <view class="scan-visual">
+        <view class="scan-ring"></view>
+        <view class="scan-doc"><view class="ico ico-book-open ico-70 c-primary"></view></view>
+        <view class="scan-beam"></view>
+      </view>
+      <text class="t-18 bold" style="margin-top:6rpx">{{scanText}}</text>
+      <text class="t-10 c-s">已处理 {{doneCount}}/{{images.length}} 张</text>
+      <view class="scan-progress"><view class="scan-fill" style="width:{{progress}}%"></view></view>
+      <view class="scan-list">
+        <view class="scan-row" wx:for="{{images}}" wx:key="path">
+          <text class="t-10 c-s flex1 truncate">第 {{index + 1}} 页</text>
+          <view class="dot-wait" wx:if="{{item.status === 'waiting'}}"></view>
+          <view class="dot-run" wx:elif="{{item.status === 'scanning'}}"></view>
+          <view class="row" wx:elif="{{item.status === 'ok'}}">
+            <view class="ico ico-check-circle ico-26" style="color:#005b3d"></view>
+            <text class="t-10" style="color:#005b3d">已识别</text>
+          </view>
+          <view class="row" wx:else>
+            <view class="ico ico-close-circle ico-26" style="color:#f97316"></view>
+            <text class="t-10" style="color:#f97316">失败</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部任务栏（页签式，共享模板） -->
+  <template is="tabbar" data="{{active: 'capture'}}" />
+</view>
+<include src="../../pages/common/veil.wxml" />

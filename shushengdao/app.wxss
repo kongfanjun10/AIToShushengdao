@@ -1,0 +1,344 @@
+@import "styles/icons.wxss";
+
+/* ===== 设计令牌（来自 Stitch 原型 tailwind.config） ===== */
+page {
+  --primary: #0369a1;
+  --primary-container: #0ea5e9;
+  --on-primary: #ffffff;
+  --primary-fixed: #eaddff;
+  --accent-purple-light: #e0f2fe;
+  --accent-purple-hover: #0369a1;
+  --accent-yellow: #fbbf24;
+  --accent-coral: #f97316;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --surface-white: #ffffff;
+  --surface-container: #e7eeff;
+  --surface-container-high: #d8e3fb;
+  --surface-container-low: #f0f3ff;
+  --secondary: #00687a;
+  --secondary-fixed: #acedff;
+  --tertiary: #005b3d;
+  --tertiary-container: #007650;
+  --tertiary-fixed: #6ffbbe;
+  --badge-locked-mask: #cbd5e1;
+  --inverse-surface: #263143;
+  --inverse-on-surface: #ecf1ff;
+  --warning-bg: #fef3c7;
+  --warning-text: #92400e;
+  --card-border: rgba(255, 255, 255, 0.6);
+  --bg-top: #e0f2fe;
+  --bg-bottom: #dcfce7;
+
+  background: linear-gradient(180deg, #e0f2fe 0%, #dcfce7 100%);
+  background-attachment: fixed;
+  font-family: "Plus Jakarta Sans", "PingFang SC", "Helvetica Neue", Roboto, sans-serif;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+view,
+text,
+image,
+scroll-view {
+  box-sizing: border-box;
+}
+
+/* ===== 顶部栏（全局）=====
+ * 不透明底：页面往上滑时内容不会从标题后面透出来；
+ * 滚动超过 8px 加一条投影，层次更清楚（各页 onPageScroll 里切 hd-solid）。 */
+.hd {
+  background: #f2f9ff;
+}
+.hd.hd-solid {
+  background: #f2f9ff;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.06), 0 8rpx 22rpx rgba(15, 23, 42, 0.05);
+}
+
+/* ===== 布局工具 ===== */
+.row {
+  display: flex;
+  align-items: center;
+}.col {
+  display: flex;
+  flex-direction: column;
+}
+.between {
+  justify-content: space-between;
+}
+.center {
+  justify-content: center;
+  align-items: center;
+}
+.flex1 {
+  flex: 1;
+  min-width: 0;
+}
+.truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ===== 字号体系（1 设计 px = 1.92rpx） ===== */
+.t-hero {
+  font-size: 61rpx;
+  line-height: 77rpx;
+  font-weight: 700;
+  letter-spacing: -0.5rpx;
+}
+.t-24 {
+  font-size: 46rpx;
+  line-height: 61rpx;
+  font-weight: 700;
+  letter-spacing: -0.4rpx;
+}
+.t-20 {
+  font-size: 38rpx;
+  line-height: 54rpx;
+  font-weight: 600;
+}
+.t-18 {
+  font-size: 35rpx;
+  line-height: 46rpx;
+  font-weight: 600;
+}
+.t-16 {
+  font-size: 31rpx;
+  line-height: 46rpx;
+  font-weight: 500;
+}
+.t-14 {
+  font-size: 27rpx;
+  line-height: 38rpx;
+}
+.t-13 {
+  font-size: 25rpx;
+  line-height: 35rpx;
+}
+.t-12 {
+  font-size: 23rpx;
+  line-height: 31rpx;
+  font-weight: 600;
+}
+.t-11 {
+  font-size: 21rpx;
+  line-height: 27rpx;
+  font-weight: 500;
+}
+.t-10 {
+  font-size: 19rpx;
+  line-height: 27rpx;
+  font-weight: 500;
+}
+/* 最小一级：角标 / 标签 / 表格小注（此前漏定义，会退回 16px 默认字号，比标题还大） */
+.t-9 {
+  font-size: 18rpx;
+  line-height: 24rpx;
+  font-weight: 500;
+}
+.bold {
+  font-weight: 700;
+}
+.semi {
+  font-weight: 600;
+}
+.c-primary {
+  color: var(--primary);
+}
+.c-pc {
+  color: var(--primary-container);
+}
+.c-s {
+  color: var(--text-secondary);
+}
+.c-t {
+  color: var(--text-tertiary);
+}
+
+/* ===== 通用卡片 ===== */
+.card {
+  background: var(--surface-white);
+  border-radius: 31rpx;
+}
+.shadow-soft {
+  box-shadow: 0 8rpx 31rpx -4rpx rgba(14, 165, 233, 0.06), 0 4rpx 12rpx 0 rgba(15, 23, 42, 0.03);
+}
+.shadow-card {
+  box-shadow: 0 15rpx 46rpx -8rpx rgba(14, 165, 233, 0.12), 0 4rpx 15rpx rgba(15, 23, 42, 0.04);
+}
+.hairline {
+  height: 1px;
+  background: rgba(204, 195, 216, 0.6);
+}
+
+/* ===== 拼音注音：一字一列，拼音在字正上方（严格一一对应） ===== */
+.ruby-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+}
+.ruby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 3rpx;
+}
+.ruby-py {
+  height: 30rpx;
+  line-height: 30rpx;
+  font-size: 20rpx;
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  opacity: 0.9;
+}
+.ruby-char {
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--text-primary);
+}
+.ruby-punct .ruby-char {
+  opacity: 0.85;
+}
+/* 关闭拼音时收起拼音行，字仍保持居中 */
+.ruby-line.no-py .ruby-py {
+  display: none;
+}
+
+/* ===== 动画 ===== */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@keyframes wave {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10%,
+  30% {
+    transform: rotate(14deg);
+  }
+  20%,
+  40% {
+    transform: rotate(-8deg);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  70%,
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+@keyframes bounceY {
+  0%,
+  100% {
+    transform: scaleY(0.55);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8rpx);
+  }
+}
+.anim-pulse {
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.anim-spin {
+  animation: spin 12s linear infinite;
+}
+
+/* ===== 底部任务栏（页签式，各页共用 templates/tabbar.wxml） ===== */
+.tbar-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  padding: 0 38rpx calc(12rpx + env(safe-area-inset-bottom));
+}
+.tbar {
+  position: relative;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 9999rpx;
+  padding: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 23rpx 61rpx -8rpx rgba(30, 41, 59, 0.12), 0 8rpx 23rpx -4rpx rgba(14, 165, 233, 0.08);
+}
+.tbar-item {
+  flex: 1;
+  min-height: 84rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-container);
+  font-weight: 600;
+}
+.tbar-off {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.tbar-center {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.tbar-fab {
+  position: absolute;
+  top: -54rpx;
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #0369a1, #0ea5e9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12rpx 38rpx rgba(14, 165, 233, 0.45);
+}
+
+/* ==================== 夜览模式（护眼遮罩） ==================== */
+/* 各页面 wxml 末尾 include pages/common/veil.wxml；night 由 store.user.nightMode 控制 */
+.night-veil {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: rgba(18, 12, 4, 0.42);
+  pointer-events: none; /* 蒙层不挡点击，只降亮度 */
+}

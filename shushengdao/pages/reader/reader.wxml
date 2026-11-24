@@ -1,0 +1,248 @@
+<view class="page">
+  <!-- 顶部导航（返回） -->
+  <view class="hd" style="padding-top:{{statusBar}}px">
+    <view class="hd-inner" style="height:{{navH}}px;padding-right:{{navRight}}px">
+      <view class="row" style="gap:8rpx">
+        <view class="back-btn" hover-class="hover-bg" bindtap="goBack">
+          <view class="ico ico-chevron-left ico-42"></view>
+        </view>
+        <text class="t-18 truncate" style="max-width:269rpx">逐句朗读</text>
+      </view>
+      <view class="row" style="gap:15rpx">
+        <view class="avatar {{avatar ? 'avatar-photo-box' : ''}}"><image wx:if="{{avatar}}" class="avatar-photo" src="{{avatar}}" mode="aspectFill" /><view wx:else class="ico ico-person ico-34"></view></view>
+        <view class="mini-ctrl">
+          <view class="row center" style="width:54rpx;height:54rpx"><view class="ico ico-more ico-34"></view></view>
+          <view class="hairline" style="height:27rpx;width:1px"></view>
+          <view class="row center" style="width:54rpx;height:54rpx"><view class="ico ico-close ico-34"></view></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 三区固定骨架：追踪条（吸顶常驻）/ 朗读舞台（滚动）/ 控制台（吸底常驻） -->
+  <view class="shell" style="padding-top:{{statusBar + navH}}px">
+
+    <!-- ① 课文原件对齐与分句追踪：再长的课文也常驻可见 -->
+    <view class="track-bar {{trackOn ? 'on' : ''}}">
+      <view class="tb-thumb" bindtap="openTrack">
+        <image
+          wx:if="{{pageImg}}"
+          class="paper-img tb-img"
+          src="{{pageImg}}"
+          mode="aspectFill"
+          binderror="onPaperImgErr"
+        />
+        <view class="paper tb-paper" wx:else>
+          <view class="paper-line" wx:for="{{paperLines}}" wx:key="*this" style="width:{{item}}%"></view>
+        </view>
+        <view
+          class="tb-band {{index === sentenceIndex - 1 - (pageIndex - 1) * 4 ? 'tb-band-on' : ''}}"
+          wx:for="{{bands}}"
+          wx:key="index"
+          style="top:{{item.top}}%;height:{{item.h}}%"
+        ></view>
+      </view>
+
+      <view class="tb-body">
+        <view class="row between" style="width:100%">
+          <text class="tb-title truncate">{{lessonTitle}}</text>
+          <text class="tb-tag">第 {{pageIndex}}/{{pageTotal}} 页</text>
+        </view>
+        <view class="tb-segs">
+          <view
+            class="tb-seg {{index === sentenceIndex - 1 - (pageIndex - 1) * 4 ? 'tb-seg-on' : ''}}"
+            wx:for="{{bands}}"
+            wx:key="index"
+          ></view>
+        </view>
+        <view class="row between" style="width:100%">
+          <text class="tb-sub">第 {{sentenceIndex}} / {{sentenceTotal}} 句</text>
+          <text class="tb-state {{trackOn ? 'on' : ''}}">{{trackOn ? '正在追踪' : '已对齐'}}</text>
+        </view>
+      </view>
+
+      <view class="tb-expand" hover-class="pressed" bindtap="openTrack">
+        <view class="ico ico-crop ico-30 c-primary"></view>
+      </view>
+    </view>
+
+    <!-- ② 朗读舞台：只滚这一块，句子永远紧贴追踪条 -->
+    <scroll-view class="stage" scroll-y scroll-into-view="{{stageAnchor}}" scroll-with-animation>
+      <!-- 即时鼓励胶囊 -->
+      <view class="row center" style="flex-shrink:0">
+        <view class="toast-pill">
+          <view class="row" style="gap:2rpx;color:#f97316">
+            <view class="ico ico-fire ico-30"></view>
+            <text class="t-12" style="color:#f97316">连续读对 4 句！</text>
+          </view>
+          <view class="tiny-dot"></view>
+          <text class="t-10 c-s">朗读之星加速中</text>
+        </view>
+      </view>
+
+      <!-- 当前句子卡 -->
+      <view class="sentence-card {{sizeClass}}" id="sentence-card">
+        <view class="amb-a"></view>
+        <view class="amb-b"></view>
+        <view class="row between" style="width:100%;margin-bottom:10rpx;z-index:2">
+          <view class="core-tag">
+            <view class="ico ico-stories ico-26"></view>
+            <text class="t-10 c-primary">核心语句</text>
+          </view>
+          <view class="row" style="gap:10rpx">
+            <view class="listen-again" hover-class="pressed" bindtap="goListen">
+              <view class="ico ico-headphones ico-26 c-primary"></view>
+              <text class="t-10 c-primary">再听一遍</text>
+            </view>
+            <view class="row" style="gap:4rpx" bindtap="togglePinyin">
+              <view class="ico ico-spellcheck ico-27 c-t"></view>
+              <text class="t-10 c-t">拼音{{pinyinOn ? '开启' : '关闭'}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="reader-ruby">
+          <view
+            class="ruby-line {{pinyinOn ? '' : 'no-py'}}"
+            wx:for="{{charLines}}"
+            wx:for-item="line"
+            wx:key="index"
+          >
+            <view
+              class="ruby {{cell.punct ? 'ruby-punct' : 'char-tap'}}"
+              wx:for="{{line}}"
+              wx:for-item="cell"
+              wx:key="gi"
+              data-index="{{cell.gi}}"
+              bindtap="onCharTap"
+            >
+              <text class="ruby-py">{{cell.py}}</text>
+              <text class="ruby-char">{{cell.c}}{{cell.tail}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="row" style="gap:8rpx;margin-top:10rpx;z-index:2">
+          <view class="ico ico-bulb ico-27" style="color:#fbbf24"></view>
+          <text class="t-10 c-t">{{tipText}}</text>
+        </view>
+      </view>
+
+      <!-- 范读 / 回听：精简成两条，不再占大半屏 -->
+      <view class="coach">
+        <view class="coach-row" hover-class="pressed" bindtap="playDemo">
+          <view class="coach-ico"><view class="ico ico-robot ico-36" style="color:#fff"></view></view>
+          <view class="col flex1" style="min-width:0;gap:2rpx">
+            <text class="t-12 semi c-primary">AI 教师示范读</text>
+            <text class="t-10 c-t truncate">{{speaking ? '正在播放，跟着追踪条读吧' : '点这里听一遍标准读音 · ' + rateLabel}}</text>
+          </view>
+          <view class="coach-btn">
+            <view class="ico {{speaking ? 'ico-pause' : 'ico-play'}} ico-30 c-primary"></view>
+          </view>
+        </view>
+
+        <view class="coach-row" hover-class="pressed" bindtap="playRecord">
+          <view class="coach-ico kid"><view class="ico ico-smile ico-36" style="color:#005b3d"></view></view>
+          <view class="col flex1" style="min-width:0;gap:2rpx">
+            <text class="t-12 semi" style="color:#005b3d">{{isKid ? '我的朗读' : '我的跟读录音'}}</text>
+            <text class="t-10 c-t truncate">{{isKid ? '读完就很棒，继续加油！🌟' : '读得太棒啦！声音真洪亮 🌟'}}</text>
+          </view>
+          <view class="coach-btn">
+            <view class="ico ico-headphones ico-30 c-primary"></view>
+          </view>
+        </view>
+      </view>
+
+      <view style="height:16rpx"></view>
+    </scroll-view>
+
+    <!-- ③ 控制台：麦克风永远在拇指区，按住即可看到上方追踪条 -->
+    <view class="dock">
+      <view class="wave">
+        <view class="wave-bar" wx:for="{{wave}}" wx:key="index" style="height:{{item.h}}rpx;width:{{item.w || 8}}rpx;background:{{item.c}};opacity:{{item.o || 1}};animation:{{item.a}}"></view>
+      </view>
+
+      <view class="timer">
+        <view class="rec-dot"><view class="ping-ring2"></view></view>
+        <text class="t-10 c-s">跟读倒计时:</text>
+        <text class="t-10 bold">{{recordTime}}</text>
+        <text class="t-10 c-s">/ 30s</text>
+      </view>
+
+      <view class="mic-wrap">
+        <view class="mic-glow anim-pulse"></view>
+        <view class="mic-btn {{recording ? 'mic-active' : ''}}"
+              bindtouchstart="startRecord" bindtouchend="endRecord" bindtouchcancel="endRecord">
+          <view class="ico ico-mic ico-70" style="color:#fff"></view>
+        </view>
+      </view>
+
+      <view class="col center" style="gap:2rpx">
+        <text class="t-12 semi">{{recording ? '松手结束朗读 · 追踪中' : '按住朗读，松开结束'}}</text>
+        <text class="t-10 c-t" style="font-weight:400">单句上限 30 秒 · 自动生成鼓励星</text>
+      </view>
+
+      <view class="ctrl-grid">
+        <view class="ctrl" hover-class="pressed" bindtap="prevSentence">
+          <view class="ico ico-arrow-left ico-29"></view>
+          <text class="t-10 c-s">上一句</text>
+        </view>
+        <view class="ctrl" hover-class="pressed" bindtap="reRead">
+          <view class="ico ico-refresh ico-29"></view>
+          <text class="t-10 c-s">重读</text>
+        </view>
+        <view class="ctrl" hover-class="pressed" bindtap="skipSentence">
+          <view class="ico ico-skip ico-29"></view>
+          <text class="t-10 c-s">跳过</text>
+        </view>
+        <view class="ctrl ctrl-next" hover-class="pressed" bindtap="onNextOrFinish">
+          <text class="t-10 semi" style="color:#25005a">{{isLast || allRead ? '完成朗读' : '下一句'}}</text>
+          <view class="ico {{isLast || allRead ? 'ico-check-circle' : 'ico-arrow-right'}} ico-29" style="color:#25005a"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 展开：课文原件大图（看完整页面时用，平时收在追踪条里） -->
+  <view class="track-modal" wx:if="{{trackBig}}" bindtap="closeTrack">
+    <view class="tm-card" catchtap="noop">
+      <view class="row between" style="width:100%;margin-bottom:16rpx">
+        <view class="row" style="gap:6rpx">
+          <view class="ico ico-crop ico-30 c-primary"></view>
+          <text class="t-12 semi">课文原件对齐</text>
+        </view>
+        <text class="t-10 c-t">第 {{pageIndex}}/{{pageTotal}} 页 · {{sentenceIndex}}/{{sentenceTotal}} 句</text>
+      </view>
+      <view class="preview-canvas {{trackOn ? 'track-on' : ''}}">
+        <image
+          wx:if="{{pageImg}}"
+          class="paper-img"
+          src="{{pageImg}}"
+          mode="aspectFill"
+          binderror="onPaperImgErr"
+        />
+        <view class="paper" wx:else>
+          <view class="paper-line" wx:for="{{paperLines}}" wx:key="*this" style="width:{{item}}%"></view>
+        </view>
+        <view
+          class="band {{index === sentenceIndex - 1 - (pageIndex - 1) * 4 ? 'band-on' : ''}}"
+          wx:for="{{bands}}"
+          wx:key="index"
+          style="top:{{item.top}}%;height:{{item.h}}%"
+        ></view>
+        <view class="bbox" style="top:{{bandTop}}%;height:25%">
+          <view class="row" style="gap:6rpx">
+            <view class="bbox-ping"><view class="ping-ring"></view></view>
+            <text class="bbox-label">当前朗读句</text>
+          </view>
+          <text class="t-10 c-primary" style="white-space:nowrap">{{sentenceIndex}}/{{sentenceTotal}} 句</text>
+        </view>
+      </view>
+      <text class="t-10 c-t" style="margin-top:12rpx;text-align:center">追踪框会跟着句子往下走，读完一句就跳到下一行</text>
+      <view class="tm-close" hover-class="pressed" bindtap="closeTrack">
+        <text class="t-12 semi c-primary">收起</text>
+      </view>
+    </view>
+  </view>
+</view>
+<include src="../../pages/common/veil.wxml" />

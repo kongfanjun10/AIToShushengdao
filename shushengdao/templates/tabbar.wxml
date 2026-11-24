@@ -1,0 +1,36 @@
+<!--
+  底部任务栏（页签式）：首页 / 生词本 / 拍照朗读(FAB) / 勋章 / 我的
+  使用：
+    <import src="../../templates/tabbar.wxml" />
+    <template is="tabbar" data="{{active: 'home'}}" />
+  页面需实现 goTab(e)（建议用 utils/tab.js 的 tab.goTab(this, e)），
+  同一个页签再点一次会触发 onSameTab（如首页回到顶部）。
+-->
+<template name="tabbar">
+  <view class="tbar-wrap">
+    <view class="tbar">
+      <view class="tbar-item {{active === 'home' ? '' : 'tbar-off'}}" data-key="home" bindtap="goTab">
+        <view class="ico ico-home ico-46"></view>
+        <text class="t-10" style="margin-top:2rpx">首页</text>
+      </view>
+      <view class="tbar-item {{active === 'vocab' ? '' : 'tbar-off'}}" data-key="vocab" bindtap="goTab">
+        <view class="ico ico-stories ico-46"></view>
+        <text class="t-10" style="margin-top:2rpx">生词本</text>
+      </view>
+      <view class="tbar-center">
+        <view class="tbar-fab" hover-class="pressed" data-key="capture" bindtap="goTab">
+          <view class="ico ico-sparkle ico-54" style="color:#fff"></view>
+        </view>
+        <text class="t-10 semi c-pc" style="margin-top:62rpx">拍照朗读</text>
+      </view>
+      <view class="tbar-item {{active === 'archive' ? '' : 'tbar-off'}}" data-key="archive" bindtap="goTab">
+        <view class="ico ico-medal ico-46"></view>
+        <text class="t-10" style="margin-top:2rpx">勋章</text>
+      </view>
+      <view class="tbar-item {{active === 'parent' ? '' : 'tbar-off'}}" data-key="parent" bindtap="goTab">
+        <view class="ico ico-person ico-46"></view>
+        <text class="t-10" style="margin-top:2rpx">我的</text>
+      </view>
+    </view>
+  </view>
+</template>

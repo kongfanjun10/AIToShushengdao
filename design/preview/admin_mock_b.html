@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>数据后台 · 方案B 仪表盘式</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:504px;
+    background:linear-gradient(180deg,#e0f2fe 0%,#dcfce7 100%);
+    background-attachment:fixed;
+    font-family:"PingFang SC","Helvetica Neue",Roboto,sans-serif;
+    color:#0f172a;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  .hd {
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,255,255,0.72);
+    box-shadow:0 1px 8px rgba(0,0,0,0.03);
+    padding:44px 0 0;
+  }
+  .hd-inner {
+    height:54px; padding:0 25px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .hd-left { display:flex; align-items:center; gap:8px; }
+  .back {
+    width:42px; height:42px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:#0f172a; font-size:20px;
+  }
+  .hd-title { font-size:17px; font-weight:600; }
+  .hd-sub { font-size:10px; color:#94a3b8; margin-top:1px; }
+  .chip {
+    display:flex; align-items:center; gap:4px;
+    padding:5px 11px; border-radius:999px;
+    background:rgba(255,255,255,0.9);
+    border:1px solid rgba(255,255,255,0.6);
+    box-shadow:0 1px 4px rgba(15,23,42,0.06);
+    font-size:10px; font-weight:600; color:#005b3d;
+  }
+  .main { padding:12px 19px; display:flex; flex-direction:column; gap:12px; }
+  .card {
+    background:#fff; border-radius:20px;
+    box-shadow:0 8px 23px -4px rgba(14,165,233,0.12), 0 2px 8px rgba(15,23,42,0.04);
+  }
+  .row { display:flex; align-items:center; }
+  .between { justify-content:space-between; }
+
+  /* 四格仪表盘 */
+  .grid-wrap { padding:16px 18px 6px; }
+  .g-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
+  .g-title { font-size:14px; font-weight:600; }
+  .g-date { font-size:10px; color:#94a3b8; }
+  .grid { display:flex; flex-wrap:wrap; gap:10px; padding-bottom:10px; }
+  .g-cell {
+    width:calc(50% - 5px);
+    border-radius:14px; padding:13px 15px;
+    background:#f0f6ff;
+  }
+  .g-cell.green { background:#ecfdf5; }
+  .g-cell.amber { background:#fff7ed; }
+  .g-cell.violet { background:#eef2ff; }
+  .g-k { font-size:10px; color:#64748b; display:flex; align-items:center; gap:5px; }
+  .g-ico { font-size:12px; }
+  .g-v { font-size:26px; font-weight:700; letter-spacing:-0.5px; margin-top:4px; line-height:1.15; }
+  .g-v small { font-size:11px; font-weight:600; color:#94a3b8; margin-left:2px; }
+  .g-d { font-size:9px; margin-top:2px; }
+  .up { color:#007650; } .down { color:#c2410c; }
+
+  /* 用户表格式列表 */
+  .users { padding:14px 18px 8px; }
+  .u-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .u-title { font-size:14px; font-weight:600; }
+  .u-tip { font-size:10px; color:#94a3b8; }
+  table { width:100%; border-collapse:collapse; }
+  th {
+    font-size:9px; color:#94a3b8; font-weight:600; text-align:left;
+    padding:7px 4px; border-bottom:1px solid rgba(204,195,216,0.6);
+  }
+  th.r, td.r { text-align:right; }
+  td { padding:10px 4px; border-bottom:1px solid rgba(204,195,216,0.35); }
+  tr:last-child td { border-bottom:none; }
+  .u-cell { display:flex; align-items:center; gap:8px; }
+  .ava {
+    width:28px; height:28px; border-radius:9px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; color:#fff;
+  }
+  .u-name { font-size:12px; font-weight:600; }
+  .u-sub { font-size:9px; color:#94a3b8; margin-top:1px; }
+  .phone { font-size:11px; color:#334155; font-weight:500; }
+  .phone.none { color:#cbd5e1; }
+  .cnt { font-size:12px; font-weight:700; color:#0369a1; }
+  .cnt small { font-size:9px; font-weight:500; color:#94a3b8; }
+  .last { font-size:10px; color:#64748b; }
+  .hot {
+    display:inline-block; width:6px; height:6px; border-radius:50%;
+    background:#10b981; margin-right:3px;
+  }
+
+  /* 门禁示意 */
+  .gate {
+    padding:18px;
+    background:linear-gradient(135deg,#0369a1,#0ea5e9);
+    border-radius:20px;
+    color:#fff;
+    box-shadow:0 12px 28px rgba(14,165,233,0.3);
+  }
+  .gate-row { display:flex; align-items:center; gap:12px; }
+  .gate-ico {
+    width:44px; height:44px; border-radius:14px; flex-shrink:0;
+    background:rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+  }
+  .gate-t { font-size:15px; font-weight:700; }
+  .gate-s { font-size:10px; opacity:0.85; margin-top:2px; }
+  .gate-input {
+    margin-top:12px; height:40px; border-radius:12px;
+    background:rgba(255,255,255,0.2);
+    display:flex; align-items:center; padding:0 14px;
+    font-size:11px; opacity:0.9;
+  }
+
+  .note { display:flex; gap:7px; align-items:flex-start; padding:4px 6px 0; }
+  .note-icon { font-size:13px; }
+  .note-text { font-size:10px; color:#64748b; line-height:1.6; }
+</style>
+</head>
+<body>
+  <div class="hd">
+    <div class="hd-inner">
+      <div class="hd-left">
+        <div class="back">‹</div>
+        <div>
+          <div class="hd-title">数据后台</div>
+          <div class="hd-sub">仅管理员可见 · 11月5日</div>
+        </div>
+      </div>
+      <div class="chip">🛡️ 管理员</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- 门禁示意（进入本页先出现） -->
+    <div class="gate">
+      <div class="gate-row">
+        <div class="gate-ico">🔒</div>
+        <div>
+          <div class="gate-t">管理员验证</div>
+          <div class="gate-s">输入管理口令后查看，口令经云函数校验</div>
+        </div>
+      </div>
+      <div class="gate-input">请输入管理口令……</div>
+    </div>
+
+    <!-- 四格仪表盘 -->
+    <div class="card grid-wrap">
+      <div class="g-head">
+        <div class="g-title">使用概览</div>
+        <div class="g-date">更新于 10:58</div>
+      </div>
+      <div class="grid">
+        <div class="g-cell">
+          <div class="g-k"><span class="g-ico">🚀</span>累计使用次数</div>
+          <div class="g-v">1,286<small>次</small></div>
+          <div class="g-d down">▲ 较昨日 +32</div>
+        </div>
+        <div class="g-cell green">
+          <div class="g-k"><span class="g-ico">☀️</span>今日使用次数</div>
+          <div class="g-v">23<small>次</small></div>
+          <div class="g-d up">▲ 较昨天同时段 +6</div>
+        </div>
+        <div class="g-cell amber">
+          <div class="g-k"><span class="g-ico">👶</span>累计用户</div>
+          <div class="g-v">12<small>位</small></div>
+          <div class="g-d up">今日新增 1 位</div>
+        </div>
+        <div class="g-cell violet">
+          <div class="g-k"><span class="g-ico">🔥</span>今日活跃用户</div>
+          <div class="g-v">3<small>位</small></div>
+          <div class="g-d up">与昨天持平</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 用户表 -->
+    <div class="card users">
+      <div class="u-head">
+        <div class="u-title">用户列表</div>
+        <div class="u-tip">按累计使用排序 · 手机号脱敏显示</div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>小朋友</th><th>手机号</th><th class="r">使用</th><th class="r">最近使用</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="u-cell"><div class="ava" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)">孔</div><div><div class="u-name">孔老师</div><div class="u-sub">小学模式</div></div></div></td>
+            <td><span class="phone">138****8000</span></td>
+            <td class="r"><span class="cnt">214<small> 次</small></span></td>
+            <td class="r"><span class="last"><span class="hot"></span>10 分钟前</span></td>
+          </tr>
+          <tr>
+            <td><div class="u-cell"><div class="ava" style="background:linear-gradient(135deg,#10b981,#34d399)">朵</div><div><div class="u-name">朵朵</div><div class="u-sub">小学模式</div></div></div></td>
+            <td><span class="phone">139****2331</span></td>
+            <td class="r"><span class="cnt">168<small> 次</small></span></td>
+            <td class="r"><span class="last"><span class="hot"></span>1 小时前</span></td>
+          </tr>
+          <tr>
+            <td><div class="u-cell"><div class="ava" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)">果</div><div><div class="u-name">果果</div><div class="u-sub">幼儿园模式</div></div></div></td>
+            <td><span class="phone none">未绑定</span></td>
+            <td class="r"><span class="cnt">97<small> 次</small></span></td>
+            <td class="r"><span class="last">昨天</span></td>
+          </tr>
+          <tr>
+            <td><div class="u-cell"><div class="ava" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)">妞</div><div><div class="u-name">妞妞</div><div class="u-sub">小学模式</div></div></div></td>
+            <td><span class="phone none">未绑定</span></td>
+            <td class="r"><span class="cnt">45<small> 次</small></span></td>
+            <td class="r"><span class="last">11月2日</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <span class="note-icon">💡</span>
+      <span class="note-text">入口藏在家长中心；未绑定手机号的用户显示「未绑定」——绑定手机号属自愿行为，上传云端前会在绑定处提示「用于家长找回记录」。</span>
+    </div>
+  </div>
+</body>
+</html>

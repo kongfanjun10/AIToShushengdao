@@ -1,0 +1,2 @@
+<!-- 夜览模式护眼遮罩：fixed 全屏暗色蒙层，pointer-events 穿透不影响操作 -->
+<view class="night-veil" wx:if="{{night}}"></view>
